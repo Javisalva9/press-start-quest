@@ -13,8 +13,18 @@ export default defineConfig({
   headLinkOptions: { preset: '2023' },
   preset: {
     ...minimal2023Preset,
-    maskable: { ...minimal2023Preset.maskable, resizeOptions: { background } },
-    apple: { ...minimal2023Preset.apple, resizeOptions: { background } },
+    // No extra padding: the logo already keeps its ring inside the central
+    // 80% that Android's circle crop and iOS's rounded corners never touch.
+    maskable: {
+      ...minimal2023Preset.maskable,
+      padding: 0,
+      resizeOptions: { background },
+    },
+    apple: {
+      ...minimal2023Preset.apple,
+      padding: 0,
+      resizeOptions: { background },
+    },
   },
   images: ['public/favicon.svg'],
 });
