@@ -51,7 +51,7 @@ export class UsersService {
       include: {
         sources: {
           where: { platform: Platform.STEAM },
-          select: { externalId: true },
+          select: { externalId: true, lastSyncAt: true },
         },
       },
     });
@@ -67,6 +67,7 @@ export class UsersService {
       displayName: user.displayName,
       locale: user.locale,
       steamId: user.sources[0]?.externalId ?? null,
+      lastSyncAt: user.sources[0]?.lastSyncAt?.toISOString() ?? null,
     });
   }
 }

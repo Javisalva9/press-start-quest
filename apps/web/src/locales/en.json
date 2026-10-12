@@ -15,21 +15,10 @@
     "greeting": "Hi, {{name}}!",
     "loading": "Loading…",
     "comingSoon": "Your library is on its way: it arrives in the next updates.",
-    "signOut": "Sign out"
-  },
-  "errors": {
-    "VALIDATION_FAILED": "Something in the request wasn't right. Please try again.",
-    "UNAUTHENTICATED": "Your session has ended. Please sign in again.",
-    "REFRESH_TOKEN_INVALID": "Your session has ended. Please sign in again.",
-    "STEAM_LOGIN_INVALID": "We couldn't verify your Steam sign-in. Please try again.",
-    "STEAM_UNAVAILABLE": "Steam isn't responding right now. Try again in a few minutes.",
-    "STEAM_ACCOUNT_NOT_LINKED": "There's no Steam account linked to your profile.",
-    "STEAM_LIBRARY_PRIVATE": "Steam didn't share your library: check that your game details are public.",
-    "SYNC_JOB_NOT_FOUND": "That import doesn't exist.",
-    "SYNC_INTERRUPTED": "The import was interrupted. Please start it again.",
-    "SYNC_FAILED": "The import failed. Please try again in a few minutes.",
-    "LIBRARY_GAME_NOT_FOUND": "That game isn't in your library.",
-    "UNKNOWN": "Something went wrong. Please try again."
+    "signOut": "Sign out",
+    "lastSync": "Last synced {{date}}",
+    "neverSynced": "Never synced",
+    "syncNow": "Sync now"
   },
   "steamPrivacy": {
     "PROFILE_PRIVATE": {
@@ -52,5 +41,40 @@
     "openSettings": "Open Steam settings",
     "checkAgain": "Check again",
     "checking": "Checking…"
+  },
+  "sync": {
+    "titleFirst": "Importing your library",
+    "title": "Syncing your library",
+    "phase": {
+      "queued": "Getting ready…",
+      "library": "Reading your Steam library…",
+      "wishlist": "Reading your wishlist…",
+      "details": "Fetching covers, ratings and lengths…",
+      "achievements": "Reading your achievements…",
+      "done": "All set!",
+      "failed": "The import stopped."
+    },
+    "percent": "{{progress}} %",
+    "firstTimeHint": "The first import takes a couple of minutes: Steam limits how fast we can ask. Keep the app open in the meantime.",
+    "games_one": "{{count}} game in your library",
+    "games_other": "{{count}} games in your library",
+    "wishlist_one": "{{count}} game in your wishlist",
+    "wishlist_other": "{{count}} games in your wishlist",
+    "continue": "Let's go",
+    "retry": "Try again"
+  },
+  "errors": {
+    "VALIDATION_FAILED": "Something in the request wasn't right. Please try again.",
+    "UNAUTHENTICATED": "Your session has ended. Please sign in again.",
+    "REFRESH_TOKEN_INVALID": "Your session has ended. Please sign in again.",
+    "STEAM_LOGIN_INVALID": "We couldn't verify your Steam sign-in. Please try again.",
+    "STEAM_UNAVAILABLE": "Steam isn't responding right now. Try again in a few minutes.",
+    "STEAM_ACCOUNT_NOT_LINKED": "There's no Steam account linked to your profile.",
+    "STEAM_LIBRARY_PRIVATE": "Steam didn't share your library: check that your game details are public.",
+    "SYNC_JOB_NOT_FOUND": "That import doesn't exist.",
+    "SYNC_INTERRUPTED": "The import was interrupted. Please start it again.",
+    "SYNC_FAILED": "The import failed. Please try again in a few minutes.",
+    "LIBRARY_GAME_NOT_FOUND": "That game isn't in your library.",
+    "UNKNOWN": "Something went wrong. Please try again."
   }
 }
