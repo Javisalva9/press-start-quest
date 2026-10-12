@@ -41,7 +41,7 @@
     },
     "steps": {
       "open": "Abre tu configuración de privacidad en Steam.",
-      "public": "Pon «Mi perfil» y «Detalles de juegos» en Público.",
+      "public": "Pon «Mi perfil» y «Detalles de los juegos» en Público.",
       "playtime": "Desmarca «Mantener siempre privado mi tiempo total de juego»."
     },
     "openSettings": "Abrir ajustes de Steam",
