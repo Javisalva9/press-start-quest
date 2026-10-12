@@ -1,15 +1,17 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { HealthResponse } from '@psq/shared';
 import { fetchHealth } from './api/client';
 
 // Página provisional de la etapa 0: solo comprueba que web, API y base de datos
-// se hablan. Los textos pasarán a es.json / en.json en la etapa 1.
+// se hablan. Se sustituirá por las pantallas de la etapa 1.
 type State =
   | { kind: 'loading' }
   | { kind: 'ok'; health: HealthResponse }
   | { kind: 'error'; message: string };
 
 export default function App() {
+  const { t } = useTranslation();
   const [state, setState] = useState<State>({ kind: 'loading' });
 
   useEffect(() => {
@@ -23,45 +25,32 @@ export default function App() {
       );
   }, []);
 
+  const apiState = state.kind === 'ok' ? 'up' : state.kind;
+  const databaseState = state.kind === 'ok' ? state.health.database : null;
+
   return (
     <main className="screen">
       <div className="ring" aria-hidden="true">
         <span className="play" />
       </div>
-      <h1>Press Start Quest</h1>
-      <p className="lead">
-        Esqueleto en marcha. Las pantallas llegan en la etapa 1.
-      </p>
+      <h1>{t('app.name')}</h1>
+      <p className="lead">{t('health.lead')}</p>
 
       <dl className="status" aria-live="polite">
         <div>
-          <dt>API</dt>
-          <dd data-state={state.kind === 'ok' ? 'up' : state.kind}>
-            {state.kind === 'loading' && 'Despertando…'}
-            {state.kind === 'ok' && 'Responde'}
-            {state.kind === 'error' && 'Sin respuesta'}
-          </dd>
+          <dt>{t('health.api')}</dt>
+          <dd data-state={apiState}>{t(`health.apiState.${apiState}`)}</dd>
         </div>
         <div>
-          <dt>Base de datos</dt>
-          <dd
-            data-state={
-              state.kind === 'ok' ? state.health.database : state.kind
-            }
-          >
-            {state.kind === 'loading' && '—'}
-            {state.kind === 'ok' &&
-              (state.health.database === 'up' ? 'Conectada' : 'Caída')}
-            {state.kind === 'error' && '—'}
+          <dt>{t('health.database')}</dt>
+          <dd data-state={databaseState ?? state.kind}>
+            {databaseState ? t(`health.databaseState.${databaseState}`) : '—'}
           </dd>
         </div>
       </dl>
 
       {state.kind === 'error' && (
-        <p className="hint">
-          {state.message}. Comprueba que la API está arrancada y que
-          VITE_API_URL apunta a ella.
-        </p>
+        <p className="hint">{t('health.hint', { message: state.message })}</p>
       )}
     </main>
   );

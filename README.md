@@ -4,8 +4,7 @@ App web instalable en el móvil (PWA) que importa tu biblioteca de juegos de PC,
 la enriquece con duración, nota y portada, y cada día te propone qué jugar para
 ir cerrando tu backlog.
 
-> Estado: etapa 0 (preparación). El esqueleto compila, tiene tests y CI; las
-> funcionalidades llegan a partir de la etapa 1.
+> Estado: etapa 1 (Steam y catálogo) en curso.
 
 ## Stack
 
@@ -54,6 +53,20 @@ pnpm dev                             # API en :3000 y web en :5173
 | `pnpm test`                         | Ejecuta los tests unitarios                  |
 | `pnpm format`                       | Formatea el código con Prettier              |
 | `pnpm --filter @psq/api db:migrate` | Crea y aplica una migración en desarrollo    |
+
+## Idiomas
+
+La web está en español (por defecto) e inglés, con
+[react-i18next](https://react.i18next.com/). La primera vez se usa el idioma del
+móvil.
+
+- Ningún texto se escribe dentro de un componente: va en
+  `apps/web/src/locales/es.json` y `en.json`, y el componente usa
+  `t('clave.del.texto')`.
+- oxlint (`react/jsx-no-literals`) marca el texto suelto en el JSX.
+- TypeScript comprueba que cada clave existe en `es.json`.
+- Un test falla si una clave o una variable `{{…}}` falta en alguno de los dos
+  idiomas, así que el CI no deja fusionar una traducción a medias.
 
 ## Variables de entorno
 
