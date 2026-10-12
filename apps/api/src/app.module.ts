@@ -6,7 +6,7 @@ import { PrismaModule } from './prisma/prisma.module.js';
 
 @Module({
   imports: [
-    // Lee apps/api/.env en local; en Render las variables vienen del panel.
+    // Reads apps/api/.env locally; on Render the variables come from the dashboard.
     ConfigModule.forRoot({ isGlobal: true, validate: validateEnv }),
     PrismaModule,
     HealthModule,

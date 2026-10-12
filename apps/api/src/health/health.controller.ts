@@ -10,7 +10,7 @@ export class HealthController {
 
   @Get()
   @ApiOkResponse({
-    description: 'La API responde y comprueba la base de datos',
+    description: 'The API is up and checks the database',
   })
   check(): Promise<HealthResponse> {
     return this.health.check();

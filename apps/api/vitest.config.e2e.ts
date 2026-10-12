@@ -5,7 +5,7 @@ export default defineConfig({
     globals: true,
     root: './',
     include: ['**/*.e2e-spec.ts'],
-    // Valor ficticio: la base de datos se sustituye por un doble en los tests.
+    // Dummy value: the database is replaced by a test double in these tests.
     env: { DATABASE_URL: 'postgresql://test:test@localhost:5432/test' },
   },
 });

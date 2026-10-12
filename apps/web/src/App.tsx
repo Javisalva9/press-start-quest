@@ -3,8 +3,8 @@ import { useTranslation } from 'react-i18next';
 import type { HealthResponse } from '@psq/shared';
 import { fetchHealth } from './api/client';
 
-// Página provisional de la etapa 0: solo comprueba que web, API y base de datos
-// se hablan. Se sustituirá por las pantallas de la etapa 1.
+// Stage 0 placeholder page: it only checks that web, API and database can talk
+// to each other. It will be replaced by the stage 1 screens.
 type State =
   | { kind: 'loading' }
   | { kind: 'ok'; health: HealthResponse }

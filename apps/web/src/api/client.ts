@@ -1,6 +1,6 @@
 import { HealthResponseSchema, type HealthResponse } from '@psq/shared';
 
-/** Une la URL base de la API con una ruta, sin barras dobles. */
+/** Joins the API base URL and a path, without double slashes. */
 export function apiUrl(path: string, baseUrl = ''): string {
   const base = baseUrl.replace(/\/+$/, '');
   const route = path.startsWith('/') ? path : `/${path}`;
@@ -12,8 +12,8 @@ export async function fetchHealth(): Promise<HealthResponse> {
     apiUrl('/api/health', import.meta.env.VITE_API_URL),
   );
   if (!response.ok) {
-    throw new Error(`La API respondió ${response.status}`);
+    throw new Error(`API responded with ${response.status}`);
   }
-  // Se valida con el mismo esquema que usa la API: si cambia el contrato, falla aquí.
+  // Validated with the same schema the API uses: if the contract changes, it fails here.
   return HealthResponseSchema.parse(await response.json());
 }

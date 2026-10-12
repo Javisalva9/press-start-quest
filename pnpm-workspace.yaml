@@ -2,14 +2,14 @@ packages:
   - apps/*
   - packages/*
 
-# Falla si tu versión de Node no cumple "engines" del package.json raíz.
+# Fail if your Node version does not match "engines" in the root package.json.
 engineStrict: true
 
-# pnpm no ejecuta scripts de instalación de dependencias salvo que los autorices:
-# así una librería comprometida no puede ejecutar código en tu PC al instalarla.
+# pnpm only runs dependency install scripts you explicitly allow, so a
+# compromised library can't run code on your machine when it's installed.
 allowBuilds:
-  # Descargan el motor de Prisma que hace las migraciones.
+  # Download the Prisma engine that runs migrations.
   '@prisma/engines': true
   prisma: true
-  # Telemetría que trae swagger-ui-dist: no hace falta.
+  # Telemetry bundled with swagger-ui-dist: not needed.
   '@scarf/scarf': false

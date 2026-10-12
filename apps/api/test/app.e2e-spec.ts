@@ -5,8 +5,8 @@ import { App } from 'supertest/types.js';
 import { AppModule } from './../src/app.module.js';
 import { PrismaService } from './../src/prisma/prisma.service.js';
 
-// Prueba la app completa (módulos, rutas, prefijo /api) sin base de datos real:
-// PrismaService se sustituye por un doble que responde a SELECT 1.
+// Tests the whole app (modules, routes, /api prefix) without a real database:
+// PrismaService is replaced by a test double that answers SELECT 1.
 describe('API (e2e)', () => {
   let app: INestApplication<App>;
 

@@ -1,5 +1,5 @@
-# Todo el texto se guarda en el repo con finales de línea LF (estilo Linux),
-# aunque trabajes en Windows. Así los diffs no se llenan de cambios CRLF/LF.
+# Store all text in the repo with LF line endings (Linux style), even when
+# working on Windows, so diffs don't fill up with CRLF/LF noise.
 * text=auto eol=lf
 
 *.png binary

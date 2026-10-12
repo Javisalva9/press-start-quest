@@ -15,14 +15,14 @@ describe('HealthService', () => {
     service = moduleRef.get(HealthService);
   });
 
-  it('informa de la base de datos activa', async () => {
+  it('reports the database as up', async () => {
     prisma.$queryRaw.mockResolvedValue([{ '?column?': 1 }]);
     const result = await service.check();
     expect(result.database).toBe('up');
     expect(HealthResponseSchema.safeParse(result).success).toBe(true);
   });
 
-  it('sigue respondiendo si la base de datos falla', async () => {
+  it('keeps responding when the database fails', async () => {
     prisma.$queryRaw.mockRejectedValue(new Error('connection refused'));
     const result = await service.check();
     expect(result).toMatchObject({ status: 'ok', database: 'down' });

@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { HealthResponseSchema } from './health.js';
 
 describe('HealthResponseSchema', () => {
-  it('acepta una respuesta válida', () => {
+  it('accepts a valid response', () => {
     const result = HealthResponseSchema.safeParse({
       status: 'ok',
       database: 'up',
@@ -11,7 +11,7 @@ describe('HealthResponseSchema', () => {
     expect(result.success).toBe(true);
   });
 
-  it('rechaza un estado de base de datos desconocido', () => {
+  it('rejects an unknown database state', () => {
     const result = HealthResponseSchema.safeParse({
       status: 'ok',
       database: 'sleeping',

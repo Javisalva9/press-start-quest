@@ -4,7 +4,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql" // la URL va en prisma.config.ts
+  provider = "postgresql" // the URL lives in prisma.config.ts
 }
 
 enum Platform {
@@ -87,8 +87,8 @@ model User {
   createdAt            DateTime              @default(now())
   sources              Source[]
   games                UserGame[]
-  curators             Curator[] // amigos propios (FRIEND)
-  follows              UserCurator[] // creadores que sigue (CREATOR)
+  curators             Curator[] // own friends (FRIEND)
+  follows              UserCurator[] // creators they follow (CREATOR)
   tasteScores          TasteScore[]
   recommendationEvents RecommendationEvent[]
   syncJobs             SyncJob[]
@@ -100,8 +100,8 @@ model Source {
   id          String      @id @default(cuid())
   userId      String
   platform    Platform
-  externalId  String // SteamID, cuenta de Epic o id generado para fuentes externas
-  displayName String? // "Jack Sparrow" en fuentes externas
+  externalId  String // SteamID, Epic account or generated id for external sources
+  displayName String? // "Jack Sparrow" for external sources
   lastSyncAt  DateTime?
   user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   ownerships  Ownership[]
@@ -228,7 +228,7 @@ model PlaytimeSnapshot {
 
 model Curator {
   id        String        @id @default(cuid())
-  userId    String? // vacío = creador global (CREATOR); relleno = amigo de ese usuario (FRIEND)
+  userId    String? // empty = global creator (CREATOR); set = that user's friend (FRIEND)
   name      String
   kind      CuratorKind   @default(FRIEND)
   color     String?
@@ -236,7 +236,7 @@ model Curator {
   picks     CuratorPick[]
   followers UserCurator[]
 
-  @@unique([userId, name]) // + índice parcial en la migración: nombre único entre creadores globales
+  @@unique([userId, name]) // + partial index in the migration: unique name among global creators
   @@map("curators")
 }
 
