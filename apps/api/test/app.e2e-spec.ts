@@ -13,6 +13,10 @@ describe('API (e2e)', () => {
   const prisma = {
     $queryRaw: vi.fn().mockResolvedValue([]),
     user: { findUnique: vi.fn() },
+    session: {
+      findUnique: vi.fn().mockResolvedValue(null),
+      deleteMany: vi.fn().mockResolvedValue({ count: 0 }),
+    },
   };
 
   beforeEach(async () => {
@@ -75,6 +79,26 @@ describe('API (e2e)', () => {
           code: 'STEAM_LOGIN_INVALID',
         });
       });
+  });
+
+  it('POST /api/auth/refresh rejects an unknown refresh token', () => {
+    return request(app.getHttpServer())
+      .post('/api/auth/refresh')
+      .send({ refreshToken: 'not-a-real-token' })
+      .expect(401)
+      .expect((res) => {
+        expect(res.body).toEqual({
+          statusCode: 401,
+          code: 'REFRESH_TOKEN_INVALID',
+        });
+      });
+  });
+
+  it('POST /api/auth/logout closes the session', () => {
+    return request(app.getHttpServer())
+      .post('/api/auth/logout')
+      .send({ refreshToken: 'some-token' })
+      .expect(204);
   });
 
   it('GET /api/me requires a token', () => {

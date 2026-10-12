@@ -8,6 +8,7 @@ import { z } from 'zod';
 export const ERROR_CODES = [
   'VALIDATION_FAILED',
   'UNAUTHENTICATED',
+  'REFRESH_TOKEN_INVALID',
   'STEAM_LOGIN_INVALID',
   'STEAM_UNAVAILABLE',
 ] as const;

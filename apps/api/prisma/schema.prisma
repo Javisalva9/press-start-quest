@@ -92,8 +92,26 @@ model User {
   tasteScores          TasteScore[]
   recommendationEvents RecommendationEvent[]
   syncJobs             SyncJob[]
+  sessions             Session[]
 
   @@map("users")
+}
+
+// A signed-in device. The refresh token itself is never stored, only its
+// SHA-256: a database leak doesn't let anyone resume a session.
+model Session {
+  id                String    @id @default(cuid())
+  userId            String
+  tokenHash         String    @unique
+  // Hash of the token this one replaced, to spot a stolen token being reused.
+  previousTokenHash String?   @unique
+  rotatedAt         DateTime?
+  expiresAt         DateTime
+  createdAt         DateTime  @default(now())
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("sessions")
 }
 
 model Source {
