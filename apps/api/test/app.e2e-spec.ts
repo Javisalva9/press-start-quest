@@ -107,6 +107,10 @@ describe('API (e2e)', () => {
       .expect(401);
   });
 
+  it('GET /api/library requires a token', () => {
+    return request(app.getHttpServer()).get('/api/library').expect(401);
+  });
+
   it('POST /api/sync requires a token', () => {
     return request(app.getHttpServer()).post('/api/sync').expect(401);
   });

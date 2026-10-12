@@ -28,6 +28,7 @@
     "SYNC_JOB_NOT_FOUND": "Esa importación no existe.",
     "SYNC_INTERRUPTED": "La importación se interrumpió. Vuelve a lanzarla.",
     "SYNC_FAILED": "La importación ha fallado. Inténtalo de nuevo en unos minutos.",
+    "LIBRARY_GAME_NOT_FOUND": "Ese juego no está en tu biblioteca.",
     "UNKNOWN": "Algo ha fallado. Vuelve a intentarlo."
   },
   "steamPrivacy": {

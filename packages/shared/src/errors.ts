@@ -16,6 +16,7 @@ export const ERROR_CODES = [
   'SYNC_JOB_NOT_FOUND',
   'SYNC_INTERRUPTED',
   'SYNC_FAILED',
+  'LIBRARY_GAME_NOT_FOUND',
 ] as const;
 
 export const ErrorCodeSchema = z.enum(ERROR_CODES);
