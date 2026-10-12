@@ -1,0 +1,20 @@
+{
+  "app": {
+    "name": "Press Start Quest"
+  },
+  "health": {
+    "lead": "Esqueleto en marcha. Las pantallas están en camino.",
+    "api": "API",
+    "database": "Base de datos",
+    "apiState": {
+      "loading": "Despertando…",
+      "up": "Responde",
+      "error": "Sin respuesta"
+    },
+    "databaseState": {
+      "up": "Conectada",
+      "down": "Caída"
+    },
+    "hint": "{{message}}. Comprueba que la API está arrancada y que VITE_API_URL apunta a ella."
+  }
+}

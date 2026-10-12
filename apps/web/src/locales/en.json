@@ -1,0 +1,20 @@
+{
+  "app": {
+    "name": "Press Start Quest"
+  },
+  "health": {
+    "lead": "Skeleton up and running. Screens are on their way.",
+    "api": "API",
+    "database": "Database",
+    "apiState": {
+      "loading": "Waking up…",
+      "up": "Responding",
+      "error": "No response"
+    },
+    "databaseState": {
+      "up": "Connected",
+      "down": "Down"
+    },
+    "hint": "{{message}}. Check that the API is running and that VITE_API_URL points to it."
+  }
+}
