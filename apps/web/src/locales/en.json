@@ -24,6 +24,10 @@
     "STEAM_LOGIN_INVALID": "We couldn't verify your Steam sign-in. Please try again.",
     "STEAM_UNAVAILABLE": "Steam isn't responding right now. Try again in a few minutes.",
     "STEAM_ACCOUNT_NOT_LINKED": "There's no Steam account linked to your profile.",
+    "STEAM_LIBRARY_PRIVATE": "Steam didn't share your library: check that your game details are public.",
+    "SYNC_JOB_NOT_FOUND": "That import doesn't exist.",
+    "SYNC_INTERRUPTED": "The import was interrupted. Please start it again.",
+    "SYNC_FAILED": "The import failed. Please try again in a few minutes.",
     "UNKNOWN": "Something went wrong. Please try again."
   },
   "steamPrivacy": {

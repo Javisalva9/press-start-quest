@@ -12,6 +12,10 @@ export const ERROR_CODES = [
   'STEAM_LOGIN_INVALID',
   'STEAM_UNAVAILABLE',
   'STEAM_ACCOUNT_NOT_LINKED',
+  'STEAM_LIBRARY_PRIVATE',
+  'SYNC_JOB_NOT_FOUND',
+  'SYNC_INTERRUPTED',
+  'SYNC_FAILED',
 ] as const;
 
 export const ErrorCodeSchema = z.enum(ERROR_CODES);
