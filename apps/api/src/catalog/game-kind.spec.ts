@@ -14,6 +14,8 @@ describe('classifyGameKind', () => {
 
   it.each([
     ['Marvel Rivals Playtest', 'PLAYTEST'],
+    ['HUMANKIND™ - Closed Beta', 'PLAYTEST'],
+    ['Some Game Open Beta', 'PLAYTEST'],
     ['Hollow Knight OST', 'SOUNDTRACK'],
     ['Cuphead (Demo)', 'DEMO'],
     ['ARK Dedicated Server', 'TOOL'],
@@ -35,10 +37,13 @@ describe('classifyGameKind', () => {
     ).toBe('DLC');
   });
 
-  it.each(["Demon's Souls", 'Demolish & Build', 'Ghostrunner', 'Lost Ark'])(
-    'does not misread names that only look similar: %s',
-    (title) => {
-      expect(classifyGameKind({ title })).toBe('GAME');
-    },
-  );
+  it.each([
+    "Demon's Souls",
+    'Demolish & Build',
+    'Ghostrunner',
+    'Lost Ark',
+    'Beta Decay',
+  ])('does not misread names that only look similar: %s', (title) => {
+    expect(classifyGameKind({ title })).toBe('GAME');
+  });
 });

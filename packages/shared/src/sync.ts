@@ -28,6 +28,10 @@ export const SyncStatsSchema = z.object({
   enriched: z.number().int().nonnegative().default(0),
   /** Games in the library with no known length (IGDB coverage). */
   withoutDuration: z.number().int().nonnegative().default(0),
+  /** Games in the Steam wishlist ("Lo quiero"). */
+  wishlistItems: z.number().int().nonnegative().default(0),
+  /** Games whose achievements were read in this sync. */
+  achievementsRead: z.number().int().nonnegative().default(0),
 });
 
 export type SyncStats = z.infer<typeof SyncStatsSchema>;

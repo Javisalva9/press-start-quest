@@ -16,6 +16,7 @@ const STORE_TYPES: Record<string, GameKind> = {
 /** Names that give away entries labelled "game" (or without a store page). */
 const NAME_RULES: Array<[RegExp, GameKind]> = [
   [/\bplaytest\b/i, GameKind.PLAYTEST],
+  [/\b(closed|open) beta\b/i, GameKind.PLAYTEST],
   [/\b(soundtrack|ost)\b/i, GameKind.SOUNDTRACK],
   // Only at the end ("Hades Demo", "Foo (Demo)"), so "Demon's Souls" is safe.
   [/\bdemo\)?\s*$/i, GameKind.DEMO],

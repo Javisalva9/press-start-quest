@@ -90,6 +90,31 @@ describe('SteamStoreApi', () => {
     });
   });
 
+  it('reuses a recent answer instead of asking the store again', async () => {
+    respond({
+      '620': { success: true, data: { type: 'game', name: 'Portal 2' } },
+    });
+    await store.getAppDetails(620);
+    await store.getAppDetails(620);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not remember failures', async () => {
+    fetchMock
+      .mockResolvedValueOnce(new Response('', { status: 500 }))
+      .mockResolvedValueOnce(
+        new Response(
+          JSON.stringify({
+            '620': { success: true, data: { type: 'game', name: 'Portal 2' } },
+          }),
+        ),
+      );
+    await expect(store.getAppDetails(620)).rejects.toThrow('500');
+    await expect(store.getAppDetails(620)).resolves.toMatchObject({
+      name: 'Portal 2',
+    });
+  });
+
   it('returns null when the app has no store page', async () => {
     respond({ '999': { success: false } });
     await expect(store.getAppDetails(999)).resolves.toBeNull();

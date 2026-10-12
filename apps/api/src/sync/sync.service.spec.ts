@@ -1,7 +1,9 @@
 import { Test } from '@nestjs/testing';
 import { PrismaService } from '../prisma/prisma.service.js';
+import { AchievementsImporter } from './achievements-importer.js';
 import { CatalogEnricher } from './catalog-enricher.js';
 import { LibraryImporter } from './library-importer.js';
+import { WishlistImporter } from './wishlist-importer.js';
 import { SyncError } from './sync-error.js';
 import { SyncService } from './sync.service.js';
 
@@ -31,6 +33,8 @@ describe('SyncService', () => {
   };
   const importer = { importSteam: vi.fn() };
   const enricher = { enrich: vi.fn(), coverage: vi.fn() };
+  const wishlist = { importSteam: vi.fn() };
+  const achievements = { importSteam: vi.fn() };
   let service: SyncService;
 
   /** Lets the background job run until it settles. */
@@ -45,6 +49,8 @@ describe('SyncService', () => {
         { provide: PrismaService, useValue: prisma },
         { provide: LibraryImporter, useValue: importer },
         { provide: CatalogEnricher, useValue: enricher },
+        { provide: WishlistImporter, useValue: wishlist },
+        { provide: AchievementsImporter, useValue: achievements },
       ],
     }).compile();
     service = moduleRef.get(SyncService);
@@ -54,11 +60,11 @@ describe('SyncService', () => {
     prisma.syncJob.findFirst.mockResolvedValue(null);
     prisma.syncJob.create.mockResolvedValue(job());
     importer.importSteam.mockResolvedValue({
-      gamesFound: 3,
-      gamesAdded: 3,
-      playtimeUpdated: 0,
-      notGames: 0,
+      stats: { gamesFound: 3, gamesAdded: 3, playtimeUpdated: 0, notGames: 0 },
+      touchedUserGameIds: ['ug1'],
     });
+    wishlist.importSteam.mockResolvedValue({ wishlistItems: 4 });
+    achievements.importSteam.mockResolvedValue({ achievementsRead: 2 });
     enricher.enrich.mockResolvedValue({ enriched: 3 });
     enricher.coverage.mockResolvedValue({ notGames: 1, withoutDuration: 2 });
 
@@ -66,6 +72,12 @@ describe('SyncService', () => {
     expect(started).toMatchObject({ id: 'job-1', status: 'QUEUED' });
 
     await flush();
+    // Achievements are only refreshed where the import saw changes.
+    expect(achievements.importSteam).toHaveBeenCalledWith(
+      'u1',
+      ['ug1'],
+      expect.any(Function),
+    );
     expect(prisma.syncJob.update).toHaveBeenLastCalledWith({
       where: { id: 'job-1' },
       data: expect.objectContaining({
@@ -79,6 +91,8 @@ describe('SyncService', () => {
           notGames: 1,
           enriched: 3,
           withoutDuration: 2,
+          wishlistItems: 4,
+          achievementsRead: 2,
         },
       }),
     });
