@@ -2,10 +2,10 @@ import { describe, expect, it } from 'vitest';
 import en from './en.json';
 import es from './es.json';
 
-// Este test es el aviso del CI si falta una traducción: si añades una clave en
-// un idioma y no en el otro, la PR no se puede fusionar.
+// This test is CI's missing-translation alarm: if you add a key in one
+// language and not the other, the PR can't be merged.
 
-/** Aplana { a: { b: 'x' } } en [['a.b', 'x']]. */
+/** Flattens { a: { b: 'x' } } into [['a.b', 'x']]. */
 function entries(node: unknown, path = ''): Array<[string, unknown]> {
   if (typeof node !== 'object' || node === null) {
     return [[path, node]];
@@ -15,8 +15,8 @@ function entries(node: unknown, path = ''): Array<[string, unknown]> {
   );
 }
 
-// i18next guarda los plurales como clave_one, clave_other…, y cada idioma usa
-// las formas que necesita: se comparan las claves sin ese sufijo.
+// i18next stores plurals as key_one, key_other…, and each language uses the
+// forms it needs, so keys are compared without that suffix.
 const PLURAL_SUFFIX = /_(zero|one|two|few|many|other)$/;
 
 function keys(messages: object): Set<string> {
@@ -25,36 +25,36 @@ function keys(messages: object): Set<string> {
   );
 }
 
-/** Variables {{así}} de un texto, ordenadas. */
+/** The {{placeholders}} in a text, sorted. */
 function placeholders(text: unknown): string[] {
   return [...String(text).matchAll(/{{\s*(\w+)/g)]
     .map(([, name]) => name)
     .sort();
 }
 
-describe('traducciones', () => {
+describe('translations', () => {
   const enKeys = keys(en);
   const esKeys = keys(es);
 
-  it('es.json tiene todas las claves de en.json', () => {
+  it('es.json has every key in en.json', () => {
     expect([...enKeys].filter((key) => !esKeys.has(key))).toEqual([]);
   });
 
-  it('en.json tiene todas las claves de es.json', () => {
+  it('en.json has every key in es.json', () => {
     expect([...esKeys].filter((key) => !enKeys.has(key))).toEqual([]);
   });
 
   it.each([
     ['en', en],
     ['es', es],
-  ])('%s.json no tiene textos vacíos', (_language, messages) => {
+  ])('%s.json has no empty texts', (_language, messages) => {
     const empty = entries(messages)
       .filter(([, text]) => typeof text !== 'string' || text.trim() === '')
       .map(([key]) => key);
     expect(empty).toEqual([]);
   });
 
-  it('las variables {{…}} coinciden en los dos idiomas', () => {
+  it('{{…}} placeholders match in both languages', () => {
     const esTexts = new Map(entries(es));
     const mismatched = entries(en)
       .filter(([key]) => esTexts.has(key))

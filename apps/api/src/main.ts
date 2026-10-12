@@ -9,10 +9,10 @@ async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule);
   const config = app.get<ConfigService<Env, true>>(ConfigService);
 
-  // Todas las rutas cuelgan de /api (por ejemplo, /api/health).
+  // Every route lives under /api (e.g. /api/health).
   app.setGlobalPrefix('api');
 
-  // Solo la web (o las URLs que pongas en CORS_ORIGIN) puede llamar a la API desde el navegador.
+  // Only the web app (or the URLs in CORS_ORIGIN) can call the API from a browser.
   app.enableCors({
     origin: config
       .get('CORS_ORIGIN', { infer: true })
@@ -20,7 +20,7 @@ async function bootstrap(): Promise<void> {
       .map((origin) => origin.trim()),
   });
 
-  // Cierra bien las conexiones a la base de datos cuando Render reinicia el servicio.
+  // Close database connections cleanly when Render restarts the service.
   app.enableShutdownHooks();
 
   const swagger = new DocumentBuilder()
@@ -33,7 +33,7 @@ async function bootstrap(): Promise<void> {
 
   const port = config.get('PORT', { infer: true });
   await app.listen(port);
-  Logger.log(`API escuchando en http://localhost:${port}/api`, 'Bootstrap');
+  Logger.log(`API listening on http://localhost:${port}/api`, 'Bootstrap');
 }
 
 await bootstrap();

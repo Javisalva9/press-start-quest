@@ -5,11 +5,11 @@ import { PrismaClient } from '../generated/prisma/client.js';
 import type { Env } from '../config/env.js';
 
 /**
- * Único punto de acceso a la base de datos.
- * Los servicios de cada módulo lo inyectan; los controladores nunca.
+ * Single entry point to the database.
+ * Each module's services inject it; controllers never do.
  *
- * No se conecta al arrancar: Prisma abre la conexión en la primera consulta.
- * Así la API arranca aunque Neon esté suspendida y la despierta cuando hace falta.
+ * It doesn't connect at startup: Prisma opens the connection on the first query.
+ * That way the API boots even while Neon is suspended, and wakes it up when needed.
  */
 @Injectable()
 export class PrismaService extends PrismaClient implements OnModuleDestroy {

@@ -21,9 +21,9 @@ export class HealthService {
       await this.prisma.$queryRaw`SELECT 1`;
       return true;
     } catch (error) {
-      // Solo el mensaje: nunca se registra la cadena de conexión.
+      // Message only: the connection string is never logged.
       this.logger.warn(
-        `La base de datos no responde: ${(error as Error).message}`,
+        `Database is not responding: ${(error as Error).message}`,
       );
       return false;
     }

@@ -2,17 +2,17 @@ import { describe, expect, it } from 'vitest';
 import { apiUrl } from './client';
 
 describe('apiUrl', () => {
-  it('usa rutas relativas si no hay URL base', () => {
+  it('uses relative paths when there is no base URL', () => {
     expect(apiUrl('/api/health')).toBe('/api/health');
   });
 
-  it('evita barras dobles', () => {
+  it('avoids double slashes', () => {
     expect(apiUrl('/api/health', 'https://api.example.com/')).toBe(
       'https://api.example.com/api/health',
     );
   });
 
-  it('añade la barra inicial si falta', () => {
+  it('adds the leading slash when missing', () => {
     expect(apiUrl('api/health', 'https://api.example.com')).toBe(
       'https://api.example.com/api/health',
     );

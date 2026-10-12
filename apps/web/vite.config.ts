@@ -5,8 +5,8 @@ import { defineConfig } from 'vite';
 export default defineConfig({
   plugins: [react()],
   server: {
-    // En local, /api se reenvía a la API de Nest: la web y la API parecen el
-    // mismo origen y no hace falta CORS mientras desarrollas.
+    // Locally, /api is forwarded to the Nest API: web and API look like the
+    // same origin, so no CORS is needed while developing.
     proxy: {
       '/api': 'http://localhost:3000',
     },

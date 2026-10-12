@@ -1,9 +1,9 @@
 import { z } from 'zod';
 
 /**
- * Respuesta de GET /api/health.
- * La API la construye y la web la valida con este mismo esquema,
- * así los dos lados nunca se desincronizan.
+ * Response of GET /api/health.
+ * The API builds it and the web app validates it with this same schema,
+ * so both sides never drift apart.
  */
 export const HealthResponseSchema = z.object({
   status: z.literal('ok'),

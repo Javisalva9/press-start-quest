@@ -1,6 +1,6 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-// Antes que App: los textos tienen que estar listos para el primer render.
+// Before App: translations must be ready for the first render.
 import './i18n';
 import './index.css';
 import App from './App.tsx';

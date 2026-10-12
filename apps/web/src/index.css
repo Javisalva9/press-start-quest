@@ -1,4 +1,4 @@
-/* Estilo provisional con los colores del plan: modo oscuro y acento violeta → cian. */
+/* Placeholder styles with the plan's colors: dark mode and a violet → cyan accent. */
 :root {
   --bg: #0e0f14;
   --card: #171923;
@@ -42,7 +42,7 @@ body {
   aspect-ratio: 1;
 }
 
-/* Anillo con degradado: se recorta el centro para dejar solo el borde. */
+/* Gradient ring: the center is masked out to keep only the border. */
 .ring::before {
   content: '';
   position: absolute;

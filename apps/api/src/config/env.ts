@@ -1,10 +1,10 @@
 import { z } from 'zod';
 
 /**
- * Variables de entorno que la API necesita para arrancar.
- * Si falta alguna o tiene un formato incorrecto, la API no arranca y te dice cuál:
- * mejor fallar al inicio que a mitad de una petición.
- * Las claves de Steam, IGDB, etc. se añadirán aquí cuando se usen (etapa 1).
+ * Environment variables the API needs to start.
+ * If one is missing or malformed, the API refuses to start and tells you which:
+ * better to fail at boot than halfway through a request.
+ * Steam, IGDB, etc. keys are added here as they start being used (stage 1).
  */
 const EnvSchema = z.object({
   NODE_ENV: z
@@ -21,7 +21,7 @@ export function validateEnv(config: Record<string, unknown>): Env {
   const result = EnvSchema.safeParse(config);
   if (!result.success) {
     throw new Error(
-      `Variables de entorno no válidas:\n${z.prettifyError(result.error)}`,
+      `Invalid environment variables:\n${z.prettifyError(result.error)}`,
     );
   }
   return result.data;

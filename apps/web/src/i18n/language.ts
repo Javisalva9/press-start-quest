@@ -1,10 +1,9 @@
 import { DEFAULT_LANGUAGE, LANGUAGES, type Language } from '@psq/shared';
 
 /**
- * Elige el idioma de la app a partir de los idiomas preferidos del móvil
- * (navigator.languages, ordenados por preferencia): el primero que la app
- * sabe hablar, sin mirar la región ("es-MX" cuenta como "es"). Si no encaja
- * ninguno, inglés.
+ * Picks the app language from the device's preferred languages
+ * (navigator.languages, in order of preference): the first one the app
+ * speaks, ignoring the region ("es-MX" counts as "es"). Falls back to English.
  */
 export function detectLanguage(preferred: readonly string[]): Language {
   for (const tag of preferred) {

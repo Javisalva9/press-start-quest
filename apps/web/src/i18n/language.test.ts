@@ -2,25 +2,25 @@ import { describe, expect, it } from 'vitest';
 import { detectLanguage } from './language';
 
 describe('detectLanguage', () => {
-  it('ignora la región', () => {
+  it('ignores the region', () => {
     expect(detectLanguage(['en-GB'])).toBe('en');
     expect(detectLanguage(['es-MX'])).toBe('es');
   });
 
-  it('respeta el orden de preferencia del móvil', () => {
+  it("follows the device's order of preference", () => {
     expect(detectLanguage(['es-ES', 'en-US'])).toBe('es');
   });
 
-  it('salta los idiomas que la app no tiene', () => {
+  it('skips languages the app does not have', () => {
     expect(detectLanguage(['fr-FR', 'es-ES'])).toBe('es');
   });
 
-  it('usa inglés si no encaja ninguno', () => {
+  it('falls back to English when none match', () => {
     expect(detectLanguage(['fr-FR', 'de'])).toBe('en');
     expect(detectLanguage([])).toBe('en');
   });
 
-  it('no distingue mayúsculas', () => {
+  it('is case-insensitive', () => {
     expect(detectLanguage(['ES'])).toBe('es');
   });
 });

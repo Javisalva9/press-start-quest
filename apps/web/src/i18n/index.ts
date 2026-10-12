@@ -5,27 +5,27 @@ import en from '../locales/en.json';
 import es from '../locales/es.json';
 import { detectLanguage } from './language';
 
-// Mantiene <html lang> al día: lo usan los lectores de pantalla y el
-// traductor del navegador. Se registra antes de init para no perder el primero.
+// Keeps <html lang> up to date: screen readers and the browser's translator
+// rely on it. Registered before init so the first change isn't missed.
 i18n.on('languageChanged', (language) => {
   document.documentElement.lang = language;
 });
 
 void i18n.use(initReactI18next).init({
-  // Los textos van dentro del bundle (son pocos KB), así la primera pantalla
-  // sale ya traducida sin esperar a ninguna descarga.
+  // Translations ship inside the bundle (a few KB), so the first screen is
+  // already translated without waiting for any download.
   resources: {
     en: { translation: en },
     es: { translation: es },
   },
-  // De momento, el idioma del móvil. Cuando haya usuario, mandará el que
-  // guarde en su perfil.
+  // For now, the device language. Once there are users, the one saved in
+  // their profile will win.
   lng: detectLanguage(navigator.languages),
   fallbackLng: DEFAULT_LANGUAGE,
   supportedLngs: LANGUAGES,
-  // Con los textos ya cargados, init termina al momento.
+  // With translations already loaded, init finishes immediately.
   initAsync: false,
-  // React ya escapa lo que pinta: escapar también aquí mostraría &amp; y similares.
+  // React already escapes what it renders: escaping here too would show &amp; and the like.
   interpolation: { escapeValue: false },
 });
 
