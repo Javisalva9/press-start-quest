@@ -46,15 +46,16 @@ pnpm dev                             # API en :3000 y web en :5173
 
 ## Scripts
 
-| Comando                             | Qué hace                                     |
-| ----------------------------------- | -------------------------------------------- |
-| `pnpm dev`                          | Arranca shared, API y web en modo desarrollo |
-| `pnpm build`                        | Compila los tres paquetes en orden           |
-| `pnpm lint`                         | Pasa oxlint                                  |
-| `pnpm typecheck`                    | Comprueba los tipos de TypeScript            |
-| `pnpm test`                         | Ejecuta los tests unitarios                  |
-| `pnpm format`                       | Formatea el código con Prettier              |
-| `pnpm --filter @psq/api db:migrate` | Crea y aplica una migración en desarrollo    |
+| Comando                             | Qué hace                                                                |
+| ----------------------------------- | ----------------------------------------------------------------------- |
+| `pnpm dev`                          | Arranca shared, API y web en modo desarrollo                            |
+| `pnpm build`                        | Compila los tres paquetes en orden                                      |
+| `pnpm lint`                         | Pasa oxlint                                                             |
+| `pnpm typecheck`                    | Comprueba los tipos de TypeScript                                       |
+| `pnpm test`                         | Ejecuta los tests unitarios                                             |
+| `pnpm format`                       | Formatea el código con Prettier                                         |
+| `pnpm --filter @psq/api db:migrate` | Crea y aplica una migración en desarrollo                               |
+| `pnpm --filter @psq/web icons`      | Regenera los iconos de la app a partir de `apps/web/public/favicon.svg` |
 
 ## Idiomas
 

@@ -47,15 +47,16 @@ pnpm dev                             # API on :3000 and web on :5173
 
 ## Scripts
 
-| Command                             | What it does                                   |
-| ----------------------------------- | ---------------------------------------------- |
-| `pnpm dev`                          | Starts shared, API and web in watch mode       |
-| `pnpm build`                        | Builds the three packages in order             |
-| `pnpm lint`                         | Runs oxlint                                    |
-| `pnpm typecheck`                    | Checks TypeScript types                        |
-| `pnpm test`                         | Runs the unit tests                            |
-| `pnpm format`                       | Formats the code with Prettier                 |
-| `pnpm --filter @psq/api db:migrate` | Creates and applies a migration in development |
+| Command                             | What it does                                                 |
+| ----------------------------------- | ------------------------------------------------------------ |
+| `pnpm dev`                          | Starts shared, API and web in watch mode                     |
+| `pnpm build`                        | Builds the three packages in order                           |
+| `pnpm lint`                         | Runs oxlint                                                  |
+| `pnpm typecheck`                    | Checks TypeScript types                                      |
+| `pnpm test`                         | Runs the unit tests                                          |
+| `pnpm format`                       | Formats the code with Prettier                               |
+| `pnpm --filter @psq/api db:migrate` | Creates and applies a migration in development               |
+| `pnpm --filter @psq/web icons`      | Regenerates the app icons from `apps/web/public/favicon.svg` |
 
 ## Languages
 
