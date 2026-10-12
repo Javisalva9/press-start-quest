@@ -10,14 +10,14 @@ ir cerrando tu backlog.
 
 ## Stack
 
-| Parte         | Tecnología                                               |
-| ------------- | -------------------------------------------------------- |
-| Web           | React 19, Vite, TypeScript                               |
-| API           | NestJS 12, TypeScript, Swagger                           |
-| Base de datos | PostgreSQL (Neon) con Prisma 7 y `@prisma/adapter-pg`    |
-| Compartido    | `packages/shared`: tipos y validaciones con zod          |
-| Calidad       | Vitest, oxlint, Prettier y GitHub Actions                |
-| Despliegue    | Render (API y web) y Neon (base de datos), plan gratuito |
+| Parte         | Tecnología                                                             |
+| ------------- | ---------------------------------------------------------------------- |
+| Web           | React 19, Vite, TypeScript, React Router, TanStack Query, Tailwind CSS |
+| API           | NestJS 12, TypeScript, Swagger                                         |
+| Base de datos | PostgreSQL (Neon) con Prisma 7 y `@prisma/adapter-pg`                  |
+| Compartido    | `packages/shared`: tipos y validaciones con zod                        |
+| Calidad       | Vitest, oxlint, Prettier y GitHub Actions                              |
+| Despliegue    | Render (API y web) y Neon (base de datos), plan gratuito               |
 
 ## Estructura
 

@@ -2,19 +2,27 @@
   "app": {
     "name": "Press Start Quest"
   },
-  "health": {
-    "lead": "Skeleton up and running. Screens are on their way.",
-    "api": "API",
-    "database": "Database",
-    "apiState": {
-      "loading": "Waking up…",
-      "up": "Responding",
-      "error": "No response"
-    },
-    "databaseState": {
-      "up": "Connected",
-      "down": "Down"
-    },
-    "hint": "{{message}}. Check that the API is running and that VITE_API_URL points to it."
+  "login": {
+    "tagline": "Your PC backlog, sorted. Every day, the next game to play.",
+    "withSteam": "Sign in with Steam",
+    "privacy": "We only read your public game library. Your Steam password never reaches us."
+  },
+  "callback": {
+    "signingIn": "Signing you in…",
+    "tryAgain": "Try again"
+  },
+  "home": {
+    "greeting": "Hi, {{name}}!",
+    "loading": "Loading…",
+    "comingSoon": "Your library is on its way: it arrives in the next updates.",
+    "signOut": "Sign out"
+  },
+  "errors": {
+    "VALIDATION_FAILED": "Something in the request wasn't right. Please try again.",
+    "UNAUTHENTICATED": "Your session has ended. Please sign in again.",
+    "REFRESH_TOKEN_INVALID": "Your session has ended. Please sign in again.",
+    "STEAM_LOGIN_INVALID": "We couldn't verify your Steam sign-in. Please try again.",
+    "STEAM_UNAVAILABLE": "Steam isn't responding right now. Try again in a few minutes.",
+    "UNKNOWN": "Something went wrong. Please try again."
   }
 }

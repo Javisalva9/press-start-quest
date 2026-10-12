@@ -1,3 +1,4 @@
+import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
@@ -10,6 +11,7 @@ const background = '#0E0F14';
 export default defineConfig({
   plugins: [
     react(),
+    tailwindcss(),
     VitePWA({
       // A new version activates on its own the next time the app is opened.
       registerType: 'autoUpdate',
@@ -52,6 +54,12 @@ export default defineConfig({
       // assets above and the manifest icons) so the app opens instantly and
       // without a connection. API data is cached separately, inside the app.
       workbox: {
+        // App shell plus the fonts for latin text (English and Spanish).
+        // Other alphabets are downloaded only if ever needed.
+        globPatterns: [
+          '**/*.{js,css,html}',
+          '**/*-latin-{wght,400}-normal-*.woff2',
+        ],
         // It's a single-page app: any route opened offline gets index.html.
         navigateFallback: 'index.html',
         // ...except the API (same origin locally through the proxy below).
