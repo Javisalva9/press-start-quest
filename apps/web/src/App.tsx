@@ -30,9 +30,14 @@ export default function App() {
 
   return (
     <main className="screen">
-      <div className="ring" aria-hidden="true">
-        <span className="play" />
-      </div>
+      {/* Decorative: the app name is right below, in the heading. */}
+      <img
+        className="logo"
+        src="/favicon.svg"
+        alt=""
+        width={112}
+        height={112}
+      />
       <h1>{t('app.name')}</h1>
       <p className="lead">{t('health.lead')}</p>
 

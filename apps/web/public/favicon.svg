@@ -1,11 +1,26 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- Press Start Quest logo: a pixel flag (start + quest) inside a progress
+       ring (backlog cleared so far). Every app icon is generated from this
+       file: after changing it, run the "icons" script of the web app. -->
   <defs>
-    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+    <linearGradient id="ring" gradientUnits="userSpaceOnUse" x1="28" y1="18" x2="74" y2="82">
+      <stop offset="0" stop-color="#8B5CF6"/>
+      <stop offset="1" stop-color="#22D3EE"/>
+    </linearGradient>
+    <linearGradient id="flag" gradientUnits="userSpaceOnUse" x1="46.6" y1="0" x2="67.4" y2="0">
       <stop offset="0" stop-color="#8B5CF6"/>
       <stop offset="1" stop-color="#22D3EE"/>
     </linearGradient>
   </defs>
-  <rect width="32" height="32" rx="7" fill="#0E0F14"/>
-  <circle cx="16" cy="16" r="11" fill="none" stroke="url(#g)" stroke-width="3"/>
-  <path d="M13 10.5v11l9-5.5z" fill="#F4F4F6"/>
+  <!-- Background -->
+  <rect width="100" height="100" rx="22" fill="#0E0F14"/>
+  <!-- Progress ring: remaining part (white) and completed part (gradient) -->
+  <g fill="none" stroke-width="7">
+    <path d="M53.72 19.73A30.5 30.5 0 0 1 79.46 42.11" stroke="#F4F4F6"/>
+    <path d="M80.12 45.23A30.5 30.5 0 1 1 50.53 19.5" stroke="url(#ring)"/>
+  </g>
+  <!-- Flag pole and its base, on a 2.6-unit pixel grid -->
+  <path fill="#F4F4F6" d="M41.4 34.6h5.2v28.6h2.6v5.2H38.8v-5.2h2.6z"/>
+  <!-- Stepped pixel pennant, which also reads as a play button -->
+  <path fill="url(#flag)" d="M46.6 37.2h5.2v2.6h5.2v2.6h5.2v2.6h5.2v5.2h-5.2v2.6h-5.2v2.6h-5.2v2.6h-5.2z"/>
 </svg>
