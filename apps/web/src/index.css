@@ -1,99 +1,31 @@
-/* Placeholder styles with the plan's colors: dark mode and a violet → cyan accent. */
-:root {
-  --bg: #0e0f14;
-  --card: #171923;
-  --border: #262a38;
-  --text: #f4f4f6;
-  --muted: #9aa0b4;
-  --violet: #8b5cf6;
-  --cyan: #22d3ee;
-  --green: #34d399;
-  --red: #f87171;
+@import 'tailwindcss';
 
-  color-scheme: dark;
-  font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
-  color: var(--text);
-  background: var(--bg);
-  -webkit-font-smoothing: antialiased;
+/*
+ * Design tokens from the plan. Each one becomes Tailwind classes:
+ * --color-card → bg-card, border-card…; --font-display → font-display.
+ */
+@theme {
+  --color-canvas: #0e0f14;
+  --color-card: #171923;
+  --color-line: #262a38;
+  --color-fg: #f4f4f6;
+  --color-muted: #9aa0b4;
+  --color-violet: #8b5cf6;
+  --color-cyan: #22d3ee;
+  --color-success: #34d399;
+  --color-danger: #f87171;
+
+  --font-sans: 'Inter Variable', system-ui, sans-serif;
+  --font-display: 'Space Grotesk Variable', system-ui, sans-serif;
+  --font-pixel: 'Press Start 2P', monospace;
 }
 
-* {
-  box-sizing: border-box;
-}
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
 
-body {
-  margin: 0;
-  min-height: 100dvh;
-}
-
-.screen {
-  min-height: 100dvh;
-  display: grid;
-  place-content: center;
-  justify-items: center;
-  gap: 1rem;
-  padding: 2rem 1.25rem;
-  text-align: center;
-}
-
-.logo {
-  width: 7rem;
-  height: auto;
-}
-
-h1 {
-  margin: 0.5rem 0 0;
-  font-size: clamp(1.75rem, 6vw, 2.5rem);
-  letter-spacing: -0.02em;
-}
-
-.lead {
-  margin: 0;
-  color: var(--muted);
-  max-width: 34ch;
-}
-
-.status {
-  margin: 1rem 0 0;
-  min-width: min(20rem, 100%);
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 0.75rem;
-  padding: 0.25rem 1rem;
-}
-
-.status div {
-  display: flex;
-  justify-content: space-between;
-  gap: 2rem;
-  padding: 0.75rem 0;
-}
-
-.status div + div {
-  border-top: 1px solid var(--border);
-}
-
-.status dt {
-  color: var(--muted);
-}
-
-.status dd {
-  margin: 0;
-  font-weight: 600;
-}
-
-.status dd[data-state='up'] {
-  color: var(--green);
-}
-
-.status dd[data-state='down'],
-.status dd[data-state='error'] {
-  color: var(--red);
-}
-
-.hint {
-  margin: 0;
-  color: var(--muted);
-  font-size: 0.9rem;
-  max-width: 40ch;
+  body {
+    @apply min-h-dvh bg-canvas font-sans text-fg antialiased;
+  }
 }

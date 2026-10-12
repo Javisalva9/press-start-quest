@@ -2,19 +2,27 @@
   "app": {
     "name": "Press Start Quest"
   },
-  "health": {
-    "lead": "Esqueleto en marcha. Las pantallas están en camino.",
-    "api": "API",
-    "database": "Base de datos",
-    "apiState": {
-      "loading": "Despertando…",
-      "up": "Responde",
-      "error": "Sin respuesta"
-    },
-    "databaseState": {
-      "up": "Conectada",
-      "down": "Caída"
-    },
-    "hint": "{{message}}. Comprueba que la API está arrancada y que VITE_API_URL apunta a ella."
+  "login": {
+    "tagline": "Tu backlog de PC, en orden. Cada día, el siguiente juego.",
+    "withSteam": "Entrar con Steam",
+    "privacy": "Solo leemos tu biblioteca pública de juegos. Tu contraseña de Steam nunca llega a nosotros."
+  },
+  "callback": {
+    "signingIn": "Iniciando sesión…",
+    "tryAgain": "Volver a intentarlo"
+  },
+  "home": {
+    "greeting": "¡Hola, {{name}}!",
+    "loading": "Cargando…",
+    "comingSoon": "Tu biblioteca está en camino: llega en las próximas actualizaciones.",
+    "signOut": "Cerrar sesión"
+  },
+  "errors": {
+    "VALIDATION_FAILED": "Algo de la petición no era correcto. Vuelve a intentarlo.",
+    "UNAUTHENTICATED": "Tu sesión ha terminado. Vuelve a entrar.",
+    "REFRESH_TOKEN_INVALID": "Tu sesión ha terminado. Vuelve a entrar.",
+    "STEAM_LOGIN_INVALID": "No hemos podido verificar tu inicio de sesión en Steam. Vuelve a intentarlo.",
+    "STEAM_UNAVAILABLE": "Steam no responde ahora mismo. Inténtalo en unos minutos.",
+    "UNKNOWN": "Algo ha fallado. Vuelve a intentarlo."
   }
 }

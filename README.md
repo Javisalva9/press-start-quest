@@ -10,14 +10,14 @@ work through your backlog.
 
 ## Stack
 
-| Part       | Technology                                               |
-| ---------- | -------------------------------------------------------- |
-| Web        | React 19, Vite, TypeScript                               |
-| API        | NestJS 12, TypeScript, Swagger                           |
-| Database   | PostgreSQL (Neon) with Prisma 7 and `@prisma/adapter-pg` |
-| Shared     | `packages/shared`: types and zod validation              |
-| Quality    | Vitest, oxlint, Prettier and GitHub Actions              |
-| Deployment | Render (API and web) and Neon (database), free tier      |
+| Part       | Technology                                                             |
+| ---------- | ---------------------------------------------------------------------- |
+| Web        | React 19, Vite, TypeScript, React Router, TanStack Query, Tailwind CSS |
+| API        | NestJS 12, TypeScript, Swagger                                         |
+| Database   | PostgreSQL (Neon) with Prisma 7 and `@prisma/adapter-pg`               |
+| Shared     | `packages/shared`: types and zod validation                            |
+| Quality    | Vitest, oxlint, Prettier and GitHub Actions                            |
+| Deployment | Render (API and web) and Neon (database), free tier                    |
 
 ## Structure
 

@@ -1,3 +1,4 @@
+import { ERROR_CODES } from '@psq/shared';
 import { describe, expect, it } from 'vitest';
 import en from './en.json';
 import es from './es.json';
@@ -52,6 +53,11 @@ describe('translations', () => {
       .filter(([, text]) => typeof text !== 'string' || text.trim() === '')
       .map(([key]) => key);
     expect(empty).toEqual([]);
+  });
+
+  it('every API error code has a message', () => {
+    const missing = ERROR_CODES.filter((code) => !(code in en.errors));
+    expect(missing).toEqual([]);
   });
 
   it('{{…}} placeholders match in both languages', () => {
