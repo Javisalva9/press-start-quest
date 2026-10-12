@@ -8,6 +8,7 @@ import { UsersModule } from '../users/users.module.js';
 import { AuthController } from './auth.controller.js';
 import { AuthGuard } from './auth.guard.js';
 import { AuthService } from './auth.service.js';
+import { SessionsService } from './sessions.service.js';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { AuthService } from './auth.service.js';
   controllers: [AuthController],
   providers: [
     AuthService,
+    SessionsService,
     // Registered as a global guard: protects every route of the API.
     { provide: APP_GUARD, useClass: AuthGuard },
   ],

@@ -6,10 +6,17 @@ import {
   Post,
   Redirect,
 } from '@nestjs/common';
-import { ApiOkResponse, ApiResponse, ApiTags } from '@nestjs/swagger';
 import {
+  ApiNoContentResponse,
+  ApiOkResponse,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
+import {
+  RefreshTokenRequestSchema,
   SteamLoginRequestSchema,
   type AuthTokens,
+  type RefreshTokenRequest,
   type SteamLoginRequest,
 } from '@psq/shared';
 import { AuthService } from './auth.service.js';
@@ -33,10 +40,31 @@ export class AuthController {
 
   @Post('steam')
   @HttpCode(200)
-  @ApiOkResponse({ description: 'Signed in: returns an access token' })
+  @ApiOkResponse({
+    description: 'Signed in: returns access and refresh tokens',
+  })
   login(
     @Body({ schema: SteamLoginRequestSchema }) body: SteamLoginRequest,
   ): Promise<AuthTokens> {
     return this.auth.loginWithSteam(body);
+  }
+
+  // Public: it must work precisely when the access token has expired.
+  @Post('refresh')
+  @HttpCode(200)
+  @ApiOkResponse({ description: 'New access and refresh tokens' })
+  refresh(
+    @Body({ schema: RefreshTokenRequestSchema }) body: RefreshTokenRequest,
+  ): Promise<AuthTokens> {
+    return this.auth.refresh(body.refreshToken);
+  }
+
+  @Post('logout')
+  @HttpCode(204)
+  @ApiNoContentResponse({ description: 'Session closed on this device' })
+  logout(
+    @Body({ schema: RefreshTokenRequestSchema }) body: RefreshTokenRequest,
+  ): Promise<void> {
+    return this.auth.logout(body.refreshToken);
   }
 }

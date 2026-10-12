@@ -19,6 +19,7 @@ import {
   ACCESS_TOKEN_TTL_SECONDS,
   type AccessTokenPayload,
 } from './access-token.js';
+import { RefreshTokenError, SessionsService } from './sessions.service.js';
 import {
   SteamLoginError,
   buildSteamLoginUrl,
@@ -35,6 +36,7 @@ export class AuthService {
     private readonly jwt: JwtService,
     private readonly steam: SteamWebApi,
     private readonly users: UsersService,
+    private readonly sessions: SessionsService,
   ) {
     this.webUrl = config.get('WEB_URL', { infer: true }).replace(/\/+$/, '');
   }
@@ -45,7 +47,8 @@ export class AuthService {
   }
 
   /**
-   * Checks what Steam sent back, finds or creates the user and opens a session.
+   * Checks what Steam sent back, finds or creates the user and opens a
+   * session on this device.
    */
   async loginWithSteam({
     query,
@@ -75,7 +78,28 @@ export class AuthService {
       displayName: await this.steamDisplayName(steamId),
       language: language ?? DEFAULT_LANGUAGE,
     });
-    return this.issueTokens(user.id);
+    return this.issueTokens(user.id, await this.sessions.create(user.id));
+  }
+
+  /** Swaps a refresh token for a new pair of tokens. */
+  async refresh(refreshToken: string): Promise<AuthTokens> {
+    try {
+      const session = await this.sessions.rotate(refreshToken);
+      return this.issueTokens(session.userId, session.refreshToken);
+    } catch (error) {
+      if (error instanceof RefreshTokenError) {
+        throw new UnauthorizedException({
+          statusCode: 401,
+          code: 'REFRESH_TOKEN_INVALID',
+        } satisfies ApiError);
+      }
+      throw error;
+    }
+  }
+
+  /** Signs out the device that holds this refresh token. */
+  logout(refreshToken: string): Promise<void> {
+    return this.sessions.revoke(refreshToken);
   }
 
   /** Where Steam sends the user back: a page of the web app. */
@@ -96,11 +120,14 @@ export class AuthService {
     }
   }
 
-  private async issueTokens(userId: string): Promise<AuthTokens> {
+  private async issueTokens(
+    userId: string,
+    refreshToken: string,
+  ): Promise<AuthTokens> {
     const payload: AccessTokenPayload = { sub: userId };
     const accessToken = await this.jwt.signAsync(payload, {
       expiresIn: ACCESS_TOKEN_TTL_SECONDS,
     });
-    return { accessToken, expiresIn: ACCESS_TOKEN_TTL_SECONDS };
+    return { accessToken, expiresIn: ACCESS_TOKEN_TTL_SECONDS, refreshToken };
   }
 }
