@@ -19,6 +19,9 @@ const EnvSchema = z.object({
   // node -e "console.log(require('node:crypto').randomBytes(48).toString('base64'))"
   JWT_SECRET: z.string().min(32),
   STEAM_API_KEY: z.string().min(1),
+  // IGDB is accessed with a Twitch application (dev.twitch.tv/console).
+  IGDB_CLIENT_ID: z.string().min(1),
+  IGDB_CLIENT_SECRET: z.string().min(1),
 });
 
 export type Env = z.infer<typeof EnvSchema>;

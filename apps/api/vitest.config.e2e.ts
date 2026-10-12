@@ -11,6 +11,8 @@ export default defineConfig({
       DATABASE_URL: 'postgresql://test:test@localhost:5432/test',
       JWT_SECRET: 'e2e-test-secret-that-is-at-least-32-characters',
       STEAM_API_KEY: 'e2e-test-steam-key',
+      IGDB_CLIENT_ID: 'e2e-test-igdb-client',
+      IGDB_CLIENT_SECRET: 'e2e-test-igdb-secret',
     },
   },
 });
