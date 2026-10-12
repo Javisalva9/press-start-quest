@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import PQueue from 'p-queue';
 import { z } from 'zod';
 
 const AppDetailsSchema = z.record(
@@ -46,26 +47,56 @@ export interface SteamAppDetails {
   fullGameAppId: number | null;
 }
 
-/** Steam answered 429: wait before asking again. */
+/** Steam kept answering 429 even after waiting. */
 export class SteamStoreRateLimitError extends Error {}
+
+/** How long to wait after a 429 before trying once more. */
+export const RATE_LIMIT_PAUSE_MS = 60_000;
 
 /**
  * Client for the public Steam Store API (store.steampowered.com/api).
- * It has no key and no documentation, and a low request limit (around 200
- * every 5 minutes): callers must space requests out and cache the results.
+ * It has no key and no documentation, and a low request limit: around 200
+ * requests every 5 minutes. Every request goes through one queue that sends
+ * one every 1.6 s, and the results are cached in the database for 30 days.
  */
 @Injectable()
 export class SteamStoreApi {
+  private readonly queue = new PQueue({
+    concurrency: 1,
+    intervalCap: 1,
+    interval: 1600,
+  });
+
   /**
    * Store page data of an app, in English. Null when Steam has no store
    * page for it (removed games, most Playtests…).
    */
-  async getAppDetails(appId: number): Promise<SteamAppDetails | null> {
+  getAppDetails(appId: number): Promise<SteamAppDetails | null> {
+    return this.queue.add(async () => {
+      let response = await this.request(appId);
+      if (response.status === 429) {
+        // Over the limit anyway (another app on the same IP, a burst…):
+        // the whole queue waits, then this request tries once more.
+        await new Promise((resolve) =>
+          setTimeout(resolve, RATE_LIMIT_PAUSE_MS),
+        );
+        response = await this.request(appId);
+      }
+      return this.parse(appId, response);
+    });
+  }
+
+  private request(appId: number): Promise<Response> {
     const url = new URL('https://store.steampowered.com/api/appdetails');
     url.searchParams.set('appids', String(appId));
     url.searchParams.set('l', 'english');
+    return fetch(url, { signal: AbortSignal.timeout(10_000) });
+  }
 
-    const response = await fetch(url, { signal: AbortSignal.timeout(10_000) });
+  private async parse(
+    appId: number,
+    response: Response,
+  ): Promise<SteamAppDetails | null> {
     if (response.status === 429) {
       throw new SteamStoreRateLimitError('Steam Store rate limit reached');
     }

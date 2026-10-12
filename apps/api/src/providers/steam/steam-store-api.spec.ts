@@ -1,10 +1,16 @@
-import { SteamStoreApi, SteamStoreRateLimitError } from './steam-store-api.js';
+import {
+  RATE_LIMIT_PAUSE_MS,
+  SteamStoreApi,
+  SteamStoreRateLimitError,
+} from './steam-store-api.js';
 
 describe('SteamStoreApi', () => {
   const fetchMock = vi.fn<typeof fetch>();
-  const store = new SteamStoreApi();
+  let store: SteamStoreApi;
 
   beforeEach(() => {
+    // A new client per test: each one has its own request queue.
+    store = new SteamStoreApi();
     fetchMock.mockReset();
     vi.stubGlobal('fetch', fetchMock);
   });
@@ -89,10 +95,47 @@ describe('SteamStoreApi', () => {
     await expect(store.getAppDetails(999)).resolves.toBeNull();
   });
 
-  it('signals the rate limit with its own error', async () => {
-    respond(null, 429);
-    await expect(store.getAppDetails(620)).rejects.toBeInstanceOf(
-      SteamStoreRateLimitError,
-    );
+  describe('rate limit', () => {
+    beforeEach(() => {
+      vi.useFakeTimers();
+    });
+
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    it('waits and tries once more after a 429', async () => {
+      fetchMock
+        .mockResolvedValueOnce(new Response('null', { status: 429 }))
+        .mockResolvedValueOnce(
+          new Response(
+            JSON.stringify({
+              '620': {
+                success: true,
+                data: { type: 'game', name: 'Portal 2' },
+              },
+            }),
+          ),
+        );
+
+      const details = store.getAppDetails(620);
+      await vi.advanceTimersByTimeAsync(RATE_LIMIT_PAUSE_MS);
+
+      await expect(details).resolves.toMatchObject({ name: 'Portal 2' });
+      expect(fetchMock).toHaveBeenCalledTimes(2);
+    });
+
+    it('gives up with its own error if Steam still answers 429', async () => {
+      fetchMock.mockImplementation(
+        async () => new Response('null', { status: 429 }),
+      );
+
+      const details = store.getAppDetails(620);
+      const assertion = expect(details).rejects.toBeInstanceOf(
+        SteamStoreRateLimitError,
+      );
+      await vi.advanceTimersByTimeAsync(RATE_LIMIT_PAUSE_MS);
+      await assertion;
+    });
   });
 });
