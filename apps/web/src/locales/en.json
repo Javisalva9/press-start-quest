@@ -28,6 +28,7 @@
     "SYNC_JOB_NOT_FOUND": "That import doesn't exist.",
     "SYNC_INTERRUPTED": "The import was interrupted. Please start it again.",
     "SYNC_FAILED": "The import failed. Please try again in a few minutes.",
+    "LIBRARY_GAME_NOT_FOUND": "That game isn't in your library.",
     "UNKNOWN": "Something went wrong. Please try again."
   },
   "steamPrivacy": {
