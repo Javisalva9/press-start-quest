@@ -4,7 +4,7 @@ import { z } from 'zod';
  * Environment variables the API needs to start.
  * If one is missing or malformed, the API refuses to start and tells you which:
  * better to fail at boot than halfway through a request.
- * Steam, IGDB, etc. keys are added here as they start being used (stage 1).
+ * Keys for external services are added here as they start being used.
  */
 const EnvSchema = z.object({
   NODE_ENV: z
@@ -13,6 +13,12 @@ const EnvSchema = z.object({
   PORT: z.coerce.number().int().positive().default(3000),
   DATABASE_URL: z.url(),
   CORS_ORIGIN: z.string().default('http://localhost:5173'),
+  // Web app URL: Steam sends users back there after they sign in.
+  WEB_URL: z.url().default('http://localhost:5173'),
+  // Signs access tokens. Generate one with:
+  // node -e "console.log(require('node:crypto').randomBytes(48).toString('base64'))"
+  JWT_SECRET: z.string().min(32),
+  STEAM_API_KEY: z.string().min(1),
 });
 
 export type Env = z.infer<typeof EnvSchema>;

@@ -26,6 +26,8 @@ async function bootstrap(): Promise<void> {
   const swagger = new DocumentBuilder()
     .setTitle('Press Start Quest API')
     .setVersion('0.0.0')
+    // "Authorize" button in /api/docs: paste an access token to try private routes.
+    .addBearerAuth()
     .build();
   SwaggerModule.setup('api/docs', app, () =>
     SwaggerModule.createDocument(app, swagger),

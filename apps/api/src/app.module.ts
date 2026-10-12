@@ -1,8 +1,12 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { APP_PIPE } from '@nestjs/core';
+import { AuthModule } from './auth/auth.module.js';
+import { ApiValidationPipe } from './common/api-validation.pipe.js';
 import { validateEnv } from './config/env.js';
 import { HealthModule } from './health/health.module.js';
 import { PrismaModule } from './prisma/prisma.module.js';
+import { UsersModule } from './users/users.module.js';
 
 @Module({
   imports: [
@@ -10,6 +14,12 @@ import { PrismaModule } from './prisma/prisma.module.js';
     ConfigModule.forRoot({ isGlobal: true, validate: validateEnv }),
     PrismaModule,
     HealthModule,
+    AuthModule,
+    UsersModule,
+  ],
+  providers: [
+    // Global pipe registered here (not in main.ts) so tests get it too.
+    { provide: APP_PIPE, useClass: ApiValidationPipe },
   ],
 })
 export class AppModule {}
