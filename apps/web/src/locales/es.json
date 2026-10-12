@@ -24,6 +24,10 @@
     "STEAM_LOGIN_INVALID": "No hemos podido verificar tu inicio de sesión en Steam. Vuelve a intentarlo.",
     "STEAM_UNAVAILABLE": "Steam no responde ahora mismo. Inténtalo en unos minutos.",
     "STEAM_ACCOUNT_NOT_LINKED": "No hay ninguna cuenta de Steam vinculada a tu perfil.",
+    "STEAM_LIBRARY_PRIVATE": "Steam no ha compartido tu biblioteca: comprueba que los detalles de tus juegos sean públicos.",
+    "SYNC_JOB_NOT_FOUND": "Esa importación no existe.",
+    "SYNC_INTERRUPTED": "La importación se interrumpió. Vuelve a lanzarla.",
+    "SYNC_FAILED": "La importación ha fallado. Inténtalo de nuevo en unos minutos.",
     "UNKNOWN": "Algo ha fallado. Vuelve a intentarlo."
   },
   "steamPrivacy": {
