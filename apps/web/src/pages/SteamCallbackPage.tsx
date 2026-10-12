@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router';
 import { DEFAULT_LANGUAGE, LanguageSchema, type ErrorCode } from '@psq/shared';
 import { signInWithSteam } from '../api/auth';
 import { ApiRequestError } from '../api/client';
+import { isInstalledApp, isTouchDevice } from '../pwa';
 
 /**
  * Steam's answer can only be checked once. React runs effects twice in
@@ -16,6 +17,7 @@ export default function SteamCallbackPage() {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const [error, setError] = useState<ErrorCode | 'UNKNOWN' | null>(null);
+  const [signedInHere, setSignedInHere] = useState(false);
 
   useEffect(() => {
     const query = window.location.search;
@@ -28,8 +30,18 @@ export default function SteamCallbackPage() {
       i18n.language,
     );
     signInWithSteam(query, language)
-      // replace: the URL with Steam's answer doesn't stay in the history.
-      .then(() => navigate('/', { replace: true }))
+      .then(() => {
+        // On a phone, Steam's page opens in the browser and comes back to
+        // the browser, not to the installed app. The session is shared, so
+        // the app is already signed in: say so instead of carrying on here.
+        if (isTouchDevice() && !isInstalledApp()) {
+          window.history.replaceState(null, '', '/auth/steam/callback');
+          setSignedInHere(true);
+          return;
+        }
+        // replace: the URL with Steam's answer doesn't stay in the history.
+        void navigate('/', { replace: true });
+      })
       .catch((caught: unknown) =>
         setError(
           caught instanceof ApiRequestError && caught.code
@@ -48,7 +60,17 @@ export default function SteamCallbackPage() {
         height={80}
         className="size-20"
       />
-      {error ? (
+      {signedInHere ? (
+        <>
+          <p className="font-display text-xl font-semibold">
+            {t('callback.signedIn')}
+          </p>
+          <p className="text-muted">{t('callback.backToApp')}</p>
+          <Link to="/" replace className="font-semibold text-cyan underline">
+            {t('callback.continueHere')}
+          </Link>
+        </>
+      ) : error ? (
         <>
           <p role="alert" className="text-danger">
             {t(`errors.${error}`)}
