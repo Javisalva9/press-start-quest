@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Navigate, Outlet, useLocation } from 'react-router';
 import { useMe } from '../api/me';
 import { useSession } from '../auth/use-session';
+import { AppNav } from './AppNav';
 
 /** Wraps every screen that needs a signed-in user. */
 export function ProtectedLayout() {
@@ -35,5 +36,11 @@ export function ProtectedLayout() {
   if (me.data?.lastSyncAt === null && pathname !== '/sync') {
     return <Navigate to="/sync" replace />;
   }
-  return <Outlet />;
+  return (
+    <>
+      <Outlet />
+      {/* The import screen is full screen: there's nothing to go to yet. */}
+      {pathname !== '/sync' && <AppNav />}
+    </>
+  );
 }

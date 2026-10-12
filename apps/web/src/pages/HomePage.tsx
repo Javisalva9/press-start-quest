@@ -11,7 +11,7 @@ export default function HomePage() {
   const lastSyncAt = me.data?.lastSyncAt;
 
   return (
-    <main className="mx-auto flex min-h-dvh max-w-md flex-col gap-6 px-5 py-8">
+    <main className="mx-auto flex min-h-dvh max-w-md flex-col gap-6 px-5 pt-8 pb-24">
       <header className="flex items-center justify-between">
         <img
           src="/favicon.svg"

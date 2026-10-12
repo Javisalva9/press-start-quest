@@ -1,10 +1,12 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Query } from '@nestjs/common';
 import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import {
   LibraryQuerySchema,
+  UpdateLengthRequestSchema,
   type LibraryGame,
   type LibraryPage,
   type LibraryQuery,
+  type UpdateLengthRequest,
 } from '@psq/shared';
 import { CurrentUser, type AuthUser } from '../auth/current-user.decorator.js';
 import { LibraryService } from './library.service.js';
@@ -31,5 +33,15 @@ export class LibraryController {
     @Param('id') id: string,
   ): Promise<LibraryGame> {
     return this.library.get(user.id, id);
+  }
+
+  @Patch(':id/length')
+  @ApiOkResponse({ description: 'The game, with its new length' })
+  setLength(
+    @CurrentUser() user: AuthUser,
+    @Param('id') id: string,
+    @Body({ schema: UpdateLengthRequestSchema }) body: UpdateLengthRequest,
+  ): Promise<LibraryGame> {
+    return this.library.setLength(user.id, id, body.minutes);
   }
 }

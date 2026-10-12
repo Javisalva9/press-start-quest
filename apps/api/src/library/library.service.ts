@@ -60,6 +60,34 @@ export class LibraryService {
     };
   }
 
+  /**
+   * Sets the "normal" length of a game by hand, or clears it (null) so the
+   * next sync takes IGDB's again. A manual length is never overwritten by
+   * a sync (see buildGameUpdate).
+   */
+  async setLength(
+    userId: string,
+    id: string,
+    minutes: number | null,
+  ): Promise<LibraryGame> {
+    const entry = await this.prisma.userGame.findFirst({
+      where: { id, userId },
+      select: { gameId: true },
+    });
+    if (!entry) {
+      throw notFound();
+    }
+    await this.prisma.game.update({
+      where: { id: entry.gameId },
+      data:
+        minutes === null
+          ? // Back to IGDB: the next sync enriches this game again.
+            { ttbExtraMin: null, ttbSource: null, metadataAt: null }
+          : { ttbExtraMin: minutes, ttbSource: 'manual' },
+    });
+    return this.get(userId, id);
+  }
+
   async get(userId: string, id: string): Promise<LibraryGame> {
     const row = await this.prisma.userGame.findFirst({
       // userId in the filter: another user's entry is simply "not found".
@@ -90,10 +118,7 @@ export class LibraryService {
       },
     });
     if (!row) {
-      throw new NotFoundException({
-        statusCode: 404,
-        code: 'LIBRARY_GAME_NOT_FOUND',
-      } satisfies ApiError);
+      throw notFound();
     }
 
     const { game } = row;
@@ -126,6 +151,13 @@ export class LibraryService {
       })),
     };
   }
+}
+
+function notFound(): NotFoundException {
+  return new NotFoundException({
+    statusCode: 404,
+    code: 'LIBRARY_GAME_NOT_FOUND',
+  } satisfies ApiError);
 }
 
 function toLibraryItem(row: ListRow): LibraryItem {

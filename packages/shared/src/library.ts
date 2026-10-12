@@ -135,3 +135,13 @@ export const LibraryGameSchema = LibraryItemSchema.extend({
 });
 
 export type LibraryGame = z.infer<typeof LibraryGameSchema>;
+
+/**
+ * Body of PATCH /api/library/:id/length: the game's "normal" length typed
+ * in by the user, in minutes, or null to go back to IGDB's.
+ */
+export const UpdateLengthRequestSchema = z.object({
+  minutes: z.number().int().min(1).max(100_000).nullable(),
+});
+
+export type UpdateLengthRequest = z.infer<typeof UpdateLengthRequestSchema>;
