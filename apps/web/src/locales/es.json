@@ -9,7 +9,10 @@
   },
   "callback": {
     "signingIn": "Iniciando sesión…",
-    "tryAgain": "Volver a intentarlo"
+    "tryAgain": "Volver a intentarlo",
+    "signedIn": "¡Sesión iniciada!",
+    "backToApp": "Si usas la app instalada, ya puedes volver a ella: allí también has iniciado sesión.",
+    "continueHere": "O sigue en el navegador"
   },
   "home": {
     "greeting": "¡Hola, {{name}}!",

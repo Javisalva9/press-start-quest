@@ -9,7 +9,10 @@
   },
   "callback": {
     "signingIn": "Signing you in…",
-    "tryAgain": "Try again"
+    "tryAgain": "Try again",
+    "signedIn": "You're signed in!",
+    "backToApp": "If you use the installed app, you can go back to it now: you're already signed in there.",
+    "continueHere": "Or continue in the browser"
   },
   "home": {
     "greeting": "Hi, {{name}}!",

@@ -6,7 +6,21 @@ Installable mobile web app (PWA) that imports your PC game library, enriches it
 with length, rating and cover art, and suggests what to play each day so you can
 work through your backlog.
 
-> Status: stage 1 (Steam and catalog) in progress.
+> Status: stage 1 (Steam and catalog) done. Next: stage 2, classification and
+> progress.
+
+## What it does today
+
+- Sign in with Steam; sessions renew on their own for 30 days.
+- Imports the Steam library (playtime, last session, achievements) and the
+  wishlist, in the background, with a progress screen.
+- Enriches each game with the Steam Store and IGDB: cover, rating, length,
+  genres and themes. DLC, demos, Playtests, betas and soundtracks stay out.
+- Library with search, filters and sorting, and a page for each game, where
+  you can type a length IGDB doesn't know.
+- Warns when the Steam profile is private, with the steps to fix it.
+- Installable on the phone (PWA), in English and Spanish, and usable offline
+  with the last data loaded.
 
 ## Stack
 
@@ -24,8 +38,13 @@ work through your backlog.
 ```text
 press-start-quest/
 ├─ apps/
-│  ├─ api/                NestJS: modules in src/, schema in prisma/
-│  └─ web/                React + Vite
+│  ├─ api/                NestJS, schema and migrations in prisma/
+│  │  └─ src/
+│  │     ├─ auth/  users/  sources/  library/
+│  │     ├─ sync/         import, enrichment, wishlist, achievements
+│  │     ├─ catalog/      game classification and metadata rules
+│  │     └─ providers/    Steam (Web API and Store) and IGDB clients
+│  └─ web/                React + Vite: pages/, components/, api/, locales/
 ├─ packages/shared/       zod types and schemas shared by web and API
 └─ .github/workflows/     CI on every pull request
 ```
@@ -36,10 +55,13 @@ Requirements: Node.js 24 (see `.node-version`) and pnpm 12 (see
 `packageManager`).
 
 ```bash
-pnpm install                         # installs everything and generates the Prisma client
-cp apps/api/.env.example apps/api/.env   # then fill in the variables
-pnpm dev                             # API on :3000 and web on :5173
+pnpm install                              # installs everything and generates the Prisma client
+cp apps/api/.env.example apps/api/.env    # then fill in the variables
+pnpm --filter @psq/api db:deploy          # applies the migrations to your database
+pnpm dev                                  # API on :3000 and web on :5173
 ```
+
+Sign in at http://localhost:5173: the first visit imports your library.
 
 - Web: http://localhost:5173
 - API: http://localhost:3000/api/health
@@ -56,7 +78,22 @@ pnpm dev                             # API on :3000 and web on :5173
 | `pnpm test`                         | Runs the unit tests                                          |
 | `pnpm format`                       | Formats the code with Prettier                               |
 | `pnpm --filter @psq/api db:migrate` | Creates and applies a migration in development               |
+| `pnpm --filter @psq/api db:deploy`  | Applies pending migrations (what Render runs)                |
+| `pnpm --filter @psq/api db:studio`  | Opens Prisma Studio to browse the database                   |
 | `pnpm --filter @psq/web icons`      | Regenerates the app icons from `apps/web/public/favicon.svg` |
+
+## How the sync works
+
+`POST /api/sync` starts a job and answers at once; the web app polls
+`GET /api/sync/jobs/:id` for its progress. The job runs four steps:
+
+1. **Library**: owned games and playtime from the Steam Web API, written in
+   bulk; after the first sync, only what changed.
+2. **Wishlist**: becomes the "wishlist" view, with Steam's priority.
+3. **Enrichment**: Steam Store (one request every 1.6 s, its limit) and IGDB
+   (4 per second) for games never enriched or older than 30 days. The catalog
+   is shared, so a game is only fetched once for everyone.
+4. **Achievements**: for played games whose playtime changed.
 
 ## Languages
 
@@ -78,4 +115,16 @@ change one, update the other in the same PR.
 ## Environment variables
 
 Each app has its own `.env.example` listing every variable and what it's for.
-Real `.env` files are never committed.
+Real `.env` files are never committed. The API refuses to start if a required
+one is missing, and says which.
+
+| Variable                     | App | What for                                       |
+| ---------------------------- | --- | ---------------------------------------------- |
+| `DATABASE_URL`               | API | Pooled Neon connection (`sslmode=verify-full`) |
+| `DATABASE_URL_DIRECT`        | API | Direct Neon connection, for migrations         |
+| `WEB_URL`                    | API | Web app URL: Steam sends users back there      |
+| `CORS_ORIGIN`                | API | Web URLs allowed to call the API               |
+| `JWT_SECRET`                 | API | Signs access tokens (48 random bytes)          |
+| `STEAM_API_KEY`              | API | Steam Web API                                  |
+| `IGDB_CLIENT_ID` / `_SECRET` | API | IGDB, through a Twitch application             |
+| `VITE_API_URL`               | Web | API URL on Render (empty locally)              |
