@@ -23,6 +23,29 @@
     "REFRESH_TOKEN_INVALID": "Your session has ended. Please sign in again.",
     "STEAM_LOGIN_INVALID": "We couldn't verify your Steam sign-in. Please try again.",
     "STEAM_UNAVAILABLE": "Steam isn't responding right now. Try again in a few minutes.",
+    "STEAM_ACCOUNT_NOT_LINKED": "There's no Steam account linked to your profile.",
     "UNKNOWN": "Something went wrong. Please try again."
+  },
+  "steamPrivacy": {
+    "PROFILE_PRIVATE": {
+      "title": "Your Steam profile is private",
+      "body": "We can't see your games until your profile is public."
+    },
+    "GAMES_PRIVATE": {
+      "title": "Your Steam games are private",
+      "body": "Your profile is public, but your game details aren't, so we can't see your library."
+    },
+    "PLAYTIME_HIDDEN": {
+      "title": "Your playtime is hidden",
+      "body": "We can see your games but not your hours, and without them we can't tell what you've finished."
+    },
+    "steps": {
+      "open": "Open your privacy settings on Steam.",
+      "public": "Set “My profile” and “Game details” to Public.",
+      "playtime": "Untick “Always keep my total playtime private”."
+    },
+    "openSettings": "Open Steam settings",
+    "checkAgain": "Check again",
+    "checking": "Checking…"
   }
 }
