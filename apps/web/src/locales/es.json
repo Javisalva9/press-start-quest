@@ -23,6 +23,29 @@
     "REFRESH_TOKEN_INVALID": "Tu sesión ha terminado. Vuelve a entrar.",
     "STEAM_LOGIN_INVALID": "No hemos podido verificar tu inicio de sesión en Steam. Vuelve a intentarlo.",
     "STEAM_UNAVAILABLE": "Steam no responde ahora mismo. Inténtalo en unos minutos.",
+    "STEAM_ACCOUNT_NOT_LINKED": "No hay ninguna cuenta de Steam vinculada a tu perfil.",
     "UNKNOWN": "Algo ha fallado. Vuelve a intentarlo."
+  },
+  "steamPrivacy": {
+    "PROFILE_PRIVATE": {
+      "title": "Tu perfil de Steam es privado",
+      "body": "No podemos ver tus juegos hasta que tu perfil sea público."
+    },
+    "GAMES_PRIVATE": {
+      "title": "Tus juegos de Steam son privados",
+      "body": "Tu perfil es público, pero los detalles de tus juegos no, así que no vemos tu biblioteca."
+    },
+    "PLAYTIME_HIDDEN": {
+      "title": "Tus horas de juego están ocultas",
+      "body": "Vemos tus juegos pero no tus horas, y sin ellas no podemos saber cuáles has terminado."
+    },
+    "steps": {
+      "open": "Abre tu configuración de privacidad en Steam.",
+      "public": "Pon «Mi perfil» y «Detalles de juegos» en Público.",
+      "playtime": "Desmarca «Mantener siempre privado mi tiempo total de juego»."
+    },
+    "openSettings": "Abrir ajustes de Steam",
+    "checkAgain": "Comprobar de nuevo",
+    "checking": "Comprobando…"
   }
 }

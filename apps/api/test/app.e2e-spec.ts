@@ -101,6 +101,12 @@ describe('API (e2e)', () => {
       .expect(204);
   });
 
+  it('GET /api/sources/steam/privacy requires a token', () => {
+    return request(app.getHttpServer())
+      .get('/api/sources/steam/privacy')
+      .expect(401);
+  });
+
   it('GET /api/me requires a token', () => {
     return request(app.getHttpServer())
       .get('/api/me')

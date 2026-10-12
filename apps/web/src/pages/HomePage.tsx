@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { signOut } from '../api/auth';
 import { useMe } from '../api/me';
+import { SteamPrivacyNotice } from '../components/SteamPrivacyNotice';
 
 /** Placeholder home: it becomes the progress screen in stage 2. */
 export default function HomePage() {
@@ -25,6 +26,8 @@ export default function HomePage() {
           {t('home.signOut')}
         </button>
       </header>
+
+      <SteamPrivacyNotice />
 
       <section className="rounded-2xl border border-line bg-card p-6">
         <h1 className="font-display text-2xl font-bold">
