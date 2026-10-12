@@ -139,7 +139,7 @@ describe('API (e2e)', () => {
       id: 'u1',
       displayName: 'Javi',
       locale: 'es',
-      sources: [{ externalId: '76561197960287930' }],
+      sources: [{ externalId: '76561197960287930', lastSyncAt: null }],
     });
     const token = await app.get(JwtService).signAsync({ sub: 'u1' });
 
@@ -153,6 +153,7 @@ describe('API (e2e)', () => {
           displayName: 'Javi',
           locale: 'es',
           steamId: '76561197960287930',
+          lastSyncAt: null,
         });
       });
   });

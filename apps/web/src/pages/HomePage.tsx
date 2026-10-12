@@ -1,12 +1,14 @@
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router';
 import { signOut } from '../api/auth';
 import { useMe } from '../api/me';
 import { SteamPrivacyNotice } from '../components/SteamPrivacyNotice';
 
 /** Placeholder home: it becomes the progress screen in stage 2. */
 export default function HomePage() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const me = useMe();
+  const lastSyncAt = me.data?.lastSyncAt;
 
   return (
     <main className="mx-auto flex min-h-dvh max-w-md flex-col gap-6 px-5 py-8">
@@ -36,6 +38,22 @@ export default function HomePage() {
             : t('home.loading')}
         </h1>
         <p className="mt-2 text-muted">{t('home.comingSoon')}</p>
+      </section>
+
+      <section className="flex items-center justify-between gap-4 rounded-2xl border border-line bg-card p-5">
+        <p className="text-sm text-muted">
+          {lastSyncAt
+            ? t('home.lastSync', {
+                date: new Intl.DateTimeFormat(i18n.language, {
+                  dateStyle: 'medium',
+                  timeStyle: 'short',
+                }).format(new Date(lastSyncAt)),
+              })
+            : t('home.neverSynced')}
+        </p>
+        <Link to="/sync" className="shrink-0 font-semibold text-cyan">
+          {t('home.syncNow')}
+        </Link>
       </section>
     </main>
   );

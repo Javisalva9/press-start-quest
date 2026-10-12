@@ -15,21 +15,10 @@
     "greeting": "¡Hola, {{name}}!",
     "loading": "Cargando…",
     "comingSoon": "Tu biblioteca está en camino: llega en las próximas actualizaciones.",
-    "signOut": "Cerrar sesión"
-  },
-  "errors": {
-    "VALIDATION_FAILED": "Algo de la petición no era correcto. Vuelve a intentarlo.",
-    "UNAUTHENTICATED": "Tu sesión ha terminado. Vuelve a entrar.",
-    "REFRESH_TOKEN_INVALID": "Tu sesión ha terminado. Vuelve a entrar.",
-    "STEAM_LOGIN_INVALID": "No hemos podido verificar tu inicio de sesión en Steam. Vuelve a intentarlo.",
-    "STEAM_UNAVAILABLE": "Steam no responde ahora mismo. Inténtalo en unos minutos.",
-    "STEAM_ACCOUNT_NOT_LINKED": "No hay ninguna cuenta de Steam vinculada a tu perfil.",
-    "STEAM_LIBRARY_PRIVATE": "Steam no ha compartido tu biblioteca: comprueba que los detalles de tus juegos sean públicos.",
-    "SYNC_JOB_NOT_FOUND": "Esa importación no existe.",
-    "SYNC_INTERRUPTED": "La importación se interrumpió. Vuelve a lanzarla.",
-    "SYNC_FAILED": "La importación ha fallado. Inténtalo de nuevo en unos minutos.",
-    "LIBRARY_GAME_NOT_FOUND": "Ese juego no está en tu biblioteca.",
-    "UNKNOWN": "Algo ha fallado. Vuelve a intentarlo."
+    "signOut": "Cerrar sesión",
+    "lastSync": "Última sincronización: {{date}}",
+    "neverSynced": "Nunca sincronizada",
+    "syncNow": "Sincronizar ahora"
   },
   "steamPrivacy": {
     "PROFILE_PRIVATE": {
@@ -52,5 +41,40 @@
     "openSettings": "Abrir ajustes de Steam",
     "checkAgain": "Comprobar de nuevo",
     "checking": "Comprobando…"
+  },
+  "sync": {
+    "titleFirst": "Importando tu biblioteca",
+    "title": "Sincronizando tu biblioteca",
+    "phase": {
+      "queued": "Preparando…",
+      "library": "Leyendo tu biblioteca de Steam…",
+      "wishlist": "Leyendo tu lista de deseados…",
+      "details": "Buscando portadas, notas y duraciones…",
+      "achievements": "Leyendo tus logros…",
+      "done": "¡Listo!",
+      "failed": "La importación se ha detenido."
+    },
+    "percent": "{{progress}} %",
+    "firstTimeHint": "La primera importación tarda un par de minutos: Steam limita lo rápido que podemos preguntar. Mientras tanto, deja la app abierta.",
+    "games_one": "{{count}} juego en tu biblioteca",
+    "games_other": "{{count}} juegos en tu biblioteca",
+    "wishlist_one": "{{count}} juego en tu lista de deseados",
+    "wishlist_other": "{{count}} juegos en tu lista de deseados",
+    "continue": "Vamos allá",
+    "retry": "Volver a intentarlo"
+  },
+  "errors": {
+    "VALIDATION_FAILED": "Algo de la petición no era correcto. Vuelve a intentarlo.",
+    "UNAUTHENTICATED": "Tu sesión ha terminado. Vuelve a entrar.",
+    "REFRESH_TOKEN_INVALID": "Tu sesión ha terminado. Vuelve a entrar.",
+    "STEAM_LOGIN_INVALID": "No hemos podido verificar tu inicio de sesión en Steam. Vuelve a intentarlo.",
+    "STEAM_UNAVAILABLE": "Steam no responde ahora mismo. Inténtalo en unos minutos.",
+    "STEAM_ACCOUNT_NOT_LINKED": "No hay ninguna cuenta de Steam vinculada a tu perfil.",
+    "STEAM_LIBRARY_PRIVATE": "Steam no ha compartido tu biblioteca: comprueba que los detalles de tus juegos sean públicos.",
+    "SYNC_JOB_NOT_FOUND": "Esa importación no existe.",
+    "SYNC_INTERRUPTED": "La importación se interrumpió. Vuelve a lanzarla.",
+    "SYNC_FAILED": "La importación ha fallado. Inténtalo de nuevo en unos minutos.",
+    "LIBRARY_GAME_NOT_FOUND": "Ese juego no está en tu biblioteca.",
+    "UNKNOWN": "Algo ha fallado. Vuelve a intentarlo."
   }
 }

@@ -88,7 +88,12 @@ describe('UsersService', () => {
         id: 'u1',
         displayName: 'Javi',
         locale: 'es',
-        sources: [{ externalId: '76561197960287930' }],
+        sources: [
+          {
+            externalId: '76561197960287930',
+            lastSyncAt: new Date('2026-10-12T22:00:00Z'),
+          },
+        ],
       });
 
       await expect(service.getMe('u1')).resolves.toEqual({
@@ -96,6 +101,7 @@ describe('UsersService', () => {
         displayName: 'Javi',
         locale: 'es',
         steamId: '76561197960287930',
+        lastSyncAt: '2026-10-12T22:00:00.000Z',
       });
     });
 

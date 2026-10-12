@@ -36,6 +36,12 @@ export const MeSchema = z.object({
   displayName: z.string(),
   locale: LanguageSchema,
   steamId: z.string().nullable(),
+  /**
+   * Last time the Steam library was imported; null before the first sync.
+   * The default keeps the web app working against an API deployed a moment
+   * earlier without this field (Render deploys them separately).
+   */
+  lastSyncAt: z.iso.datetime().nullable().default(null),
 });
 
 export type Me = z.infer<typeof MeSchema>;
