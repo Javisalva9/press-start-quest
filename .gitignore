@@ -1,0 +1,31 @@
+# Dependencias
+node_modules/
+
+# Builds y cachés
+dist/
+coverage/
+*.tsbuildinfo
+.vite/
+
+# Código generado por Prisma (se regenera con `pnpm install`)
+apps/api/src/generated/
+
+# Variables de entorno: NUNCA se suben. Solo los .env.example.
+.env
+.env.*
+!.env.example
+
+# Copias de la base de datos y claves de age
+*.dump
+*.sql.gz
+*.age
+age-key.txt
+
+# Sistema y editor
+.DS_Store
+Thumbs.db
+*.log
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea/

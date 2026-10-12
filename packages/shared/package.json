@@ -1,0 +1,30 @@
+{
+  "name": "@psq/shared",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Tipos y validaciones (zod) comunes a la API y a la web",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "dev": "tsc -p tsconfig.build.json --watch --preserveWatchOutput",
+    "lint": "oxlint",
+    "prepare": "tsc -p tsconfig.build.json",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "oxlint": "^1.81.0",
+    "typescript": "^6.0.2",
+    "vitest": "^4.1.2"
+  }
+}

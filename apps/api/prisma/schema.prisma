@@ -1,0 +1,326 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql" // la URL va en prisma.config.ts
+}
+
+enum Platform {
+  STEAM
+  EPIC
+  EXTERNAL
+}
+
+enum GameStatus {
+  BACKLOG
+  PLAYING
+  COMPLETED
+  ABANDONED
+  ON_HOLD
+  WISHLIST
+  DISCARDED
+}
+
+enum StatusSource {
+  AUTO
+  MANUAL
+}
+
+enum GameType {
+  COMPLETABLE
+  ENDLESS
+  SANDBOX
+  UNKNOWN
+}
+
+enum ServerStatus {
+  ONLINE
+  ANNOUNCED
+  PARTIAL
+  CLOSED
+  UNKNOWN
+}
+
+enum GameKind {
+  GAME
+  DLC
+  DEMO
+  SOUNDTRACK
+  TOOL
+}
+
+enum TagKind {
+  GENRE
+  THEME
+  MODE
+  PERSPECTIVE
+  STORE_CATEGORY
+}
+
+enum CuratorKind {
+  FRIEND
+  CREATOR
+}
+
+enum FeedbackAction {
+  ACCEPTED
+  NOT_NOW
+  NEVER
+  IGNORED
+}
+
+enum JobStatus {
+  QUEUED
+  RUNNING
+  DONE
+  FAILED
+}
+
+model User {
+  id                   String                @id @default(cuid())
+  email                String?               @unique
+  displayName          String
+  locale               String                @default("es") // es | en
+  settings             Json                  @default("{}")
+  createdAt            DateTime              @default(now())
+  sources              Source[]
+  games                UserGame[]
+  curators             Curator[] // amigos propios (FRIEND)
+  follows              UserCurator[] // creadores que sigue (CREATOR)
+  tasteScores          TasteScore[]
+  recommendationEvents RecommendationEvent[]
+  syncJobs             SyncJob[]
+
+  @@map("users")
+}
+
+model Source {
+  id          String      @id @default(cuid())
+  userId      String
+  platform    Platform
+  externalId  String // SteamID, cuenta de Epic o id generado para fuentes externas
+  displayName String? // "Jack Sparrow" en fuentes externas
+  lastSyncAt  DateTime?
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ownerships  Ownership[]
+
+  @@unique([platform, externalId])
+  @@map("sources")
+}
+
+model Game {
+  id                   String                @id @default(cuid())
+  title                String
+  slug                 String                @unique
+  igdbId               Int?                  @unique
+  steamAppId           Int?                  @unique
+  epicCatalogId        String?               @unique
+  kind                 GameKind              @default(GAME)
+  coverUrl             String?
+  heroUrl              String?
+  summary              String?
+  releaseDate          DateTime?
+  developer            String?
+  rating               Float? // 0-100
+  ratingCount          Int?
+  metacritic           Int?
+  steamReviewPct       Int?
+  ttbMainMin           Int?
+  ttbExtraMin          Int?
+  ttbCompleteMin       Int?
+  ttbSource            String? // igdb | hltb | manual
+  gameType             GameType              @default(UNKNOWN)
+  serverStatus         ServerStatus          @default(UNKNOWN)
+  serverClosedAt       DateTime?
+  metadataAt           DateTime?
+  userGames            UserGame[]
+  tags                 GameTag[]
+  curatorPicks         CuratorPick[]
+  deals                Deal[]
+  recommendationEvents RecommendationEvent[]
+
+  @@map("games")
+}
+
+model Tag {
+  id          Int          @id @default(autoincrement())
+  name        String
+  kind        TagKind
+  games       GameTag[]
+  tasteScores TasteScore[]
+
+  @@unique([name, kind])
+  @@map("tags")
+}
+
+model GameTag {
+  gameId String
+  tagId  Int
+  game   Game   @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  tag    Tag    @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([gameId, tagId])
+  @@map("game_tags")
+}
+
+model UserGame {
+  id                   String             @id @default(cuid())
+  userId               String
+  gameId               String
+  status               GameStatus         @default(BACKLOG)
+  statusSource         StatusSource       @default(AUTO)
+  completionConfidence Float?
+  owned                Boolean            @default(true)
+  wishlistPriority     Int?
+  wishlistedAt         DateTime?
+  playtimeMin          Int                @default(0)
+  lastPlayedAt         DateTime?
+  achievementsUnlocked Int?
+  achievementsTotal    Int?
+  completedAt          DateTime?
+  personalRating       Int?
+  goal                 String?
+  notes                String?
+  typeOverride         GameType?
+  serverOverride       ServerStatus?
+  hidden               Boolean            @default(false)
+  snoozedUntil         DateTime?
+  addedManually        Boolean            @default(false)
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
+  user                 User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  game                 Game               @relation(fields: [gameId], references: [id])
+  ownerships           Ownership[]
+  snapshots            PlaytimeSnapshot[]
+
+  @@unique([userId, gameId])
+  @@index([userId, status])
+  @@map("user_games")
+}
+
+model Ownership {
+  id            String    @id @default(cuid())
+  userGameId    String
+  sourceId      String
+  externalAppId String
+  playtimeMin   Int       @default(0)
+  playtime2wMin Int       @default(0)
+  lastPlayedAt  DateTime?
+  userGame      UserGame  @relation(fields: [userGameId], references: [id], onDelete: Cascade)
+  source        Source    @relation(fields: [sourceId], references: [id], onDelete: Cascade)
+
+  @@unique([sourceId, externalAppId])
+  @@map("ownerships")
+}
+
+model PlaytimeSnapshot {
+  id          String   @id @default(cuid())
+  userGameId  String
+  date        DateTime @db.Date
+  playtimeMin Int
+  userGame    UserGame @relation(fields: [userGameId], references: [id], onDelete: Cascade)
+
+  @@unique([userGameId, date])
+  @@map("playtime_snapshots")
+}
+
+model Curator {
+  id        String        @id @default(cuid())
+  userId    String? // vacío = creador global (CREATOR); relleno = amigo de ese usuario (FRIEND)
+  name      String
+  kind      CuratorKind   @default(FRIEND)
+  color     String?
+  user      User?         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  picks     CuratorPick[]
+  followers UserCurator[]
+
+  @@unique([userId, name]) // + índice parcial en la migración: nombre único entre creadores globales
+  @@map("curators")
+}
+
+model UserCurator {
+  userId     String
+  curatorId  String
+  followedAt DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  curator    Curator  @relation(fields: [curatorId], references: [id], onDelete: Cascade)
+
+  @@id([userId, curatorId])
+  @@map("user_curators")
+}
+
+model CuratorPick {
+  id        String   @id @default(cuid())
+  curatorId String
+  gameId    String
+  note      String?
+  createdAt DateTime @default(now())
+  curator   Curator  @relation(fields: [curatorId], references: [id], onDelete: Cascade)
+  game      Game     @relation(fields: [gameId], references: [id])
+
+  @@unique([curatorId, gameId])
+  @@map("curator_picks")
+}
+
+model TasteScore {
+  userId    String
+  tagId     Int
+  score     Float
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tag       Tag      @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([userId, tagId])
+  @@map("taste_scores")
+}
+
+model RecommendationEvent {
+  id      String         @id @default(cuid())
+  userId  String
+  gameId  String
+  score   Float
+  reasons Json
+  mood    String?
+  action  FeedbackAction @default(IGNORED)
+  shownAt DateTime       @default(now())
+  actedAt DateTime?
+  user    User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  game    Game           @relation(fields: [gameId], references: [id])
+
+  @@map("recommendation_events")
+}
+
+model Deal {
+  id              String    @id @default(cuid())
+  gameId          String
+  store           String
+  price           Decimal   @db.Decimal(8, 2)
+  regularPrice    Decimal   @db.Decimal(8, 2)
+  cutPct          Int
+  currency        String    @default("EUR")
+  url             String
+  isHistoricalLow Boolean   @default(false)
+  expiresAt       DateTime?
+  fetchedAt       DateTime  @default(now())
+  game            Game      @relation(fields: [gameId], references: [id], onDelete: Cascade)
+
+  @@index([gameId, fetchedAt])
+  @@map("deals")
+}
+
+model SyncJob {
+  id         String    @id @default(cuid())
+  userId     String
+  status     JobStatus @default(QUEUED)
+  progress   Int       @default(0)
+  stats      Json?
+  error      String?
+  startedAt  DateTime?
+  finishedAt DateTime?
+  createdAt  DateTime  @default(now())
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sync_jobs")
+}

@@ -1,0 +1,124 @@
+/* Estilo provisional con los colores del plan: modo oscuro y acento violeta → cian. */
+:root {
+  --bg: #0e0f14;
+  --card: #171923;
+  --border: #262a38;
+  --text: #f4f4f6;
+  --muted: #9aa0b4;
+  --violet: #8b5cf6;
+  --cyan: #22d3ee;
+  --green: #34d399;
+  --red: #f87171;
+
+  color-scheme: dark;
+  font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
+  color: var(--text);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+}
+
+.screen {
+  min-height: 100dvh;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 1rem;
+  padding: 2rem 1.25rem;
+  text-align: center;
+}
+
+.ring {
+  position: relative;
+  width: 7rem;
+  aspect-ratio: 1;
+}
+
+/* Anillo con degradado: se recorta el centro para dejar solo el borde. */
+.ring::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  padding: 0.5rem;
+  background: conic-gradient(var(--violet), var(--cyan), var(--violet));
+  mask:
+    linear-gradient(#000 0 0) content-box exclude,
+    linear-gradient(#000 0 0);
+}
+
+.play {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 0;
+  height: 0;
+  border-block: 1.1rem solid transparent;
+  border-left: 1.8rem solid var(--text);
+  translate: 0.3rem 0;
+}
+
+h1 {
+  margin: 0.5rem 0 0;
+  font-size: clamp(1.75rem, 6vw, 2.5rem);
+  letter-spacing: -0.02em;
+}
+
+.lead {
+  margin: 0;
+  color: var(--muted);
+  max-width: 34ch;
+}
+
+.status {
+  margin: 1rem 0 0;
+  min-width: min(20rem, 100%);
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  padding: 0.25rem 1rem;
+}
+
+.status div {
+  display: flex;
+  justify-content: space-between;
+  gap: 2rem;
+  padding: 0.75rem 0;
+}
+
+.status div + div {
+  border-top: 1px solid var(--border);
+}
+
+.status dt {
+  color: var(--muted);
+}
+
+.status dd {
+  margin: 0;
+  font-weight: 600;
+}
+
+.status dd[data-state='up'] {
+  color: var(--green);
+}
+
+.status dd[data-state='down'],
+.status dd[data-state='error'] {
+  color: var(--red);
+}
+
+.hint {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+  max-width: 40ch;
+}
