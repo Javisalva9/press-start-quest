@@ -33,20 +33,20 @@ function placeholders(text: unknown): string[] {
 }
 
 describe('traducciones', () => {
-  const esKeys = keys(es);
   const enKeys = keys(en);
-
-  it('en.json tiene todas las claves de es.json', () => {
-    expect([...esKeys].filter((key) => !enKeys.has(key))).toEqual([]);
-  });
+  const esKeys = keys(es);
 
   it('es.json tiene todas las claves de en.json', () => {
     expect([...enKeys].filter((key) => !esKeys.has(key))).toEqual([]);
   });
 
+  it('en.json tiene todas las claves de es.json', () => {
+    expect([...esKeys].filter((key) => !enKeys.has(key))).toEqual([]);
+  });
+
   it.each([
-    ['es', es],
     ['en', en],
+    ['es', es],
   ])('%s.json no tiene textos vacíos', (_language, messages) => {
     const empty = entries(messages)
       .filter(([, text]) => typeof text !== 'string' || text.trim() === '')
@@ -55,12 +55,12 @@ describe('traducciones', () => {
   });
 
   it('las variables {{…}} coinciden en los dos idiomas', () => {
-    const enTexts = new Map(entries(en));
-    const mismatched = entries(es)
-      .filter(([key]) => enTexts.has(key))
+    const esTexts = new Map(entries(es));
+    const mismatched = entries(en)
+      .filter(([key]) => esTexts.has(key))
       .filter(
         ([key, text]) =>
-          placeholders(text).join() !== placeholders(enTexts.get(key)).join(),
+          placeholders(text).join() !== placeholders(esTexts.get(key)).join(),
       )
       .map(([key]) => key);
     expect(mismatched).toEqual([]);

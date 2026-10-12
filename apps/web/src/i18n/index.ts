@@ -15,8 +15,8 @@ void i18n.use(initReactI18next).init({
   // Los textos van dentro del bundle (son pocos KB), así la primera pantalla
   // sale ya traducida sin esperar a ninguna descarga.
   resources: {
-    es: { translation: es },
     en: { translation: en },
+    es: { translation: es },
   },
   // De momento, el idioma del móvil. Cuando haya usuario, mandará el que
   // guarde en su perfil.

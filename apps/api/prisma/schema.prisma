@@ -82,7 +82,7 @@ model User {
   id                   String                @id @default(cuid())
   email                String?               @unique
   displayName          String
-  locale               String                @default("es") // es | en
+  locale               String                @default("en") // en | es
   settings             Json                  @default("{}")
   createdAt            DateTime              @default(now())
   sources              Source[]
