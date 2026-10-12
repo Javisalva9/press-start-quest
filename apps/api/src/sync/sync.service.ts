@@ -4,12 +4,14 @@ import {
   SyncStatsSchema,
   type ApiError,
   type SyncJob,
+  type SyncStats,
 } from '@psq/shared';
 import {
   JobStatus,
   type SyncJob as SyncJobRow,
 } from '../generated/prisma/client.js';
 import { PrismaService } from '../prisma/prisma.service.js';
+import { CatalogEnricher } from './catalog-enricher.js';
 import { LibraryImporter } from './library-importer.js';
 import { SyncError } from './sync-error.js';
 
@@ -33,6 +35,7 @@ export class SyncService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly importer: LibraryImporter,
+    private readonly enricher: CatalogEnricher,
   ) {}
 
   /** Starts a sync, or returns the one already running for this user. */
@@ -75,20 +78,34 @@ export class SyncService {
   }
 
   private async run(jobId: string, userId: string): Promise<void> {
+    // Progress only moves forward, and is only saved when it changes.
+    let saved = 0;
+    const progress = async (value: number) => {
+      const rounded = Math.min(99, Math.round(value));
+      if (rounded > saved) {
+        saved = rounded;
+        await this.prisma.syncJob.update({
+          where: { id: jobId },
+          data: { progress: rounded },
+        });
+      }
+    };
+
     try {
       await this.prisma.syncJob.update({
         where: { id: jobId },
         data: { status: JobStatus.RUNNING, startedAt: new Date(), progress: 5 },
       });
-      const stats = await this.importer.importSteam(
-        userId,
-        async (progress) => {
-          await this.prisma.syncJob.update({
-            where: { id: jobId },
-            data: { progress },
-          });
-        },
+      // Importing is quick: 5–25 %. Enriching is the long part: 25–95 %.
+      const imported = await this.importer.importSteam(userId, (value) =>
+        progress(5 + value * 0.2),
       );
+      const { enriched } = await this.enricher.enrich(userId, (fraction) =>
+        progress(25 + fraction * 70),
+      );
+      const coverage = await this.enricher.coverage(userId);
+      const stats: SyncStats = { ...imported, enriched, ...coverage };
+
       await this.prisma.syncJob.update({
         where: { id: jobId },
         data: {

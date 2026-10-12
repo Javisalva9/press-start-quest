@@ -1,5 +1,6 @@
 import { Test } from '@nestjs/testing';
 import { PrismaService } from '../prisma/prisma.service.js';
+import { CatalogEnricher } from './catalog-enricher.js';
 import { LibraryImporter } from './library-importer.js';
 import { SyncError } from './sync-error.js';
 import { SyncService } from './sync.service.js';
@@ -29,6 +30,7 @@ describe('SyncService', () => {
     },
   };
   const importer = { importSteam: vi.fn() };
+  const enricher = { enrich: vi.fn(), coverage: vi.fn() };
   let service: SyncService;
 
   /** Lets the background job run until it settles. */
@@ -42,6 +44,7 @@ describe('SyncService', () => {
         SyncService,
         { provide: PrismaService, useValue: prisma },
         { provide: LibraryImporter, useValue: importer },
+        { provide: CatalogEnricher, useValue: enricher },
       ],
     }).compile();
     service = moduleRef.get(SyncService);
@@ -50,13 +53,14 @@ describe('SyncService', () => {
   it('creates a job, answers at once and finishes it in the background', async () => {
     prisma.syncJob.findFirst.mockResolvedValue(null);
     prisma.syncJob.create.mockResolvedValue(job());
-    const stats = {
+    importer.importSteam.mockResolvedValue({
       gamesFound: 3,
       gamesAdded: 3,
       playtimeUpdated: 0,
       notGames: 0,
-    };
-    importer.importSteam.mockResolvedValue(stats);
+    });
+    enricher.enrich.mockResolvedValue({ enriched: 3 });
+    enricher.coverage.mockResolvedValue({ notGames: 1, withoutDuration: 2 });
 
     const started = await service.start('u1');
     expect(started).toMatchObject({ id: 'job-1', status: 'QUEUED' });
@@ -64,7 +68,19 @@ describe('SyncService', () => {
     await flush();
     expect(prisma.syncJob.update).toHaveBeenLastCalledWith({
       where: { id: 'job-1' },
-      data: expect.objectContaining({ status: 'DONE', progress: 100, stats }),
+      data: expect.objectContaining({
+        status: 'DONE',
+        progress: 100,
+        // The coverage, counted after enriching, replaces the importer's count.
+        stats: {
+          gamesFound: 3,
+          gamesAdded: 3,
+          playtimeUpdated: 0,
+          notGames: 1,
+          enriched: 3,
+          withoutDuration: 2,
+        },
+      }),
     });
   });
 

@@ -23,6 +23,11 @@ export const SyncStatsSchema = z.object({
   playtimeUpdated: z.number().int().nonnegative(),
   /** DLC, demos, Playtests, soundtracks and tools (hidden in the library). */
   notGames: z.number().int().nonnegative(),
+  // The defaults keep jobs saved before these fields existed valid.
+  /** Catalog entries filled with Steam Store and IGDB data in this sync. */
+  enriched: z.number().int().nonnegative().default(0),
+  /** Games in the library with no known length (IGDB coverage). */
+  withoutDuration: z.number().int().nonnegative().default(0),
 });
 
 export type SyncStats = z.infer<typeof SyncStatsSchema>;

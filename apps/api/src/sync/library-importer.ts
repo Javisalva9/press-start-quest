@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import type { SyncStats } from '@psq/shared';
 import { classifyGameKind } from '../catalog/game-kind.js';
 import { steamGameSlug } from '../catalog/slug.js';
 import {
@@ -13,6 +12,13 @@ import type { LibraryGame } from '../providers/library-provider.js';
 import { SteamLibraryProvider } from '../providers/steam/steam-library.provider.js';
 import { diffOwnerships } from './library-diff.js';
 import { SyncError } from './sync-error.js';
+
+export interface ImportStats {
+  gamesFound: number;
+  gamesAdded: number;
+  playtimeUpdated: number;
+  notGames: number;
+}
 
 /**
  * Imports a user's Steam library into the database:
@@ -32,7 +38,7 @@ export class LibraryImporter {
   async importSteam(
     userId: string,
     onProgress: (progress: number) => Promise<void>,
-  ): Promise<SyncStats> {
+  ): Promise<ImportStats> {
     const source = await this.prisma.source.findFirst({
       where: { userId, platform: Platform.STEAM },
       select: { id: true, externalId: true },
