@@ -64,6 +64,22 @@ export default defineConfig({
         navigateFallback: 'index.html',
         // ...except the API (same origin locally through the proxy below).
         navigateFallbackDenylist: [/^\/api\//],
+        // Covers and headers come from IGDB and Steam: kept on the phone so
+        // the library looks the same offline and doesn't download them twice.
+        runtimeCaching: [
+          {
+            urlPattern: ({ url }) =>
+              url.hostname === 'images.igdb.com' ||
+              url.hostname.endsWith('.steamstatic.com'),
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'game-images',
+              expiration: { maxEntries: 500, maxAgeSeconds: 30 * 24 * 60 * 60 },
+              // Cross-site images answer "opaque" responses (status 0).
+              cacheableResponse: { statuses: [0, 200] },
+            },
+          },
+        ],
       },
     }),
   ],

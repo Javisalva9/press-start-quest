@@ -63,6 +63,75 @@
     "continue": "Let's go",
     "retry": "Try again"
   },
+  "nav": {
+    "label": "Main",
+    "home": "Home",
+    "library": "Library"
+  },
+  "status": {
+    "BACKLOG": "Pending",
+    "PLAYING": "Playing",
+    "COMPLETED": "Completed",
+    "ABANDONED": "Abandoned",
+    "ON_HOLD": "On hold",
+    "WISHLIST": "Wishlist",
+    "DISCARDED": "Won't play"
+  },
+  "library": {
+    "title": "Library",
+    "view": {
+      "library": "My games",
+      "wishlist": "Wishlist"
+    },
+    "search": "Search by title",
+    "length": {
+      "label": "Length",
+      "any": "Any length",
+      "short": "Short (< 10 h)",
+      "medium": "Medium (10–30 h)",
+      "long": "Long (> 30 h)",
+      "unknown": "Unknown length"
+    },
+    "sort": {
+      "label": "Sort by",
+      "lastPlayed": "Last played",
+      "title": "Title",
+      "playtime": "Most played",
+      "rating": "Best rated",
+      "length": "Shortest first",
+      "added": "Recently added",
+      "priority": "Wishlist priority"
+    },
+    "count_one": "{{count}} game",
+    "count_other": "{{count}} games",
+    "empty": "No games match these filters.",
+    "loadMore": "Load more",
+    "played": "{{hours}} played",
+    "notPlayed": "Not played yet",
+    "lengthSuffix": " · ~{{hours}}"
+  },
+  "game": {
+    "back": "← Back",
+    "played": "Played",
+    "length": "Length",
+    "achievements": "Achievements",
+    "achievementsValue": "{{unlocked}} / {{total}}",
+    "rating": "Rating",
+    "metacritic": "Metacritic",
+    "released": "Released",
+    "lengths": "How long it takes",
+    "lengthKind": {
+      "main": "Main story",
+      "extra": "Main + extras",
+      "complete": "100 %"
+    },
+    "noLength": "We don't know how long this game takes yet.",
+    "searchHltb": "Search it on HowLongToBeat ↗",
+    "yourLength": "Your estimate (hours):",
+    "save": "Save",
+    "clearLength": "Remove",
+    "steamStore": "See it on the Steam Store ↗"
+  },
   "errors": {
     "VALIDATION_FAILED": "Something in the request wasn't right. Please try again.",
     "UNAUTHENTICATED": "Your session has ended. Please sign in again.",

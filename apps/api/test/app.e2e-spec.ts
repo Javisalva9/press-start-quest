@@ -111,6 +111,13 @@ describe('API (e2e)', () => {
     return request(app.getHttpServer()).get('/api/library').expect(401);
   });
 
+  it('PATCH /api/library/:id/length requires a token', () => {
+    return request(app.getHttpServer())
+      .patch('/api/library/x/length')
+      .send({ minutes: 600 })
+      .expect(401);
+  });
+
   it('POST /api/sync requires a token', () => {
     return request(app.getHttpServer()).post('/api/sync').expect(401);
   });

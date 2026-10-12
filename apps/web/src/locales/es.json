@@ -63,6 +63,75 @@
     "continue": "Vamos allá",
     "retry": "Volver a intentarlo"
   },
+  "nav": {
+    "label": "Principal",
+    "home": "Inicio",
+    "library": "Biblioteca"
+  },
+  "status": {
+    "BACKLOG": "Pendiente",
+    "PLAYING": "Jugando",
+    "COMPLETED": "Completado",
+    "ABANDONED": "Abandonado",
+    "ON_HOLD": "En pausa",
+    "WISHLIST": "Lo quiero",
+    "DISCARDED": "No lo voy a jugar"
+  },
+  "library": {
+    "title": "Biblioteca",
+    "view": {
+      "library": "Mis juegos",
+      "wishlist": "Lo quiero"
+    },
+    "search": "Buscar por título",
+    "length": {
+      "label": "Duración",
+      "any": "Cualquier duración",
+      "short": "Cortos (< 10 h)",
+      "medium": "Medios (10–30 h)",
+      "long": "Largos (> 30 h)",
+      "unknown": "Sin duración"
+    },
+    "sort": {
+      "label": "Ordenar por",
+      "lastPlayed": "Último jugado",
+      "title": "Título",
+      "playtime": "Más jugados",
+      "rating": "Mejor valorados",
+      "length": "Más cortos primero",
+      "added": "Añadidos recientemente",
+      "priority": "Prioridad en Steam"
+    },
+    "count_one": "{{count}} juego",
+    "count_other": "{{count}} juegos",
+    "empty": "Ningún juego encaja con estos filtros.",
+    "loadMore": "Cargar más",
+    "played": "{{hours}} jugadas",
+    "notPlayed": "Sin jugar",
+    "lengthSuffix": " · ~{{hours}}"
+  },
+  "game": {
+    "back": "← Volver",
+    "played": "Jugado",
+    "length": "Duración",
+    "achievements": "Logros",
+    "achievementsValue": "{{unlocked}} / {{total}}",
+    "rating": "Nota",
+    "metacritic": "Metacritic",
+    "released": "Salida",
+    "lengths": "Cuánto dura",
+    "lengthKind": {
+      "main": "Historia",
+      "extra": "Historia + extras",
+      "complete": "100 %"
+    },
+    "noLength": "Todavía no sabemos cuánto dura este juego.",
+    "searchHltb": "Buscarlo en HowLongToBeat ↗",
+    "yourLength": "Tu estimación (horas):",
+    "save": "Guardar",
+    "clearLength": "Quitar",
+    "steamStore": "Verlo en la tienda de Steam ↗"
+  },
   "errors": {
     "VALIDATION_FAILED": "Algo de la petición no era correcto. Vuelve a intentarlo.",
     "UNAUTHENTICATED": "Tu sesión ha terminado. Vuelve a entrar.",
