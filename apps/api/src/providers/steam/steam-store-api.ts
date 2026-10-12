@@ -53,6 +53,9 @@ export class SteamStoreRateLimitError extends Error {}
 /** How long to wait after a 429 before trying once more. */
 export const RATE_LIMIT_PAUSE_MS = 60_000;
 
+/** How long an answer is reused (see `recent`). */
+const RECENT_TTL_MS = 10 * 60 * 1000;
+
 /**
  * Client for the public Steam Store API (store.steampowered.com/api).
  * It has no key and no documentation, and a low request limit: around 200
@@ -66,12 +69,39 @@ export class SteamStoreApi {
     intervalCap: 1,
     interval: 1600,
   });
+  /**
+   * Answers from the last few minutes, by appid: the wishlist import and
+   * the enrichment of the same sync ask for the same new games, and the
+   * store is too slow to ask twice.
+   */
+  private readonly recent = new Map<
+    number,
+    { details: Promise<SteamAppDetails | null>; expiresAt: number }
+  >();
 
   /**
    * Store page data of an app, in English. Null when Steam has no store
    * page for it (removed games, most Playtests…).
    */
   getAppDetails(appId: number): Promise<SteamAppDetails | null> {
+    const now = Date.now();
+    for (const [cachedAppId, entry] of this.recent) {
+      if (entry.expiresAt <= now) {
+        this.recent.delete(cachedAppId);
+      }
+    }
+    const cached = this.recent.get(appId);
+    if (cached) {
+      return cached.details;
+    }
+    const details = this.fetchAppDetails(appId);
+    this.recent.set(appId, { details, expiresAt: now + RECENT_TTL_MS });
+    // A failed request isn't remembered: the next caller tries again.
+    void details.catch(() => this.recent.delete(appId));
+    return details;
+  }
+
+  private fetchAppDetails(appId: number): Promise<SteamAppDetails | null> {
     return this.queue.add(async () => {
       let response = await this.request(appId);
       if (response.status === 429) {

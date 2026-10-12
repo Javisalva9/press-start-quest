@@ -20,6 +20,12 @@ export interface ImportStats {
   notGames: number;
 }
 
+export interface ImportResult {
+  stats: ImportStats;
+  /** Library entries that are new or whose playtime changed. */
+  touchedUserGameIds: string[];
+}
+
 /**
  * Imports a user's Steam library into the database:
  * the shared catalog (`games`), the user's library (`user_games`) and
@@ -38,7 +44,7 @@ export class LibraryImporter {
   async importSteam(
     userId: string,
     onProgress: (progress: number) => Promise<void>,
-  ): Promise<ImportStats> {
+  ): Promise<ImportResult> {
     const source = await this.prisma.source.findFirst({
       where: { userId, platform: Platform.STEAM },
       select: { id: true, externalId: true },
@@ -73,11 +79,23 @@ export class LibraryImporter {
       where: {
         steamAppId: { in: library.map((game) => Number(game.externalAppId)) },
       },
-      select: { id: true, steamAppId: true, kind: true },
+      select: { id: true, steamAppId: true, kind: true, title: true },
     });
     const gameIdByAppId = new Map(
       games.map((game) => [String(game.steamAppId), game.id]),
     );
+    // Name rules improve over time (Closed Beta came later): entries saved
+    // as games before a rule existed are reclassified now.
+    for (const game of games) {
+      const kind = classifyGameKind({ title: game.title });
+      if (game.kind === GameKind.GAME && kind !== GameKind.GAME) {
+        await this.prisma.game.update({
+          where: { id: game.id },
+          data: { kind },
+        });
+        game.kind = kind;
+      }
+    }
     const gameIds = games.map((game) => game.id);
     await onProgress(50);
 
@@ -187,10 +205,13 @@ export class LibraryImporter {
     });
 
     return {
-      gamesFound: library.length,
-      gamesAdded: added.length,
-      playtimeUpdated: changed.length,
-      notGames: games.filter((game) => game.kind !== GameKind.GAME).length,
+      stats: {
+        gamesFound: library.length,
+        gamesAdded: added.length,
+        playtimeUpdated: changed.length,
+        notGames: games.filter((game) => game.kind !== GameKind.GAME).length,
+      },
+      touchedUserGameIds: touched,
     };
   }
 }

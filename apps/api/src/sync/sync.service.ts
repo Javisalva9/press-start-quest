@@ -11,8 +11,10 @@ import {
   type SyncJob as SyncJobRow,
 } from '../generated/prisma/client.js';
 import { PrismaService } from '../prisma/prisma.service.js';
+import { AchievementsImporter } from './achievements-importer.js';
 import { CatalogEnricher } from './catalog-enricher.js';
 import { LibraryImporter } from './library-importer.js';
+import { WishlistImporter } from './wishlist-importer.js';
 import { SyncError } from './sync-error.js';
 
 const ACTIVE: JobStatus[] = [JobStatus.QUEUED, JobStatus.RUNNING];
@@ -35,7 +37,9 @@ export class SyncService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly importer: LibraryImporter,
+    private readonly wishlist: WishlistImporter,
     private readonly enricher: CatalogEnricher,
+    private readonly achievements: AchievementsImporter,
   ) {}
 
   /** Starts a sync, or returns the one already running for this user. */
@@ -96,15 +100,31 @@ export class SyncService {
         where: { id: jobId },
         data: { status: JobStatus.RUNNING, startedAt: new Date(), progress: 5 },
       });
-      // Importing is quick: 5–25 %. Enriching is the long part: 25–95 %.
+      // Each step gets a share of the bar matching how long it usually takes:
+      // the Steam Store (wishlist names, enrichment) is the slow part.
       const imported = await this.importer.importSteam(userId, (value) =>
-        progress(5 + value * 0.2),
+        progress(5 + value * 0.1),
+      );
+      const { wishlistItems } = await this.wishlist.importSteam(
+        userId,
+        (fraction) => progress(15 + fraction * 15),
       );
       const { enriched } = await this.enricher.enrich(userId, (fraction) =>
-        progress(25 + fraction * 70),
+        progress(30 + fraction * 55),
+      );
+      const { achievementsRead } = await this.achievements.importSteam(
+        userId,
+        imported.touchedUserGameIds,
+        (fraction) => progress(85 + fraction * 13),
       );
       const coverage = await this.enricher.coverage(userId);
-      const stats: SyncStats = { ...imported, enriched, ...coverage };
+      const stats: SyncStats = {
+        ...imported.stats,
+        ...coverage,
+        enriched,
+        wishlistItems,
+        achievementsRead,
+      };
 
       await this.prisma.syncJob.update({
         where: { id: jobId },
