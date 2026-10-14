@@ -21,6 +21,15 @@ apps/api/src/generated/
 *.age
 age-key.txt
 
+# AI agent skills some tools install on their own (prisma generate offers
+# them): they aren't part of the project.
+.agents/
+.claude/
+.codex/
+.cursor/
+.windsurf/
+skills-lock.json
+
 # OS and editor
 .DS_Store
 Thumbs.db

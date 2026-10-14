@@ -19,6 +19,18 @@ import {
 /** Catalog data is refreshed once a month: it barely changes. */
 const REFRESH_AFTER_MS = 30 * 24 * 60 * 60 * 1000;
 
+/**
+ * Games saved together. If a sync stops halfway, the batches already saved
+ * aren't asked for again: the next sync goes on where this one stopped.
+ */
+export const BATCH_SIZE = 10;
+
+interface IgdbData {
+  /** IGDB game per catalog game id. */
+  games: Map<string, IgdbGame>;
+  timesToBeat: Map<number, IgdbTimeToBeat>;
+}
+
 interface CatalogGame {
   id: string;
   title: string;
@@ -34,6 +46,9 @@ interface CatalogGame {
  * Only games of this user's library that were never enriched, or not in
  * the last 30 days, are asked for: after the first sync this is usually
  * nothing, and the next user who owns the same game gets it for free.
+ *
+ * Games are saved in batches of BATCH_SIZE, each one as soon as it's ready,
+ * so an interrupted sync keeps what it already did.
  */
 @Injectable()
 export class CatalogEnricher {
@@ -85,54 +100,58 @@ export class CatalogEnricher {
       return { enriched: 0 };
     }
 
-    // 1. Steam Store: the slow part (one request every 1.6 s).
-    const storeDetails = await this.fetchStoreDetails(candidates, onProgress);
-
-    // 2. IGDB, for the entries that are still games once the store's type
-    //    is known (a DLC doesn't need a cover or a length).
-    const stillGames = candidates.filter((game) => {
-      const store = storeDetails.get(game.id) ?? null;
-      return (
-        buildGameUpdate(game, { store, igdb: null, timeToBeat: null }).kind ===
-        GameKind.GAME
-      );
-    });
-    const igdb = await this.fetchIgdbData(stillGames);
-    await onProgress(0.95);
-
-    // 3. Save. Games whose store request failed are left for the next sync.
-    const ready = candidates.filter((game) => storeDetails.has(game.id));
-    const sources = new Map<string, GameSources>(
-      ready.map((game) => {
-        const igdbGame = igdb?.games.get(game.id) ?? null;
-        return [
-          game.id,
-          {
-            store: storeDetails.get(game.id) ?? null,
-            igdb: igdbGame,
-            timeToBeat: igdbGame
-              ? (igdb?.timesToBeat.get(igdbGame.igdbId) ?? null)
-              : null,
-          },
-        ];
-      }),
+    // 1. Steam Store: the slow part (one request every 1.6 s). Every request
+    //    is queued now, so the store client keeps its pace while batches are
+    //    being saved. These promises never reject: a failure is `undefined`.
+    const pending = new Map(
+      candidates.map((game) => [game.id, this.fetchStoreDetails(game)]),
     );
-    await this.prisma.$transaction(
-      ready.map((game) =>
-        this.prisma.game.update({
-          where: { id: game.id },
-          data: {
-            ...buildGameUpdate(game, sources.get(game.id)!),
-            // If IGDB failed, the store data is kept but the game stays due,
-            // so the next sync tries IGDB again.
-            metadataAt: igdb ? now : undefined,
-          },
-        }),
-      ),
-    );
-    await this.saveTags(ready, sources);
 
-    return { enriched: ready.length };
+    // Progress: the store requests are most of the time, saving the rest.
+    let fetched = 0;
+    let saved = 0;
+    const report = () =>
+      onProgress((0.85 * fetched + 0.15 * saved) / candidates.length);
+
+    let enriched = 0;
+    let igdbDown = false;
+    for (const batch of chunk(candidates, BATCH_SIZE)) {
+      const storeDetails = new Map<string, SteamAppDetails | null>();
+      for (const game of batch) {
+        const details = await pending.get(game.id);
+        if (details !== undefined) {
+          storeDetails.set(game.id, details);
+        }
+        fetched += 1;
+        await report();
+      }
+
+      // 2. IGDB, for the entries that are still games once the store's type
+      //    is known (a DLC doesn't need a cover or a length). If it fails
+      //    once, the rest of this sync goes on without it.
+      const stillGames = batch.filter((game) => {
+        const store = storeDetails.get(game.id) ?? null;
+        return (
+          buildGameUpdate(game, { store, igdb: null, timeToBeat: null })
+            .kind === GameKind.GAME
+        );
+      });
+      let igdb: IgdbData | null = null;
+      if (!igdbDown) {
+        igdb = await this.fetchIgdbData(stillGames);
+        igdbDown = igdb === null;
+      }
+
+      // 3. Save this batch. Games whose store request failed are left for
+      //    the next sync.
+      const ready = batch.filter((game) => storeDetails.has(game.id));
+      await this.saveBatch(ready, storeDetails, igdb, now);
+      enriched += ready.length;
+      saved += batch.length;
+      await report();
+    }
+
+    return { enriched };
   }
 
   /** Counts that describe the user's library after the sync. */
@@ -159,37 +178,65 @@ export class CatalogEnricher {
     return { notGames, withoutDuration };
   }
 
-  /** Store data per game id: null if it has no store page, absent if it failed. */
+  /** A game's store data: null if it has no store page, undefined if it failed. */
   private async fetchStoreDetails(
+    game: CatalogGame,
+  ): Promise<SteamAppDetails | null | undefined> {
+    try {
+      return await this.store.getAppDetails(game.steamAppId);
+    } catch (error) {
+      this.logger.warn(
+        `Steam Store failed for appid ${game.steamAppId}: ${(error as Error).message}`,
+      );
+      return undefined;
+    }
+  }
+
+  /** Saves the store and IGDB data of one batch, with its tags. */
+  private async saveBatch(
     games: CatalogGame[],
-    onProgress: (fraction: number) => Promise<void>,
-  ): Promise<Map<string, SteamAppDetails | null>> {
-    const details = new Map<string, SteamAppDetails | null>();
-    let done = 0;
-    // All requests are queued at once; the client sends them at its pace.
-    await Promise.all(
-      games.map(async (game) => {
-        try {
-          details.set(game.id, await this.store.getAppDetails(game.steamAppId));
-        } catch (error) {
-          this.logger.warn(
-            `Steam Store failed for appid ${game.steamAppId}: ${(error as Error).message}`,
-          );
-        }
-        done += 1;
-        await onProgress((0.85 * done) / games.length);
+    storeDetails: Map<string, SteamAppDetails | null>,
+    igdb: IgdbData | null,
+    now: Date,
+  ): Promise<void> {
+    if (games.length === 0) {
+      return;
+    }
+    const sources = new Map<string, GameSources>(
+      games.map((game) => {
+        const igdbGame = igdb?.games.get(game.id) ?? null;
+        return [
+          game.id,
+          {
+            store: storeDetails.get(game.id) ?? null,
+            igdb: igdbGame,
+            timeToBeat: igdbGame
+              ? (igdb?.timesToBeat.get(igdbGame.igdbId) ?? null)
+              : null,
+          },
+        ];
       }),
     );
-    return details;
+    await this.prisma.$transaction(
+      games.map((game) =>
+        this.prisma.game.update({
+          where: { id: game.id },
+          data: {
+            ...buildGameUpdate(game, sources.get(game.id)!),
+            // If IGDB failed, the store data is kept but the game stays due,
+            // so the next sync tries IGDB again.
+            metadataAt: igdb ? now : undefined,
+          },
+        }),
+      ),
+    );
+    await this.saveTags(games, sources);
   }
 
   /**
    * IGDB data per game id. Null if IGDB failed: the sync goes on without it.
    */
-  private async fetchIgdbData(games: CatalogGame[]): Promise<{
-    games: Map<string, IgdbGame>;
-    timesToBeat: Map<number, IgdbTimeToBeat>;
-  } | null> {
+  private async fetchIgdbData(games: CatalogGame[]): Promise<IgdbData | null> {
     if (games.length === 0) {
       return { games: new Map(), timesToBeat: new Map() };
     }
@@ -289,4 +336,12 @@ export class CatalogEnricher {
       }),
     ]);
   }
+}
+
+function chunk<T>(items: T[], size: number): T[][] {
+  const chunks: T[][] = [];
+  for (let i = 0; i < items.length; i += size) {
+    chunks.push(items.slice(i, i + size));
+  }
+  return chunks;
 }
