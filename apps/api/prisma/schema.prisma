@@ -340,7 +340,13 @@ model SyncJob {
   startedAt  DateTime?
   finishedAt DateTime?
   createdAt  DateTime  @default(now())
+  // Last time the job wrote anything (progress or its 30 s heartbeat). An
+  // active job silent for 2 minutes is treated as dead, whichever process ran it.
+  updatedAt  DateTime  @default(now()) @updatedAt
   user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  // + partial unique index in the migration: one QUEUED or RUNNING job per user.
+  // If `prisma migrate dev` ever proposes dropping sync_jobs_one_active_per_user,
+  // delete that line from the generated migration.
   @@map("sync_jobs")
 }
