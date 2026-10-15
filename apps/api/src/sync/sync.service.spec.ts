@@ -3,6 +3,7 @@ import { Prisma } from '../generated/prisma/client.js';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { AchievementsImporter } from './achievements-importer.js';
 import { CatalogEnricher } from './catalog-enricher.js';
+import { GameTypeUpdater } from './game-type-updater.js';
 import { LibraryImporter } from './library-importer.js';
 import { WishlistImporter } from './wishlist-importer.js';
 import { SyncError } from './sync-error.js';
@@ -39,6 +40,7 @@ describe('SyncService', () => {
   const enricher = { enrich: vi.fn(), coverage: vi.fn() };
   const wishlist = { importSteam: vi.fn() };
   const achievements = { importSteam: vi.fn() };
+  const gameTypes = { update: vi.fn() };
   let service: SyncService;
 
   /** Lets the background job run until it settles. */
@@ -69,6 +71,7 @@ describe('SyncService', () => {
     achievements.importSteam.mockResolvedValue({ achievementsRead: 2 });
     enricher.enrich.mockResolvedValue({ enriched: 3 });
     enricher.coverage.mockResolvedValue({ notGames: 1, withoutDuration: 2 });
+    gameTypes.update.mockResolvedValue(0);
   };
 
   beforeEach(async () => {
@@ -82,6 +85,7 @@ describe('SyncService', () => {
         { provide: CatalogEnricher, useValue: enricher },
         { provide: WishlistImporter, useValue: wishlist },
         { provide: AchievementsImporter, useValue: achievements },
+        { provide: GameTypeUpdater, useValue: gameTypes },
       ],
     }).compile();
     service = moduleRef.get(SyncService);
@@ -101,6 +105,8 @@ describe('SyncService', () => {
 
     await flush();
     // Achievements are only refreshed where the import saw changes.
+    // Classified after the catalog is enriched.
+    expect(gameTypes.update).toHaveBeenCalledWith('u1');
     expect(achievements.importSteam).toHaveBeenCalledWith(
       'u1',
       ['ug1'],
