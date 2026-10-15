@@ -5,6 +5,7 @@ import { AchievementsImporter } from './achievements-importer.js';
 import { CatalogEnricher } from './catalog-enricher.js';
 import { GameTypeUpdater } from './game-type-updater.js';
 import { LibraryImporter } from './library-importer.js';
+import { ServerStatusUpdater } from './server-status-updater.js';
 import { WishlistImporter } from './wishlist-importer.js';
 import { SyncError } from './sync-error.js';
 import { HEARTBEAT_MS, STALE_AFTER_MS, SyncService } from './sync.service.js';
@@ -41,6 +42,7 @@ describe('SyncService', () => {
   const wishlist = { importSteam: vi.fn() };
   const achievements = { importSteam: vi.fn() };
   const gameTypes = { update: vi.fn() };
+  const serverStatus = { update: vi.fn() };
   let service: SyncService;
 
   /** Lets the background job run until it settles. */
@@ -72,6 +74,7 @@ describe('SyncService', () => {
     enricher.enrich.mockResolvedValue({ enriched: 3 });
     enricher.coverage.mockResolvedValue({ notGames: 1, withoutDuration: 2 });
     gameTypes.update.mockResolvedValue(0);
+    serverStatus.update.mockResolvedValue(0);
   };
 
   beforeEach(async () => {
@@ -86,6 +89,7 @@ describe('SyncService', () => {
         { provide: WishlistImporter, useValue: wishlist },
         { provide: AchievementsImporter, useValue: achievements },
         { provide: GameTypeUpdater, useValue: gameTypes },
+        { provide: ServerStatusUpdater, useValue: serverStatus },
       ],
     }).compile();
     service = moduleRef.get(SyncService);
@@ -107,6 +111,7 @@ describe('SyncService', () => {
     // Achievements are only refreshed where the import saw changes.
     // Classified after the catalog is enriched.
     expect(gameTypes.update).toHaveBeenCalledWith('u1');
+    expect(serverStatus.update).toHaveBeenCalledWith('u1');
     expect(achievements.importSteam).toHaveBeenCalledWith(
       'u1',
       ['ug1'],

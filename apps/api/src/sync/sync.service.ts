@@ -21,6 +21,7 @@ import { AchievementsImporter } from './achievements-importer.js';
 import { CatalogEnricher } from './catalog-enricher.js';
 import { GameTypeUpdater } from './game-type-updater.js';
 import { LibraryImporter } from './library-importer.js';
+import { ServerStatusUpdater } from './server-status-updater.js';
 import { WishlistImporter } from './wishlist-importer.js';
 import { SyncError } from './sync-error.js';
 
@@ -58,6 +59,7 @@ export class SyncService implements BeforeApplicationShutdown {
     private readonly wishlist: WishlistImporter,
     private readonly enricher: CatalogEnricher,
     private readonly gameTypes: GameTypeUpdater,
+    private readonly serverStatus: ServerStatusUpdater,
     private readonly achievements: AchievementsImporter,
   ) {}
 
@@ -204,8 +206,9 @@ export class SyncService implements BeforeApplicationShutdown {
       const { enriched } = await this.enricher.enrich(userId, (fraction) =>
         progress(30 + fraction * 55),
       );
-      // Reads only the catalog just saved: fast, no progress share needed.
+      // Read only the catalog just saved: fast, no progress share needed.
       await this.gameTypes.update(userId);
+      await this.serverStatus.update(userId);
       const { achievementsRead } = await this.achievements.importSteam(
         userId,
         imported.touchedUserGameIds,
