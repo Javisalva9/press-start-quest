@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import PQueue from 'p-queue';
 import { z } from 'zod';
+import { chunk } from '../../common/chunk.js';
 import type { Env } from '../../config/env.js';
 
 const IGDB_URL = 'https://api.igdb.com/v4/';
@@ -339,12 +340,4 @@ function toMinutes(seconds: number | undefined): number | null {
 
 function fromUnixSeconds(seconds: number | undefined): Date | null {
   return seconds ? new Date(seconds * 1000) : null;
-}
-
-function chunk<T>(items: T[], size: number): T[][] {
-  const chunks: T[][] = [];
-  for (let start = 0; start < items.length; start += size) {
-    chunks.push(items.slice(start, start + size));
-  }
-  return chunks;
 }

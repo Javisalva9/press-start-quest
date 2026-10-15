@@ -160,6 +160,7 @@ model Game {
   curatorPicks         CuratorPick[]
   deals                Deal[]
   recommendationEvents RecommendationEvent[]
+  achievements         Achievement[]
 
   @@map("games")
 }
@@ -214,6 +215,7 @@ model UserGame {
   game                 Game               @relation(fields: [gameId], references: [id])
   ownerships           Ownership[]
   snapshots            PlaytimeSnapshot[]
+  achievements         UserAchievement[]
 
   @@unique([userId, gameId])
   @@index([userId, status])
@@ -233,6 +235,36 @@ model Ownership {
 
   @@unique([sourceId, externalAppId])
   @@map("ownerships")
+}
+
+// A game's achievements, shared by every player: the catalog, like games.
+// Read in English, so a name can tell a "finish the game" achievement.
+model Achievement {
+  id          String            @id @default(cuid())
+  gameId      String
+  platform    Platform
+  // The store's own id (Steam's apiname): unique within a game and store.
+  externalId  String
+  name        String
+  description String
+  game        Game              @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  unlocks     UserAchievement[]
+
+  @@unique([gameId, platform, externalId])
+  @@map("achievements")
+}
+
+// The achievements a player unlocked. A locked one has no row.
+model UserAchievement {
+  userGameId    String
+  achievementId String
+  unlockedAt    DateTime
+  userGame      UserGame    @relation(fields: [userGameId], references: [id], onDelete: Cascade)
+  achievement   Achievement @relation(fields: [achievementId], references: [id], onDelete: Cascade)
+
+  @@id([userGameId, achievementId])
+  @@index([achievementId])
+  @@map("user_achievements")
 }
 
 model PlaytimeSnapshot {
