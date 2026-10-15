@@ -1,0 +1,18 @@
+[
+  {
+    "steamAppId": 1818750,
+    "title": "MultiVersus",
+    "closesOn": "2025-05-30",
+    "after": "PARTIAL",
+    "note": "Online ended with Season 5. Local and offline modes still work, but only if you logged in during Season 5 (Feb 4 - May 30, 2025).",
+    "source": "https://www.videogameschronicle.com/news/multiversus-officially-closes-down-and-is-delisted-today/"
+  },
+  {
+    "steamAppId": 1283700,
+    "title": "SUPERVIVE",
+    "closesOn": "2026-02-25",
+    "after": "CLOSED",
+    "note": "Online only: unplayable since the servers closed.",
+    "source": "https://www.kitguru.net/gaming/joao-silva/theorycraft-games-shutting-down-supervive-just-five-months-after-1-0-launch/"
+  }
+]
