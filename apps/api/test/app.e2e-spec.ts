@@ -124,6 +124,13 @@ describe('API (e2e)', () => {
       .expect(401);
   });
 
+  it('PATCH /api/library/:id requires a token', () => {
+    return request(app.getHttpServer())
+      .patch('/api/library/x')
+      .send({ status: 'COMPLETED' })
+      .expect(401);
+  });
+
   it('PATCH /api/library/:id/length requires a token', () => {
     return request(app.getHttpServer())
       .patch('/api/library/x/length')

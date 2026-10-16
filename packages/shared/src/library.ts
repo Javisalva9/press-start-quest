@@ -15,6 +15,58 @@ export const GameStatusSchema = z.enum(GAME_STATUSES);
 
 export type GameStatus = z.infer<typeof GameStatusSchema>;
 
+/**
+ * Statuses a player can give a game they own. WISHLIST is only for games
+ * they don't, and comes from the store.
+ */
+export const OWNED_STATUSES = [
+  'BACKLOG',
+  'PLAYING',
+  'COMPLETED',
+  'ABANDONED',
+  'ON_HOLD',
+  'DISCARDED',
+] as const satisfies readonly GameStatus[];
+
+/** Same values as the GameType enum in the database. */
+export const GAME_TYPES = [
+  'COMPLETABLE',
+  'ENDLESS',
+  'SANDBOX',
+  'UNKNOWN',
+] as const;
+
+export const GameTypeSchema = z.enum(GAME_TYPES);
+
+export type GameType = z.infer<typeof GameTypeSchema>;
+
+/** The types a player can pick: "unknown" is only the app's answer. */
+export const PICKABLE_GAME_TYPES = [
+  'COMPLETABLE',
+  'ENDLESS',
+  'SANDBOX',
+] as const;
+
+/** Same values as the ServerStatus enum in the database. */
+export const SERVER_STATUSES = [
+  'ONLINE',
+  'ANNOUNCED',
+  'PARTIAL',
+  'CLOSED',
+  'UNKNOWN',
+] as const;
+
+export const ServerStatusSchema = z.enum(SERVER_STATUSES);
+
+export type ServerStatus = z.infer<typeof ServerStatusSchema>;
+
+export const PICKABLE_SERVER_STATUSES = [
+  'ONLINE',
+  'ANNOUNCED',
+  'PARTIAL',
+  'CLOSED',
+] as const;
+
 /** Same values as the Platform enum in the database. */
 export const PLATFORMS = ['STEAM', 'EPIC', 'EXTERNAL'] as const;
 
@@ -124,6 +176,21 @@ export const LibraryGameSchema = LibraryItemSchema.extend({
   themes: z.array(z.string()),
   modes: z.array(z.string()),
   perspectives: z.array(z.string()),
+  /** Who set the status: the app (AUTO) or the player (MANUAL). */
+  statusSource: z.enum(['AUTO', 'MANUAL']),
+  /** What the app would set: shown next to "automatic" when editing. */
+  automaticStatus: GameStatusSchema,
+  /** The catalog's type and the player's own, if any (theirs wins). */
+  gameType: z.object({
+    catalog: GameTypeSchema,
+    override: z.enum(PICKABLE_GAME_TYPES).nullable(),
+  }),
+  /** The same for the servers, with the closing day when known. */
+  serverStatus: z.object({
+    catalog: ServerStatusSchema,
+    override: z.enum(PICKABLE_SERVER_STATUSES).nullable(),
+    closedAt: z.iso.datetime().nullable(),
+  }),
   /** Playtime per store. */
   ownerships: z.array(
     z.object({
@@ -145,3 +212,22 @@ export const UpdateLengthRequestSchema = z.object({
 });
 
 export type UpdateLengthRequest = z.infer<typeof UpdateLengthRequestSchema>;
+
+/**
+ * Body of PATCH /api/library/:id: the player's own word on a game. Each
+ * field is optional; null hands it back to the app (automatic status, the
+ * catalog's type, the closed-servers list).
+ */
+export const UpdateLibraryGameRequestSchema = z
+  .object({
+    status: z.enum(OWNED_STATUSES).nullable().optional(),
+    gameType: z.enum(PICKABLE_GAME_TYPES).nullable().optional(),
+    serverStatus: z.enum(PICKABLE_SERVER_STATUSES).nullable().optional(),
+  })
+  .refine((body) => Object.values(body).some((value) => value !== undefined), {
+    message: 'Nothing to change',
+  });
+
+export type UpdateLibraryGameRequest = z.infer<
+  typeof UpdateLibraryGameRequestSchema
+>;

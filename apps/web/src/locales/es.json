@@ -136,7 +136,15 @@
     "yourLength": "Tu estimación (horas):",
     "save": "Guardar",
     "clearLength": "Quitar",
-    "steamStore": "Verlo en la tienda de Steam ↗"
+    "steamStore": "Verlo en la tienda de Steam ↗",
+    "yourCall": "Tu estado",
+    "statusLabel": "Estado",
+    "typeLabel": "Tipo",
+    "serversLabel": "Servidores",
+    "automatic": "Automático ({{value}})",
+    "yourCallHint": "Lo que elijas tú manda sobre lo que calcula la app. «Automático» le devuelve la decisión.",
+    "closesOn": "Los servidores cierran el {{date}}.",
+    "closedOn": "Los servidores cerraron el {{date}}."
   },
   "review": {
     "title": "Repaso",
@@ -170,6 +178,19 @@
       "library": "Ver tu biblioteca"
     }
   },
+  "gameType": {
+    "COMPLETABLE": "Completable",
+    "ENDLESS": "Sin fin",
+    "SANDBOX": "Sandbox",
+    "UNKNOWN": "Sin clasificar"
+  },
+  "serverStatus": {
+    "ONLINE": "Online",
+    "ANNOUNCED": "Cierre anunciado",
+    "PARTIAL": "Parcial",
+    "CLOSED": "Cerrados",
+    "UNKNOWN": "Sin datos"
+  },
   "errors": {
     "VALIDATION_FAILED": "Algo de la petición no era correcto. Vuelve a intentarlo.",
     "UNAUTHENTICATED": "Tu sesión ha terminado. Vuelve a entrar.",
@@ -182,6 +203,7 @@
     "SYNC_INTERRUPTED": "La importación se interrumpió. Vuelve a lanzarla.",
     "SYNC_FAILED": "La importación ha fallado. Inténtalo de nuevo en unos minutos.",
     "LIBRARY_GAME_NOT_FOUND": "Ese juego no está en tu biblioteca.",
+    "LIBRARY_GAME_NOT_OWNED": "Ese juego no es tuyo todavía: está en tu lista de «Lo quiero».",
     "UNKNOWN": "Algo ha fallado. Vuelve a intentarlo."
   }
 }

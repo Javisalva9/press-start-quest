@@ -19,6 +19,7 @@ import {
   ReviewAnswerRequestSchema,
   ReviewQueueQuerySchema,
   UpdateLengthRequestSchema,
+  UpdateLibraryGameRequestSchema,
   type LibraryGame,
   type LibraryPage,
   type LibraryQuery,
@@ -26,6 +27,7 @@ import {
   type ReviewQueue,
   type ReviewQueueQuery,
   type UpdateLengthRequest,
+  type UpdateLibraryGameRequest,
 } from '@psq/shared';
 import { CurrentUser, type AuthUser } from '../auth/current-user.decorator.js';
 import { LibraryService } from './library.service.js';
@@ -87,5 +89,16 @@ export class LibraryController {
     @Body({ schema: UpdateLengthRequestSchema }) body: UpdateLengthRequest,
   ): Promise<LibraryGame> {
     return this.library.setLength(user.id, id, body.minutes);
+  }
+
+  @Patch(':id')
+  @ApiOkResponse({ description: 'The game, with the changes' })
+  update(
+    @CurrentUser() user: AuthUser,
+    @Param('id') id: string,
+    @Body({ schema: UpdateLibraryGameRequestSchema })
+    body: UpdateLibraryGameRequest,
+  ): Promise<LibraryGame> {
+    return this.library.update(user.id, id, body);
   }
 }
