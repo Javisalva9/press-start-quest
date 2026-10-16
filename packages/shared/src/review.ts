@@ -18,14 +18,24 @@ export const ReviewQueueQuerySchema = z.object({
 
 export type ReviewQueueQuery = z.infer<typeof ReviewQueueQuerySchema>;
 
-/** One card of the confirmation queue: "did you finish it?". */
+/**
+ * What a card asks: "did you finish it?" (it looks finished, or it's the
+ * initial triage) or "did you drop it?" (paused for 3 months). The answers
+ * are the same for both.
+ */
+export const REVIEW_QUESTIONS = ['finished', 'abandoned'] as const;
+
+/** One card of the confirmation queue. */
 export const ReviewCardSchema = z.object({
   /** Id of the library entry. */
   id: z.string(),
+  question: z.enum(REVIEW_QUESTIONS),
   title: z.string(),
   coverUrl: z.string().nullable(),
   heroUrl: z.string().nullable(),
   playtimeMinutes: z.number().int().nonnegative(),
+  /** For "you haven't played it in 7 months". */
+  lastPlayedAt: z.iso.datetime().nullable(),
   /** Main story length in minutes, what the playtime signal compares to. */
   mainStoryMinutes: z.number().int().nullable(),
   achievements: z

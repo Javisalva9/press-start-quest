@@ -2,6 +2,7 @@ import { Test } from '@nestjs/testing';
 import { Prisma } from '../generated/prisma/client.js';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { AchievementsImporter } from './achievements-importer.js';
+import { AutoStatusUpdater } from './auto-status-updater.js';
 import { CatalogEnricher } from './catalog-enricher.js';
 import { CompletionDetector } from './completion-detector.js';
 import { FinaleRuleUpdater } from './finale-rule-updater.js';
@@ -47,6 +48,7 @@ describe('SyncService', () => {
   const serverStatus = { update: vi.fn() };
   const finaleRules = { update: vi.fn() };
   const completions = { update: vi.fn() };
+  const statuses = { update: vi.fn() };
   let service: SyncService;
 
   /** Lets the background job run until it settles. */
@@ -81,6 +83,7 @@ describe('SyncService', () => {
     serverStatus.update.mockResolvedValue(0);
     finaleRules.update.mockResolvedValue(0);
     completions.update.mockResolvedValue(0);
+    statuses.update.mockResolvedValue(0);
   };
 
   beforeEach(async () => {
@@ -98,6 +101,7 @@ describe('SyncService', () => {
         { provide: ServerStatusUpdater, useValue: serverStatus },
         { provide: FinaleRuleUpdater, useValue: finaleRules },
         { provide: CompletionDetector, useValue: completions },
+        { provide: AutoStatusUpdater, useValue: statuses },
       ],
     }).compile();
     service = moduleRef.get(SyncService);
@@ -122,6 +126,7 @@ describe('SyncService', () => {
     expect(serverStatus.update).toHaveBeenCalledWith('u1');
     // After the achievements: the detector needs them.
     expect(completions.update).toHaveBeenCalledWith('u1');
+    expect(statuses.update).toHaveBeenCalledWith('u1');
     expect(achievements.importSteam).toHaveBeenCalledWith(
       'u1',
       ['ug1'],
