@@ -26,6 +26,15 @@ const STRENGTH: Record<CompletionSignal, number> = {
 const strength = (signal: CompletionSignal | null) =>
   signal ? STRENGTH[signal] : 0;
 
+/**
+ * Without a signal, a game only gets "did you finish it?" when it's
+ * completable, nobody knows how long it is, it's been played this long and
+ * it isn't being played now. With a known length, below 80 % there's no
+ * signal and no card: fewer false alarms, at the price of a few games
+ * finished early (Hades at 66 %), which the player marks by hand.
+ */
+export const UNKNOWN_LENGTH_MIN = 5 * 60;
+
 /** What a card needs, and what decides whether it shows. */
 const cardSelect = {
   id: true,
@@ -38,8 +47,15 @@ const cardSelect = {
   completionConfidence: true,
   reviewedAt: true,
   reviewedSignal: true,
+  typeOverride: true,
   game: {
-    select: { title: true, coverUrl: true, heroUrl: true, ttbMainMin: true },
+    select: {
+      title: true,
+      coverUrl: true,
+      heroUrl: true,
+      ttbMainMin: true,
+      gameType: true,
+    },
   },
   achievements: {
     where: { achievement: { finaleByRule: true } },
@@ -53,8 +69,9 @@ type CardRow = Prisma.UserGameGetPayload<{ select: typeof cardSelect }>;
 /**
  * The confirmation queue. Two kinds of cards, "did you finish it?" first:
  *
- * - Finished: games that look finished, plus, on the first load, every
- *   one played for at least an hour. Back after a "no" only with a
+ * - Finished: games that look finished (a completion signal), plus
+ *   completable games of unknown length played for 5 hours and not
+ *   being played now. Back after a "no" only with a
  *   stronger signal.
  * - Abandoned: games the app put on hold, unplayed for 3 months, that the
  *   player hasn't answered about since their last session. Any earlier
@@ -108,6 +125,7 @@ export class ReviewService {
     // can't filter by order, and the dates compare two columns: done here,
     // on the few rows left.
     const finished = rows
+      .filter(worthAsking)
       .filter(
         (row) =>
           row.reviewedAt === null ||
@@ -197,6 +215,20 @@ export class ReviewService {
               };
     await this.prisma.userGame.update({ where: { id }, data });
   }
+}
+
+/** A reason to ask "did you finish it?": a signal, or see UNKNOWN_LENGTH_MIN. */
+function worthAsking(row: CardRow): boolean {
+  if (row.completionSignal !== null) {
+    return true;
+  }
+  const type = row.typeOverride ?? row.game.gameType;
+  return (
+    type === GameType.COMPLETABLE &&
+    row.game.ttbMainMin === null &&
+    row.playtimeMin >= UNKNOWN_LENGTH_MIN &&
+    row.status !== GameStatus.PLAYING
+  );
 }
 
 /** Statuses only an answer sets: "not finished" undoes them. */

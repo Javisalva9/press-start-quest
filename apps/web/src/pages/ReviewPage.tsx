@@ -40,6 +40,10 @@ const LEAVE_OFFSET: Record<SwipeDirection, [number, number]> = {
   up: [0, -700],
 };
 
+/** Icons of the two questions: they tell the cards apart without reading. */
+const FINISHED_ICON = '✓';
+const PAUSED_ICON = '⏸';
+
 const ARROW: Record<SwipeDirection, string> = {
   right: '→',
   left: '←',
@@ -62,6 +66,10 @@ export default function ReviewPage() {
   // Answered in this visit: hidden right away, without waiting for the API.
   const [answered, setAnswered] = useState<ReadonlySet<string>>(new Set());
   const [error, setError] = useState<string | null>(null);
+  // Before the first "did you drop it?" card, a pause that says the
+  // question changes: after many "did you finish it?" swipes, a different
+  // line on the card goes unread.
+  const [pausedIntroSeen, setPausedIntroSeen] = useState(false);
   // "7 months ago" is counted from when the screen opened: a fixed value,
   // so every render of a card says the same.
   const [now] = useState(() => new Date());
@@ -155,7 +163,24 @@ export default function ReviewPage() {
         </p>
       )}
 
-      {current ? (
+      {current?.question === 'abandoned' && !pausedIntroSeen ? (
+        <section className="mt-6 flex flex-col items-center gap-4 rounded-2xl border border-dashed border-muted bg-card p-8 text-center">
+          <span aria-hidden className="text-4xl">
+            {PAUSED_ICON}
+          </span>
+          <h2 className="font-display text-xl font-bold">
+            {t('review.pausedIntro.title')}
+          </h2>
+          <p className="text-muted">{t('review.pausedIntro.body')}</p>
+          <button
+            type="button"
+            onClick={() => setPausedIntroSeen(true)}
+            className="rounded-xl border border-line bg-canvas px-5 py-2 font-semibold"
+          >
+            {t('review.pausedIntro.continue')}
+          </button>
+        </section>
+      ) : current ? (
         <>
           <div className="relative h-[30rem]">
             {next && (
@@ -311,21 +336,34 @@ function CardFace({ card, now }: { card: ReviewCard; now: Date }) {
   const { t, i18n } = useTranslation();
   const hours = (minutes: number) => formatHours(minutes, i18n.language);
   const reason = reasonFor(card, now, hours);
+  const paused = card.question === 'abandoned';
   return (
-    <article className="flex h-full flex-col overflow-hidden rounded-2xl border border-line bg-card">
+    <article
+      className={`flex h-full flex-col overflow-hidden rounded-2xl border bg-card ${
+        paused ? 'border-dashed border-muted' : 'border-line'
+      }`}
+    >
+      {/* The question first, with an icon: told apart without reading. */}
+      <p
+        className={`mx-auto mt-4 rounded-full px-4 py-1 text-sm font-semibold ${
+          paused ? 'bg-fg/10 text-fg' : 'bg-cyan/15 text-cyan'
+        }`}
+      >
+        <span aria-hidden className="mr-1.5">
+          {paused ? PAUSED_ICON : FINISHED_ICON}
+        </span>
+        {paused
+          ? t('review.question.abandoned')
+          : t('review.question.finished')}
+      </p>
       <GameCover
         title={card.title}
         coverUrl={card.coverUrl}
         heroUrl={card.heroUrl}
-        className="pointer-events-none mx-auto mt-5 w-44 shrink-0"
+        className="pointer-events-none mx-auto mt-4 w-40 shrink-0"
       />
       <div className="flex flex-1 flex-col items-center justify-center gap-2 p-5 text-center">
         <h2 className="font-display text-xl font-bold">{card.title}</h2>
-        <p className="text-lg">
-          {card.question === 'abandoned'
-            ? t('review.question.abandoned')
-            : t('review.question.finished')}
-        </p>
         <p className="text-sm text-muted">{t(reason.key, reason.values)}</p>
       </div>
     </article>
@@ -349,7 +387,9 @@ function AnswerButtons({
           type="button"
           onClick={() => onAnswer(card, direction)}
           className={`rounded-xl border px-3 py-3 text-sm font-semibold transition ${
-            direction === 'right'
+            // The highlighted answer is "yes, I finished it" only where
+            // it's the likely one: not on "did you drop it?".
+            direction === 'right' && card.question === 'finished'
               ? 'border-transparent bg-linear-to-r from-violet to-cyan text-canvas'
               : 'border-line bg-card text-fg hover:border-muted'
           }`}
@@ -371,7 +411,11 @@ function answerLabel(
 ): string {
   switch (ANSWER_BY_DIRECTION[direction]) {
     case 'finished':
-      return t('review.answer.finished');
+      // On "did you drop it?", a bare "yes" would read as "yes, I dropped
+      // it": spelled out instead.
+      return card.question === 'abandoned'
+        ? t('review.answer.finishedIt')
+        : t('review.answer.finished');
     case 'notFinished':
       // On "did you drop it?", "no" means "I'll get back to it".
       return card.question === 'abandoned'
