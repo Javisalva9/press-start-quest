@@ -136,7 +136,15 @@
     "yourLength": "Your estimate (hours):",
     "save": "Save",
     "clearLength": "Remove",
-    "steamStore": "See it on the Steam Store ↗"
+    "steamStore": "See it on the Steam Store ↗",
+    "yourCall": "Your call",
+    "statusLabel": "Status",
+    "typeLabel": "Type",
+    "serversLabel": "Servers",
+    "automatic": "Automatic ({{value}})",
+    "yourCallHint": "What you pick wins over what the app works out. “Automatic” hands the decision back to it.",
+    "closesOn": "Servers close on {{date}}.",
+    "closedOn": "Servers closed on {{date}}."
   },
   "review": {
     "title": "Catch up",
@@ -170,6 +178,19 @@
       "library": "See your library"
     }
   },
+  "gameType": {
+    "COMPLETABLE": "Completable",
+    "ENDLESS": "Endless",
+    "SANDBOX": "Sandbox",
+    "UNKNOWN": "Not classified"
+  },
+  "serverStatus": {
+    "ONLINE": "Online",
+    "ANNOUNCED": "Closure announced",
+    "PARTIAL": "Partial",
+    "CLOSED": "Closed",
+    "UNKNOWN": "No data"
+  },
   "errors": {
     "VALIDATION_FAILED": "Something in the request wasn't right. Please try again.",
     "UNAUTHENTICATED": "Your session has ended. Please sign in again.",
@@ -182,6 +203,7 @@
     "SYNC_INTERRUPTED": "The import was interrupted. Please start it again.",
     "SYNC_FAILED": "The import failed. Please try again in a few minutes.",
     "LIBRARY_GAME_NOT_FOUND": "That game isn't in your library.",
+    "LIBRARY_GAME_NOT_OWNED": "You don’t own this game yet: it’s on your wishlist.",
     "UNKNOWN": "Something went wrong. Please try again."
   }
 }

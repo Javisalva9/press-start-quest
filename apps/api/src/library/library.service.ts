@@ -1,12 +1,23 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import type {
   ApiError,
   LibraryGame,
   LibraryItem,
   LibraryPage,
   LibraryQuery,
+  UpdateLibraryGameRequest,
 } from '@psq/shared';
-import { TagKind, type Prisma } from '../generated/prisma/client.js';
+import { autoStatus } from '../catalog/auto-status.js';
+import {
+  GameStatus,
+  StatusSource,
+  TagKind,
+  type Prisma,
+} from '../generated/prisma/client.js';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { buildLibraryOrderBy, buildLibraryWhere } from './library-query.js';
 
@@ -88,15 +99,104 @@ export class LibraryService {
     return this.get(userId, id);
   }
 
+  /**
+   * The player's own word on a game: status, type and servers. Their value
+   * always wins over the app's; null hands each one back to the app. The
+   * automatic status is worked out at once, so the page shows it without
+   * waiting for the next sync.
+   */
+  async update(
+    userId: string,
+    id: string,
+    body: UpdateLibraryGameRequest,
+  ): Promise<LibraryGame> {
+    const entry = await this.prisma.userGame.findFirst({
+      where: { id, userId },
+      select: {
+        owned: true,
+        status: true,
+        statusSource: true,
+        completedAt: true,
+        playtimeMin: true,
+        lastPlayedAt: true,
+        typeOverride: true,
+        game: { select: { gameType: true } },
+      },
+    });
+    if (!entry) {
+      throw notFound();
+    }
+    if (body.status !== undefined && !entry.owned) {
+      // A wishlisted game's status comes from the store: "I want it".
+      throw new ConflictException({
+        statusCode: 409,
+        code: 'LIBRARY_GAME_NOT_OWNED',
+      } satisfies ApiError);
+    }
+
+    const data: Prisma.UserGameUpdateInput = {};
+    if (body.gameType !== undefined) {
+      data.typeOverride = body.gameType;
+    }
+    if (body.serverStatus !== undefined) {
+      data.serverOverride = body.serverStatus;
+    }
+
+    const now = new Date();
+    if (body.status) {
+      Object.assign(data, {
+        status: body.status,
+        statusSource: StatusSource.MANUAL,
+        // Keep the first completion date if it was already completed.
+        completedAt:
+          body.status === GameStatus.COMPLETED
+            ? entry.status === GameStatus.COMPLETED && entry.completedAt
+              ? entry.completedAt
+              : now
+            : null,
+      });
+    } else if (
+      entry.owned &&
+      (body.status === null || entry.statusSource === StatusSource.AUTO)
+    ) {
+      // Back to automatic, or still automatic: the type may have just
+      // changed (an endless game is never "on hold").
+      const type =
+        (body.gameType !== undefined ? body.gameType : entry.typeOverride) ??
+        entry.game.gameType;
+      Object.assign(data, {
+        status: autoStatus(
+          {
+            playtimeMin: entry.playtimeMin,
+            lastPlayedAt: entry.lastPlayedAt,
+            gameType: type,
+          },
+          now,
+        ),
+        statusSource: StatusSource.AUTO,
+        completedAt: null,
+      });
+    }
+
+    await this.prisma.userGame.update({ where: { id }, data });
+    return this.get(userId, id);
+  }
+
   async get(userId: string, id: string): Promise<LibraryGame> {
     const row = await this.prisma.userGame.findFirst({
       // userId in the filter: another user's entry is simply "not found".
       where: { id, userId },
       select: {
         ...listSelect,
+        statusSource: true,
+        typeOverride: true,
+        serverOverride: true,
         game: {
           select: {
             ...listSelect.game.select,
+            gameType: true,
+            serverStatus: true,
+            serverClosedAt: true,
             summary: true,
             developer: true,
             releaseDate: true,
@@ -144,6 +244,26 @@ export class LibraryService {
       themes: tagsOf(TagKind.THEME),
       modes: tagsOf(TagKind.MODE),
       perspectives: tagsOf(TagKind.PERSPECTIVE),
+      statusSource: row.statusSource,
+      automaticStatus: row.owned
+        ? autoStatus(
+            {
+              playtimeMin: row.playtimeMin,
+              lastPlayedAt: row.lastPlayedAt,
+              gameType: row.typeOverride ?? game.gameType,
+            },
+            new Date(),
+          )
+        : GameStatus.WISHLIST,
+      gameType: {
+        catalog: game.gameType,
+        override: pickable(row.typeOverride),
+      },
+      serverStatus: {
+        catalog: game.serverStatus,
+        override: pickable(row.serverOverride),
+        closedAt: game.serverClosedAt?.toISOString() ?? null,
+      },
       ownerships: row.ownerships.map((ownership) => ({
         platform: ownership.source.platform,
         playtimeMinutes: ownership.playtimeMin,
@@ -151,6 +271,15 @@ export class LibraryService {
       })),
     };
   }
+}
+
+/** Overrides are never UNKNOWN (the API doesn't accept it), but the column could say so. */
+function pickable<T extends string>(
+  value: T | null,
+): Exclude<T, 'UNKNOWN'> | null {
+  return value === null || value === 'UNKNOWN'
+    ? null
+    : (value as Exclude<T, 'UNKNOWN'>);
 }
 
 function notFound(): NotFoundException {

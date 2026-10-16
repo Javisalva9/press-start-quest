@@ -45,3 +45,112 @@ describe('LibraryService.setLength', () => {
     expect(prisma.game.update).not.toHaveBeenCalled();
   });
 });
+
+describe('LibraryService.update', () => {
+  const prisma = {
+    userGame: { findFirst: vi.fn(), update: vi.fn() },
+  };
+  let service: LibraryService;
+
+  const entry = (overrides: Record<string, unknown> = {}) => ({
+    owned: true,
+    status: 'ON_HOLD',
+    statusSource: 'AUTO',
+    completedAt: null,
+    playtimeMin: 600,
+    // Long ago: the automatic status is "on hold".
+    lastPlayedAt: new Date('2025-01-01T00:00:00Z'),
+    typeOverride: null,
+    game: { gameType: 'COMPLETABLE' },
+    ...overrides,
+  });
+  const saved = () => prisma.userGame.update.mock.calls[0][0].data;
+
+  beforeEach(async () => {
+    vi.resetAllMocks();
+    const moduleRef = await Test.createTestingModule({
+      providers: [LibraryService, { provide: PrismaService, useValue: prisma }],
+    }).compile();
+    service = moduleRef.get(LibraryService);
+    vi.spyOn(service, 'get').mockResolvedValue({} as never);
+  });
+
+  it("saves the player's status, which syncs never touch", async () => {
+    prisma.userGame.findFirst.mockResolvedValue(entry());
+    await service.update('u1', 'ug1', { status: 'COMPLETED' });
+    expect(saved()).toEqual({
+      status: 'COMPLETED',
+      statusSource: 'MANUAL',
+      completedAt: expect.any(Date),
+    });
+  });
+
+  it('keeps the first completion date when completed again', async () => {
+    const completedAt = new Date('2026-05-01T00:00:00Z');
+    prisma.userGame.findFirst.mockResolvedValue(
+      entry({ status: 'COMPLETED', statusSource: 'MANUAL', completedAt }),
+    );
+    await service.update('u1', 'ug1', { status: 'COMPLETED' });
+    expect(saved().completedAt).toBe(completedAt);
+  });
+
+  it('hands the status back to the app with null, worked out at once', async () => {
+    prisma.userGame.findFirst.mockResolvedValue(
+      entry({ status: 'COMPLETED', statusSource: 'MANUAL' }),
+    );
+    await service.update('u1', 'ug1', { status: null });
+    expect(saved()).toEqual({
+      status: 'ON_HOLD',
+      statusSource: 'AUTO',
+      completedAt: null,
+    });
+  });
+
+  it('saves the type and recomputes an automatic status with it', async () => {
+    prisma.userGame.findFirst.mockResolvedValue(entry());
+    await service.update('u1', 'ug1', { gameType: 'ENDLESS' });
+    // An endless game is never "on hold".
+    expect(saved()).toMatchObject({
+      typeOverride: 'ENDLESS',
+      status: 'BACKLOG',
+      statusSource: 'AUTO',
+    });
+  });
+
+  it("leaves a player's status alone when only the type changes", async () => {
+    prisma.userGame.findFirst.mockResolvedValue(
+      entry({ status: 'ABANDONED', statusSource: 'MANUAL' }),
+    );
+    await service.update('u1', 'ug1', { gameType: 'SANDBOX' });
+    expect(saved()).toEqual({ typeOverride: 'SANDBOX' });
+  });
+
+  it('saves and clears the server status', async () => {
+    prisma.userGame.findFirst.mockResolvedValue(
+      entry({ statusSource: 'MANUAL' }),
+    );
+    await service.update('u1', 'ug1', { serverStatus: 'CLOSED' });
+    expect(saved()).toEqual({ serverOverride: 'CLOSED' });
+
+    prisma.userGame.update.mockClear();
+    await service.update('u1', 'ug1', { serverStatus: null });
+    expect(saved()).toEqual({ serverOverride: null });
+  });
+
+  it('refuses a status for a game that is only wishlisted', async () => {
+    prisma.userGame.findFirst.mockResolvedValue(
+      entry({ owned: false, status: 'WISHLIST' }),
+    );
+    await expect(
+      service.update('u1', 'ug1', { status: 'COMPLETED' }),
+    ).rejects.toMatchObject({ status: 409 });
+    expect(prisma.userGame.update).not.toHaveBeenCalled();
+  });
+
+  it("answers 404 for another user's entry", async () => {
+    prisma.userGame.findFirst.mockResolvedValue(null);
+    await expect(
+      service.update('u1', 'ug9', { status: 'COMPLETED' }),
+    ).rejects.toMatchObject({ status: 404 });
+  });
+});

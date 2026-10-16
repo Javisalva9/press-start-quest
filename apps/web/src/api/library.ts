@@ -11,6 +11,7 @@ import {
   type LibraryGame,
   type LibraryPage,
   type LibraryQuery,
+  type UpdateLibraryGameRequest,
 } from '@psq/shared';
 import { authRequest } from './client';
 
@@ -95,6 +96,28 @@ export function useSetLength(id: string) {
       queryClient.setQueryData(['library-game', id], game);
       // Lists show the length too (and the length filter depends on it).
       void queryClient.invalidateQueries({ queryKey: ['library'] });
+    },
+  });
+}
+
+/** The player's own status, type or servers; null hands each back to the app. */
+export function useUpdateLibraryGame(id: string) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (
+      changes: UpdateLibraryGameRequest,
+    ): Promise<LibraryGame> =>
+      LibraryGameSchema.parse(
+        await authRequest(`/api/library/${encodeURIComponent(id)}`, {
+          method: 'PATCH',
+          body: JSON.stringify(changes),
+        }),
+      ),
+    onSuccess: (game) => {
+      queryClient.setQueryData(['library-game', id], game);
+      // Lists filter by status, and a status set by hand leaves the review.
+      void queryClient.invalidateQueries({ queryKey: ['library'] });
+      void queryClient.invalidateQueries({ queryKey: ['review-queue'] });
     },
   });
 }
