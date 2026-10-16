@@ -13,7 +13,7 @@ import {
   StatusSource,
   type Prisma,
 } from '../generated/prisma/client.js';
-import { pausedLongEnough } from '../catalog/auto-status.js';
+import { pausedLongEnough, STARTED_MIN } from '../catalog/auto-status.js';
 import { PrismaService } from '../prisma/prisma.service.js';
 
 /** How strong each signal is: a card comes back only with a stronger one. */
@@ -54,7 +54,7 @@ type CardRow = Prisma.UserGameGetPayload<{ select: typeof cardSelect }>;
  * The confirmation queue. Two kinds of cards, "did you finish it?" first:
  *
  * - Finished: games that look finished, plus, on the first load, every
- *   played one (the initial triage). Back after a "no" only with a
+ *   one played for at least an hour. Back after a "no" only with a
  *   stronger signal.
  * - Abandoned: games the app put on hold, unplayed for 3 months, that the
  *   player hasn't answered about since their last session. Any earlier
@@ -90,11 +90,13 @@ export class ReviewService {
               },
             ],
           },
-          // A reason to ask: a signal, or having played it at all.
+          // A reason to ask: a signal, or having really started it. Under
+          // an hour it was only tried (the same line as the automatic
+          // "backlog"): asking "did you finish it?" makes no sense.
           {
             OR: [
               { completionSignal: { not: null } },
-              { playtimeMin: { gt: 0 } },
+              { playtimeMin: { gte: STARTED_MIN } },
             ],
           },
         ],

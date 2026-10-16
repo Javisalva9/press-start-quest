@@ -21,7 +21,10 @@
     "signOut": "Sign out",
     "lastSync": "Last synced {{date}}",
     "neverSynced": "Never synced",
-    "syncNow": "Sync now"
+    "syncNow": "Sync now",
+    "review_one": "You have {{count}} game to review",
+    "review_other": "You have {{count}} games to review",
+    "reviewNow": "Review"
   },
   "steamPrivacy": {
     "PROFILE_PRIVATE": {
@@ -134,6 +137,38 @@
     "save": "Save",
     "clearLength": "Remove",
     "steamStore": "See it on the Steam Store ↗"
+  },
+  "review": {
+    "title": "Catch up",
+    "remaining_one": "{{count}} left",
+    "remaining_other": "{{count}} left",
+    "question": {
+      "finished": "Did you finish it?",
+      "abandoned": "Did you drop it?"
+    },
+    "reason": {
+      "allAchievements": "You have all {{total}} of its achievements.",
+      "finale": "You have “{{name}}”: {{description}}",
+      "finaleHidden": "You have the “{{name}}” achievement.",
+      "playtime": "You’ve played {{played}} and its story takes about {{story}}.",
+      "played": "You’ve played {{played}}.",
+      "paused_one": "You haven’t played it in {{count}} month ({{played}} played).",
+      "paused_other": "You haven’t played it in {{count}} months ({{played}} played).",
+      "pausedLongAgo": "You haven’t played it in a long time ({{played}} played)."
+    },
+    "answer": {
+      "finished": "Yes",
+      "notFinished": "No",
+      "resume": "I’ll get back to it",
+      "abandoned": "I dropped it",
+      "wontPlay": "I won’t play it"
+    },
+    "hint": "Swipe the card, or use the buttons or the arrow keys.",
+    "done": {
+      "title": "All reviewed!",
+      "body": "No games left to confirm. When the app spots a new one, it shows up here.",
+      "library": "See your library"
+    }
   },
   "errors": {
     "VALIDATION_FAILED": "Something in the request wasn't right. Please try again.",

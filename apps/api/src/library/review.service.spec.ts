@@ -51,6 +51,15 @@ describe('ReviewService', () => {
       );
     });
 
+    it('asks about games played for an hour, or with a signal', async () => {
+      prisma.userGame.findMany.mockResolvedValue([]);
+      await service.queue('u1', 20, NOW);
+      const { where } = prisma.userGame.findMany.mock.calls[0][0];
+      expect(where.AND).toContainEqual({
+        OR: [{ completionSignal: { not: null } }, { playtimeMin: { gte: 60 } }],
+      });
+    });
+
     it('puts the most likely finished first, then the most played', async () => {
       prisma.userGame.findMany.mockResolvedValue([
         row({ id: 'played-a-lot', playtimeMin: 3000 }),

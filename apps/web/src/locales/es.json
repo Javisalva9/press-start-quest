@@ -21,7 +21,10 @@
     "signOut": "Cerrar sesión",
     "lastSync": "Última sincronización: {{date}}",
     "neverSynced": "Nunca sincronizada",
-    "syncNow": "Sincronizar ahora"
+    "syncNow": "Sincronizar ahora",
+    "review_one": "Tienes {{count}} juego por revisar",
+    "review_other": "Tienes {{count}} juegos por revisar",
+    "reviewNow": "Revisar"
   },
   "steamPrivacy": {
     "PROFILE_PRIVATE": {
@@ -134,6 +137,38 @@
     "save": "Guardar",
     "clearLength": "Quitar",
     "steamStore": "Verlo en la tienda de Steam ↗"
+  },
+  "review": {
+    "title": "Repaso",
+    "remaining_one": "Queda {{count}}",
+    "remaining_other": "Quedan {{count}}",
+    "question": {
+      "finished": "¿Te lo pasaste?",
+      "abandoned": "¿Lo dejaste?"
+    },
+    "reason": {
+      "allAchievements": "Tienes sus {{total}} logros.",
+      "finale": "Tienes «{{name}}»: {{description}}",
+      "finaleHidden": "Tienes el logro «{{name}}».",
+      "playtime": "Llevas {{played}} y su historia dura unas {{story}}.",
+      "played": "Llevas {{played}} jugadas.",
+      "paused_one": "Hace {{count}} mes que no lo juegas ({{played}} jugadas).",
+      "paused_other": "Hace {{count}} meses que no lo juegas ({{played}} jugadas).",
+      "pausedLongAgo": "Hace mucho que no lo juegas ({{played}} jugadas)."
+    },
+    "answer": {
+      "finished": "Sí",
+      "notFinished": "No",
+      "resume": "Lo retomaré",
+      "abandoned": "Lo dejé",
+      "wontPlay": "No lo voy a jugar"
+    },
+    "hint": "Desliza la tarjeta, usa los botones o las flechas del teclado.",
+    "done": {
+      "title": "¡Todo revisado!",
+      "body": "No te queda ningún juego por confirmar. Cuando la app detecte uno nuevo, aparecerá aquí.",
+      "library": "Ver tu biblioteca"
+    }
   },
   "errors": {
     "VALIDATION_FAILED": "Algo de la petición no era correcto. Vuelve a intentarlo.",

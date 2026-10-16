@@ -2,12 +2,16 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 import { signOut } from '../api/auth';
 import { useMe } from '../api/me';
+import { useReviewQueue } from '../api/review';
 import { SteamPrivacyNotice } from '../components/SteamPrivacyNotice';
 
 /** Placeholder home: it becomes the progress screen in stage 2. */
 export default function HomePage() {
   const { t, i18n } = useTranslation();
   const me = useMe();
+  // Only the count is needed: one card is enough to get the total.
+  const review = useReviewQueue(1);
+  const toReview = review.data?.total ?? 0;
   const lastSyncAt = me.data?.lastSyncAt;
 
   return (
@@ -39,6 +43,20 @@ export default function HomePage() {
         </h1>
         <p className="mt-2 text-muted">{t('home.comingSoon')}</p>
       </section>
+
+      {toReview > 0 && (
+        <section className="flex items-center justify-between gap-4 rounded-2xl border border-line bg-card p-5">
+          <p className="font-semibold">
+            {t('home.review', { count: toReview })}
+          </p>
+          <Link
+            to="/review"
+            className="shrink-0 rounded-xl bg-linear-to-r from-violet to-cyan px-4 py-2 font-semibold text-canvas"
+          >
+            {t('home.reviewNow')}
+          </Link>
+        </section>
+      )}
 
       <section className="flex items-center justify-between gap-4 rounded-2xl border border-line bg-card p-5">
         <p className="text-sm text-muted">
