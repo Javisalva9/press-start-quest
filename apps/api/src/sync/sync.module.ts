@@ -9,6 +9,7 @@ import { FinaleRuleUpdater } from './finale-rule-updater.js';
 import { GameTypeUpdater } from './game-type-updater.js';
 import { LibraryImporter } from './library-importer.js';
 import { ServerStatusUpdater } from './server-status-updater.js';
+import { SnapshotRecorder } from './snapshot-recorder.js';
 import { SyncController } from './sync.controller.js';
 import { SyncService } from './sync.service.js';
 import { WishlistImporter } from './wishlist-importer.js';
@@ -27,6 +28,9 @@ import { WishlistImporter } from './wishlist-importer.js';
     FinaleRuleUpdater,
     CompletionDetector,
     AutoStatusUpdater,
+    SnapshotRecorder,
   ],
+  // The nightly job (internal module) runs syncs too.
+  exports: [SyncService],
 })
 export class SyncModule {}

@@ -1,0 +1,60 @@
+name: Nightly sync
+
+# Every night, every user's library is synced and that day's playtime
+# photos are saved: the history the streaks and the monthly chart come
+# from. Steam only gives running totals, so a night without photos is a
+# gap that can't be filled later.
+on:
+  schedule:
+    # 23:30 UTC: 00:30 in Madrid in winter, 01:30 in summer. Inside the
+    # "gaming day", which ends at 4:00 (see gaming-day.ts), so the day's
+    # play is filed under that day, with room for GitHub's usual delays
+    # with scheduled runs.
+    - cron: '30 23 * * *'
+  # Also by hand, from the Actions tab: to try it, or to catch up a night.
+  workflow_dispatch:
+
+# Two runs never overlap: a slow night isn't cut short by the next one.
+concurrency:
+  group: nightly-sync
+  cancel-in-progress: false
+
+# It only calls our API: it needs no access to the repository.
+permissions: {}
+
+jobs:
+  sync:
+    name: Sync every user
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Call the API
+        env:
+          # Repository variable (not secret): the API's public URL on Render.
+          API_URL: ${{ vars.API_URL }}
+          JOBS_TOKEN: ${{ secrets.JOBS_TOKEN }}
+        run: |
+          # Render's free plan stops the API after 15 minutes without a new
+          # request, and doesn't say whether one long open request counts.
+          # While the sync runs (and only then), a light request every 5
+          # minutes tells Render there's work going on. It stops as soon as
+          # the sync is over, so the API still goes to sleep as usual. A
+          # nightly sync takes a minute or two: if it ever gets near 15,
+          # that's worth looking into, not just keeping awake.
+          (
+            while true; do
+              sleep 300
+              curl --silent --output /dev/null "$API_URL/api/health" || true
+            done
+          ) &
+          keep_awake=$!
+          # On the way out, stop the loop and the sleep it's waiting on.
+          trap 'pkill -P "$keep_awake" || true; kill "$keep_awake" 2>/dev/null || true' EXIT
+
+          # The retries cover Render waking the API up (up to a minute).
+          # The request stays open until every sync is done.
+          curl --fail-with-body --silent --show-error \
+            --retry 5 --retry-delay 30 --retry-all-errors \
+            --max-time 2400 \
+            --request POST "$API_URL/api/internal/jobs/daily" \
+            --header "Authorization: Bearer $JOBS_TOKEN"

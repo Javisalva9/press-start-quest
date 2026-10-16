@@ -22,6 +22,15 @@ const EnvSchema = z.object({
   // IGDB is accessed with a Twitch application (dev.twitch.tv/console).
   IGDB_CLIENT_ID: z.string().min(1),
   IGDB_CLIENT_SECRET: z.string().min(1),
+  // Shared with the nightly GitHub workflow, which sends it to call
+  // /api/internal/jobs/daily. Optional: without it those routes are off.
+  // Generate it like JWT_SECRET.
+  // An empty JOBS_TOKEN= line counts as not set.
+  JOBS_TOKEN: z
+    .string()
+    .optional()
+    .transform((value) => value || undefined)
+    .pipe(z.string().min(32).optional()),
 });
 
 export type Env = z.infer<typeof EnvSchema>;

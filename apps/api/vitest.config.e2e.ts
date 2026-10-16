@@ -13,6 +13,7 @@ export default defineConfig({
       STEAM_API_KEY: 'e2e-test-steam-key',
       IGDB_CLIENT_ID: 'e2e-test-igdb-client',
       IGDB_CLIENT_SECRET: 'e2e-test-igdb-secret',
+      JOBS_TOKEN: 'e2e-test-jobs-token-that-is-at-least-32-characters',
     },
   },
 });
