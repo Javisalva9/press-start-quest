@@ -19,6 +19,8 @@ import {
 import { PrismaService } from '../prisma/prisma.service.js';
 import { AchievementsImporter } from './achievements-importer.js';
 import { CatalogEnricher } from './catalog-enricher.js';
+import { CompletionDetector } from './completion-detector.js';
+import { FinaleRuleUpdater } from './finale-rule-updater.js';
 import { GameTypeUpdater } from './game-type-updater.js';
 import { LibraryImporter } from './library-importer.js';
 import { ServerStatusUpdater } from './server-status-updater.js';
@@ -61,6 +63,8 @@ export class SyncService implements BeforeApplicationShutdown {
     private readonly gameTypes: GameTypeUpdater,
     private readonly serverStatus: ServerStatusUpdater,
     private readonly achievements: AchievementsImporter,
+    private readonly finaleRules: FinaleRuleUpdater,
+    private readonly completions: CompletionDetector,
   ) {}
 
   /** Starts a sync, or returns the one already running for this user. */
@@ -214,6 +218,9 @@ export class SyncService implements BeforeApplicationShutdown {
         imported.touchedUserGameIds,
         (fraction) => progress(85 + fraction * 13),
       );
+      // Needs the achievements just read; both only read our database.
+      await this.finaleRules.update(userId);
+      await this.completions.update(userId);
       const coverage = await this.enricher.coverage(userId);
       const stats: SyncStats = {
         ...imported.stats,

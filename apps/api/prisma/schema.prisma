@@ -28,6 +28,13 @@ enum StatusSource {
   MANUAL
 }
 
+// Why a game looks finished, shown on its confirmation card.
+enum CompletionSignal {
+  ALL_ACHIEVEMENTS
+  FINALE_ACHIEVEMENT
+  PLAYTIME
+}
+
 enum GameType {
   COMPLETABLE
   ENDLESS
@@ -193,6 +200,7 @@ model UserGame {
   status               GameStatus         @default(BACKLOG)
   statusSource         StatusSource       @default(AUTO)
   completionConfidence Float?
+  completionSignal     CompletionSignal?
   owned                Boolean            @default(true)
   wishlistPriority     Int?
   wishlistedAt         DateTime?
@@ -240,15 +248,18 @@ model Ownership {
 // A game's achievements, shared by every player: the catalog, like games.
 // Read in English, so a name can tell a "finish the game" achievement.
 model Achievement {
-  id          String            @id @default(cuid())
-  gameId      String
-  platform    Platform
+  id           String            @id @default(cuid())
+  gameId       String
+  platform     Platform
   // The store's own id (Steam's apiname): unique within a game and store.
-  externalId  String
-  name        String
-  description String
-  game        Game              @relation(fields: [gameId], references: [id], onDelete: Cascade)
-  unlocks     UserAchievement[]
+  externalId   String
+  name         String
+  description  String
+  // A "finish the game" achievement according to the phrase rules
+  // (catalog/finale-achievement.ts), kept up to date on every sync.
+  finaleByRule Boolean           @default(false)
+  game         Game              @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  unlocks      UserAchievement[]
 
   @@unique([gameId, platform, externalId])
   @@map("achievements")

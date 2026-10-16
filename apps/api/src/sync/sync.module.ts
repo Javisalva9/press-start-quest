@@ -3,6 +3,8 @@ import { IgdbModule } from '../providers/igdb/igdb.module.js';
 import { SteamModule } from '../providers/steam/steam.module.js';
 import { AchievementsImporter } from './achievements-importer.js';
 import { CatalogEnricher } from './catalog-enricher.js';
+import { CompletionDetector } from './completion-detector.js';
+import { FinaleRuleUpdater } from './finale-rule-updater.js';
 import { GameTypeUpdater } from './game-type-updater.js';
 import { LibraryImporter } from './library-importer.js';
 import { ServerStatusUpdater } from './server-status-updater.js';
@@ -21,6 +23,8 @@ import { WishlistImporter } from './wishlist-importer.js';
     GameTypeUpdater,
     ServerStatusUpdater,
     AchievementsImporter,
+    FinaleRuleUpdater,
+    CompletionDetector,
   ],
 })
 export class SyncModule {}

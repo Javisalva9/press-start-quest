@@ -3,6 +3,8 @@ import { Prisma } from '../generated/prisma/client.js';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { AchievementsImporter } from './achievements-importer.js';
 import { CatalogEnricher } from './catalog-enricher.js';
+import { CompletionDetector } from './completion-detector.js';
+import { FinaleRuleUpdater } from './finale-rule-updater.js';
 import { GameTypeUpdater } from './game-type-updater.js';
 import { LibraryImporter } from './library-importer.js';
 import { ServerStatusUpdater } from './server-status-updater.js';
@@ -43,6 +45,8 @@ describe('SyncService', () => {
   const achievements = { importSteam: vi.fn() };
   const gameTypes = { update: vi.fn() };
   const serverStatus = { update: vi.fn() };
+  const finaleRules = { update: vi.fn() };
+  const completions = { update: vi.fn() };
   let service: SyncService;
 
   /** Lets the background job run until it settles. */
@@ -75,6 +79,8 @@ describe('SyncService', () => {
     enricher.coverage.mockResolvedValue({ notGames: 1, withoutDuration: 2 });
     gameTypes.update.mockResolvedValue(0);
     serverStatus.update.mockResolvedValue(0);
+    finaleRules.update.mockResolvedValue(0);
+    completions.update.mockResolvedValue(0);
   };
 
   beforeEach(async () => {
@@ -90,6 +96,8 @@ describe('SyncService', () => {
         { provide: AchievementsImporter, useValue: achievements },
         { provide: GameTypeUpdater, useValue: gameTypes },
         { provide: ServerStatusUpdater, useValue: serverStatus },
+        { provide: FinaleRuleUpdater, useValue: finaleRules },
+        { provide: CompletionDetector, useValue: completions },
       ],
     }).compile();
     service = moduleRef.get(SyncService);
@@ -112,6 +120,8 @@ describe('SyncService', () => {
     // Classified after the catalog is enriched.
     expect(gameTypes.update).toHaveBeenCalledWith('u1');
     expect(serverStatus.update).toHaveBeenCalledWith('u1');
+    // After the achievements: the detector needs them.
+    expect(completions.update).toHaveBeenCalledWith('u1');
     expect(achievements.importSteam).toHaveBeenCalledWith(
       'u1',
       ['ug1'],

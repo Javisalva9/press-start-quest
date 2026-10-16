@@ -1,0 +1,794 @@
+[
+  {
+    "game": "Arizona Sunshine® VR Remake",
+    "name": "Almost there",
+    "description": "Finish the level Sunshine",
+    "finale": false
+  },
+  {
+    "game": "Arizona Sunshine® VR Remake",
+    "name": "And the award for Can Killer goes to...",
+    "description": "Finish the level Base",
+    "finale": false
+  },
+  {
+    "game": "Arizona Sunshine® VR Remake",
+    "name": "Barracuda",
+    "description": "Complete the Damned DLC",
+    "finale": false
+  },
+  {
+    "game": "Arizona Sunshine® VR Remake",
+    "name": "Biting the Bullet",
+    "description": "Finish the level Refinery",
+    "finale": false
+  },
+  {
+    "game": "Arizona Sunshine® VR Remake",
+    "name": "Hard Boiled",
+    "description": "Complete the campaign on Apocalyptic Mode!",
+    "finale": true
+  },
+  {
+    "game": "Arizona Sunshine® VR Remake",
+    "name": "Rescued!",
+    "description": "Complete the entire campaign!",
+    "finale": true
+  },
+  {
+    "game": "BattleBlock Theater",
+    "name": "All Around Joe",
+    "description": "Be on the winning team in one arena match of every mode.",
+    "finale": false
+  },
+  {
+    "game": "BattleBlock Theater",
+    "name": "Cast Member",
+    "description": "Complete the story's opening sequence in any mode.",
+    "finale": false
+  },
+  {
+    "game": "BattleBlock Theater",
+    "name": "Coop Star",
+    "description": "Get a letter grade in every level (except Encores) in Normal Co-op Story Mode.",
+    "finale": false
+  },
+  {
+    "game": "BattleBlock Theater",
+    "name": "Crowd Pleaser",
+    "description": "Complete all the Encores in any mode.",
+    "finale": false
+  },
+  {
+    "game": "Curse of the Dead Gods",
+    "name": "Clairvoyance",
+    "description": "Complete any exploration with 50 or more Perception",
+    "finale": false
+  },
+  {
+    "game": "Curse of the Dead Gods",
+    "name": "Diligence",
+    "description": "Complete 10 different \"Special Events\"",
+    "finale": false
+  },
+  {
+    "game": "Curse of the Dead Gods",
+    "name": "Initiation",
+    "description": "Complete the room of Trials",
+    "finale": false
+  },
+  {
+    "game": "Curse of the Dead Gods",
+    "name": "Invulnerability",
+    "description": "Complete any exploration with 50 or more Constitution",
+    "finale": false
+  },
+  {
+    "game": "Curse of the Dead Gods",
+    "name": "Relief",
+    "description": "Lift the Final Curse",
+    "finale": true
+  },
+  {
+    "game": "Dead Cells",
+    "name": "8th wonder",
+    "description": "Reach the Lighthouse for the first time!",
+    "finale": false
+  },
+  {
+    "game": "Dead Cells",
+    "name": "Blade Master",
+    "description": "You have beaten the \"Time Keeper\"!",
+    "finale": false
+  },
+  {
+    "game": "Dead Cells",
+    "name": "Born sapper",
+    "description": "You completed the Derelict Distillery without using the Barrel Launcher!",
+    "finale": false
+  },
+  {
+    "game": "Dead Cells",
+    "name": "Death comes for us all... but not you!",
+    "description": "You beat Death!",
+    "finale": false
+  },
+  {
+    "game": "Dead Cells",
+    "name": "Up to the eyeball in debt",
+    "description": "Beat the game with the maximum debt remaining.",
+    "finale": true
+  },
+  {
+    "game": "Dead Cells",
+    "name": "Who's a good boi?",
+    "description": "Finish the game without sacrificing the Mushroom Boi!",
+    "finale": true
+  },
+  {
+    "game": "Desperados III",
+    "name": "Hardcore",
+    "description": "Finish a mission on \"Desperado\" difficulty.",
+    "finale": false
+  },
+  {
+    "game": "Desperados III",
+    "name": "Most Entertaining",
+    "description": "Complete 5 of the Baron's Challenges.",
+    "finale": false
+  },
+  {
+    "game": "Enter the Gungeon",
+    "name": "Beast Master",
+    "description": "Complete the game with Beast Mode on",
+    "finale": true
+  },
+  {
+    "game": "Enter the Gungeon",
+    "name": "Castle Crasher",
+    "description": "Clear the First Chamber 50 Times",
+    "finale": false
+  },
+  {
+    "game": "Enter the Gungeon",
+    "name": "Dungeon Diver",
+    "description": "Clear the Second Chamber 40 Times",
+    "finale": false
+  },
+  {
+    "game": "Enter the Gungeon",
+    "name": "Forger",
+    "description": "Clear the Fifth Chamber 10 Times",
+    "finale": false
+  },
+  {
+    "game": "Enter the Gungeon",
+    "name": "Gungeon Acolyte",
+    "description": "Complete the Tutorial",
+    "finale": false
+  },
+  {
+    "game": "Going Medieval",
+    "name": "Market Mastery",
+    "description": "Complete Charter Fair",
+    "finale": false
+  },
+  {
+    "game": "Going Medieval",
+    "name": "Mind Over Matter",
+    "description": "Complete New University",
+    "finale": false
+  },
+  {
+    "game": "Going Medieval",
+    "name": "Natural Order",
+    "description": "Complete Pagan Sanctuary",
+    "finale": false
+  },
+  {
+    "game": "Going Medieval",
+    "name": "Redemption",
+    "description": "Complete Centre Of Pilgrimage",
+    "finale": false
+  },
+  {
+    "game": "Hades",
+    "name": "Champion of Elysium",
+    "description": "Clear Elysium with the 'Extreme Measures' Condition",
+    "finale": false
+  },
+  {
+    "game": "Hades",
+    "name": "Complete Set",
+    "description": "Earn all Chthonic Companions",
+    "finale": false
+  },
+  {
+    "game": "Hades",
+    "name": "Death Dealer",
+    "description": "Beat Thanatos by 15 kills or more",
+    "finale": false
+  },
+  {
+    "game": "Hades",
+    "name": "End to Torment",
+    "description": "Fulfill the 'End to Torment' Prophecy",
+    "finale": false
+  },
+  {
+    "game": "Hades",
+    "name": "One for the Ages",
+    "description": "Reach the epilogue of the story",
+    "finale": true
+  },
+  {
+    "game": "Hades",
+    "name": "The Family Secret",
+    "description": "Complete the main quest in the story",
+    "finale": true
+  },
+  {
+    "game": "Hollow Knight",
+    "name": "Ascension",
+    "description": "Collect 2400 Essence and hear the Seer's final words",
+    "finale": false
+  },
+  {
+    "game": "Hollow Knight",
+    "name": "Completion",
+    "description": "Achieve 100% game completion and finish the game",
+    "finale": true
+  },
+  {
+    "game": "Hollow Knight",
+    "name": "Conqueror",
+    "description": "Complete the Trial of the Conqueror",
+    "finale": false
+  },
+  {
+    "game": "Hollow Knight",
+    "name": "Fool",
+    "description": "Complete the Trial of the Fool",
+    "finale": false
+  },
+  {
+    "game": "Hollow Knight",
+    "name": "Pure Completion",
+    "description": "Achieve 112% game completion and finish the game.",
+    "finale": true
+  },
+  {
+    "game": "Hollow Knight",
+    "name": "Speed Completion",
+    "description": "Achieve 100% game completion and finish the game in under 20 hours",
+    "finale": true
+  },
+  {
+    "game": "Hollow Knight",
+    "name": "Speedrun 1",
+    "description": "Complete the game in under 10 hours",
+    "finale": true
+  },
+  {
+    "game": "Hollow Knight",
+    "name": "Speedrun 2",
+    "description": "Complete the game in under 5 hours",
+    "finale": true
+  },
+  {
+    "game": "Hollow Knight",
+    "name": "Steel Heart",
+    "description": "Achieve 100% game completion and finish the game in Steel Soul mode",
+    "finale": true
+  },
+  {
+    "game": "Hollow Knight",
+    "name": "Steel Soul",
+    "description": "Finish the game in Steel Soul mode",
+    "finale": true
+  },
+  {
+    "game": "Hollow Knight",
+    "name": "Warrior",
+    "description": "Complete the Trial of the Warrior",
+    "finale": false
+  },
+  {
+    "game": "Kingdom Two Crowns",
+    "name": "Easter Island",
+    "description": "Clear all trees from a single land.",
+    "finale": false
+  },
+  {
+    "game": "Kingdom Two Crowns",
+    "name": "End of an Odyssey",
+    "description": "Conquer Mount Olympus",
+    "finale": false
+  },
+  {
+    "game": "Kingdom Two Crowns",
+    "name": "Mediterranean Vacation",
+    "description": "Beat all portals on all ten lands",
+    "finale": false
+  },
+  {
+    "game": "Kingdom Two Crowns",
+    "name": "On the Seventh Day",
+    "description": "You cleared an acre of land.",
+    "finale": false
+  },
+  {
+    "game": "Moonlighter",
+    "name": "100%",
+    "description": "Complete all achievements",
+    "finale": false
+  },
+  {
+    "game": "Moonlighter",
+    "name": "Careful Merchant",
+    "description": "Complete the game under 40 deaths",
+    "finale": true
+  },
+  {
+    "game": "Moonlighter",
+    "name": "Gotta go fast!",
+    "description": "Beat Game Under 10 hours",
+    "finale": false
+  },
+  {
+    "game": "Moonlighter",
+    "name": "Scribe",
+    "description": "Complete the Notebook",
+    "finale": false
+  },
+  {
+    "game": "Plan B: Terraform",
+    "name": "Epic gamer",
+    "description": "Finish the game with all settings on max difficulty.",
+    "finale": true
+  },
+  {
+    "game": "Plan B: Terraform",
+    "name": "No time to waste",
+    "description": "Finish the game under 100 years",
+    "finale": true
+  },
+  {
+    "game": "Scribblenauts Unlimited",
+    "name": "Window Shopping",
+    "description": "Download a custom object from another player",
+    "finale": false
+  },
+  {
+    "game": "Skul: The Hero Slayer",
+    "name": "An Endless Appetite for Research",
+    "description": "",
+    "finale": false
+  },
+  {
+    "game": "Skul: The Hero Slayer",
+    "name": "The End of the Gold Mane Knights",
+    "description": "",
+    "finale": false
+  },
+  {
+    "game": "Skul: The Hero Slayer",
+    "name": "The Final Battle of the First Hero",
+    "description": "",
+    "finale": true
+  },
+  {
+    "game": "Skul: The Hero Slayer",
+    "name": "The Final Mystery of the Arts",
+    "description": "",
+    "finale": false
+  },
+  {
+    "game": "Slay the Spire",
+    "name": "Amethyst",
+    "description": "Beat the game with the Watcher.",
+    "finale": true
+  },
+  {
+    "game": "Slay the Spire",
+    "name": "Amethyst+",
+    "description": "Complete the Ending with the Watcher.",
+    "finale": true
+  },
+  {
+    "game": "Slay the Spire",
+    "name": "Ascend 10",
+    "description": "Complete Ascension Level 10.",
+    "finale": false
+  },
+  {
+    "game": "Slay the Spire",
+    "name": "Ascend 20",
+    "description": "Complete Ascension Level 20.",
+    "finale": false
+  },
+  {
+    "game": "Slay the Spire",
+    "name": "Come At Me",
+    "description": "Win a combat without playing an Attack.",
+    "finale": false
+  },
+  {
+    "game": "Slay the Spire",
+    "name": "Common Sense",
+    "description": "Beat the game with a deck containing no uncommons or rares.",
+    "finale": true
+  },
+  {
+    "game": "Slay the Spire",
+    "name": "Emerald",
+    "description": "Beat the game with the Silent.",
+    "finale": true
+  },
+  {
+    "game": "Slay the Spire",
+    "name": "Minimalist",
+    "description": "Beat the game with a 5 card deck or smaller.",
+    "finale": true
+  },
+  {
+    "game": "Slay the Spire",
+    "name": "My Lucky Day",
+    "description": "Win a Daily Climb.",
+    "finale": false
+  },
+  {
+    "game": "Slay the Spire",
+    "name": "Ruby",
+    "description": "Beat the game with the Ironclad.",
+    "finale": true
+  },
+  {
+    "game": "Slay the Spire",
+    "name": "Sapphire",
+    "description": "Beat the game with the Defect.",
+    "finale": true
+  },
+  {
+    "game": "Slay the Spire",
+    "name": "Speed Climber",
+    "description": "Beat the game in under 20 minutes.",
+    "finale": true
+  },
+  {
+    "game": "Slay the Spire",
+    "name": "Who Needs Relics?",
+    "description": "Beat the game with a single relic.",
+    "finale": true
+  },
+  {
+    "game": "The Elder Scrolls V: Skyrim",
+    "name": "Alduin's Wall",
+    "description": "Complete \"Alduin's Wall\"",
+    "finale": false
+  },
+  {
+    "game": "The Elder Scrolls V: Skyrim",
+    "name": "Architect",
+    "description": "Build three wings on a house",
+    "finale": false
+  },
+  {
+    "game": "The Elder Scrolls V: Skyrim",
+    "name": "At the Summit of Apocrypha",
+    "description": "Complete \"At the Summit of Apocrypha\"",
+    "finale": false
+  },
+  {
+    "game": "The Elder Scrolls V: Skyrim",
+    "name": "Awakening",
+    "description": "Complete \"Awakening\"",
+    "finale": false
+  },
+  {
+    "game": "The Walking Dead",
+    "name": "Abandoner",
+    "description": "Completed Wyatt's Chapter.",
+    "finale": false
+  },
+  {
+    "game": "The Walking Dead",
+    "name": "Adventures in Babysitting",
+    "description": "Complete chapter 2 of episode 1.",
+    "finale": false
+  },
+  {
+    "game": "The Walking Dead",
+    "name": "Bad Blood",
+    "description": "Completed chapter 2 of episode 3.",
+    "finale": false
+  },
+  {
+    "game": "The Walking Dead",
+    "name": "Bedside Manor",
+    "description": "Completed chapter 4 of episode 4.",
+    "finale": false
+  },
+  {
+    "game": "The Walking Dead",
+    "name": "Loose Ends",
+    "description": "Completed the Epilogue.",
+    "finale": true
+  },
+  {
+    "game": "Total War: SHOGUN 2",
+    "name": "A Blow to the Temple",
+    "description": "Win the Battle of Ueno without capturing any of the key temple buildings. [Fall of the Samurai only]",
+    "finale": false
+  },
+  {
+    "game": "Total War: SHOGUN 2",
+    "name": "A Promising Beginning",
+    "description": "Win a campaign on easy difficulty.",
+    "finale": true
+  },
+  {
+    "game": "Total War: SHOGUN 2",
+    "name": "A Respectable Rule",
+    "description": "Win a campaign on normal difficulty.",
+    "finale": true
+  },
+  {
+    "game": "Total War: SHOGUN 2",
+    "name": "Advanced Firearms",
+    "description": "Be the first clan in the campaign to obtain gunpowder mastery.",
+    "finale": false
+  },
+  {
+    "game": "Total War: SHOGUN 2",
+    "name": "Against All Odds",
+    "description": "Win a campaign on legendary difficulty.",
+    "finale": true
+  },
+  {
+    "game": "Total War: SHOGUN 2",
+    "name": "Agent Provocateur",
+    "description": "Playing as the Choshu, incite 3 rebellions in the same campaign using an ishin shishi. [Fall of the Samurai only]",
+    "finale": false
+  },
+  {
+    "game": "Total War: SHOGUN 2",
+    "name": "Agent of the Stealthy Blade",
+    "description": "Obtain a maximum level ninja in the campaign.",
+    "finale": false
+  },
+  {
+    "game": "Total War: SHOGUN 2",
+    "name": "Chosokabe Victory",
+    "description": "Win a campaign as the Chosokabe clan.",
+    "finale": true
+  },
+  {
+    "game": "Total War: SHOGUN 2",
+    "name": "Date Victory",
+    "description": "Win a campaign as the Date clan.",
+    "finale": true
+  },
+  {
+    "game": "Total War: SHOGUN 2",
+    "name": "Ezo Republic",
+    "description": "Declare your independence and complete a campaign. [Fall of the Samurai only]",
+    "finale": true
+  },
+  {
+    "game": "Total War: SHOGUN 2",
+    "name": "Famed Shogun",
+    "description": "Win a campaign on hard difficulty.",
+    "finale": true
+  },
+  {
+    "game": "Total War: SHOGUN 2",
+    "name": "Hero of the Empire",
+    "description": "Win a campaign on legendary difficulty playing as either the Satsuma, the Tosa or the Choshu. [Fall of the Samurai only]",
+    "finale": true
+  },
+  {
+    "game": "Total War: SHOGUN 2",
+    "name": "Hero of the Shogunate",
+    "description": "Win a campaign on legendary difficulty playing as either the Aizu, the Jozai or the Nagaoka. [Fall of the Samurai only]",
+    "finale": true
+  },
+  {
+    "game": "Total War: SHOGUN 2",
+    "name": "Hojo Victory",
+    "description": "Win a campaign as the Hojo clan.",
+    "finale": true
+  },
+  {
+    "game": "Total War: SHOGUN 2",
+    "name": "Mori Victory",
+    "description": "Win a campaign as the Mori clan.",
+    "finale": true
+  },
+  {
+    "game": "Total War: SHOGUN 2",
+    "name": "Oda Victory",
+    "description": "Win a campaign as the Oda clan.",
+    "finale": true
+  },
+  {
+    "game": "Total War: SHOGUN 2",
+    "name": "One Rule Under God",
+    "description": "Win a campaign as a Christian daimyo.",
+    "finale": true
+  },
+  {
+    "game": "Total War: SHOGUN 2",
+    "name": "Shimazu Victory",
+    "description": "Win a campaign as the Shimazu clan.",
+    "finale": true
+  },
+  {
+    "game": "Total War: SHOGUN 2",
+    "name": "Stubborn Pursuer of Victory",
+    "description": "Win a campaign on very hard difficulty.",
+    "finale": true
+  },
+  {
+    "game": "Total War: SHOGUN 2",
+    "name": "Takeda Victory",
+    "description": "Win a campaign as the Takeda clan.",
+    "finale": true
+  },
+  {
+    "game": "Total War: SHOGUN 2",
+    "name": "Tokugawa Victory",
+    "description": "Win a campaign as the Tokugawa clan.",
+    "finale": true
+  },
+  {
+    "game": "Total War: SHOGUN 2",
+    "name": "Uesugi Victory",
+    "description": "Win a campaign as the Uesugi clan.",
+    "finale": true
+  },
+  {
+    "game": "Totally Accurate Battle Simulator",
+    "name": "Accountant",
+    "description": "Win a level with only half of the gold given or less",
+    "finale": false
+  },
+  {
+    "game": "Totally Accurate Battle Simulator",
+    "name": "Adventurer",
+    "description": "Finish The Adventure campaign",
+    "finale": false
+  },
+  {
+    "game": "Totally Accurate Battle Simulator",
+    "name": "Ancient Aspiration",
+    "description": "Win a battle with each ancient unit",
+    "finale": false
+  },
+  {
+    "game": "Totally Accurate Battle Simulator",
+    "name": "Bad ass Campaigner",
+    "description": "Finish all Campaigns without being defeated even once",
+    "finale": false
+  },
+  {
+    "game": "Totally Accurate Battle Simulator",
+    "name": "Tactician",
+    "description": "Beat a campaign without possessing a unit",
+    "finale": true
+  },
+  {
+    "game": "V Rising",
+    "name": "Completed Act 1",
+    "description": "Defeat Quincey the Bandit King and complete Act I.",
+    "finale": false
+  },
+  {
+    "game": "V Rising",
+    "name": "Completed Act 1 on Brutal Difficulty",
+    "description": "Defeat Quincey the Bandit King and complete Act I on Brutal Difficulty.",
+    "finale": false
+  },
+  {
+    "game": "V Rising",
+    "name": "Completed Act 2",
+    "description": "Defeat Octavian the Militia Leader and complete Act II.",
+    "finale": false
+  },
+  {
+    "game": "V Rising",
+    "name": "Completed Act 2 on Brutal Difficulty",
+    "description": "Defeat Octavian the Militia Leader and complete Act II on Brutal Difficulty.",
+    "finale": false
+  },
+  {
+    "game": "Vampire Survivors",
+    "name": "EXTRA: A Garlic Paradise",
+    "description": "Complete once the adventure A Garlic Paradise.",
+    "finale": false
+  },
+  {
+    "game": "Vampire Survivors",
+    "name": "EXTRA: Brave Story",
+    "description": "Find the Brave Story at minute 18 in Space 54.",
+    "finale": false
+  },
+  {
+    "game": "Vampire Survivors",
+    "name": "EXTRA: Game Speed Modifier",
+    "description": "Find the Roast chicken with a clock in the middle at the end of The Coop.",
+    "finale": false
+  },
+  {
+    "game": "Vampire Survivors",
+    "name": "EXTRA: To End An Ice Age",
+    "description": "Complete once the adventure To End An Ice Age.",
+    "finale": false
+  },
+  {
+    "game": "Vampire Survivors",
+    "name": "Game Killer",
+    "description": "Defeat the final enemy in the Cappella Magna.",
+    "finale": true
+  },
+  {
+    "game": "XCOM 2",
+    "name": "A Final Stand",
+    "description": "",
+    "finale": false
+  },
+  {
+    "game": "XCOM 2",
+    "name": "A New Alliance",
+    "description": "Complete the Lost and Abandoned mission",
+    "finale": false
+  },
+  {
+    "game": "XCOM 2",
+    "name": "A Torch Passed",
+    "description": "Beat the Lost Towers mission",
+    "finale": false
+  },
+  {
+    "game": "XCOM 2",
+    "name": "Beginner's Luck",
+    "description": "Beat a mission in June or later using only Rookies",
+    "finale": false
+  },
+  {
+    "game": "XCOM 2",
+    "name": "Exquisite Timing",
+    "description": "Beat the game on Commander+ difficulty by July 1st (July 15th for War of the Chosen)",
+    "finale": true
+  },
+  {
+    "game": "XCOM 2",
+    "name": "The Few and the Proud",
+    "description": "Beat the game on Commander+ difficulty without buying a Squad Size upgrade",
+    "finale": true
+  },
+  {
+    "game": "XCOM 2",
+    "name": "The Untouchables",
+    "description": "Beat the game on Commander+ without losing a soldier",
+    "finale": true
+  },
+  {
+    "game": "XCOM 2",
+    "name": "There's A Future In The Past",
+    "description": "Complete a single player campaign with Tactical Legacy Pack content",
+    "finale": true
+  },
+  {
+    "game": "XCOM 2",
+    "name": "Valhalla",
+    "description": "Beat the game on Commander+ difficulty in Ironman mode",
+    "finale": true
+  },
+  {
+    "game": "XCOM 2",
+    "name": "Who Needs Tygan?",
+    "description": "Beat the final mission using only conventional gear",
+    "finale": true
+  }
+]
