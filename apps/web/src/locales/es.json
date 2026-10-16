@@ -154,6 +154,11 @@
       "finished": "¿Te lo pasaste?",
       "abandoned": "¿Lo dejaste?"
     },
+    "pausedIntro": {
+      "title": "Juegos en pausa",
+      "body": "Ahora vienen los juegos que llevas tiempo sin tocar, y la pregunta cambia: ¿los dejaste?",
+      "continue": "Seguir"
+    },
     "reason": {
       "allAchievements": "Tienes sus {{total}} logros.",
       "finale": "Tienes «{{name}}»: {{description}}",
@@ -166,6 +171,7 @@
     },
     "answer": {
       "finished": "Sí",
+      "finishedIt": "Me lo pasé",
       "notFinished": "No",
       "resume": "Lo retomaré",
       "abandoned": "Lo dejé",

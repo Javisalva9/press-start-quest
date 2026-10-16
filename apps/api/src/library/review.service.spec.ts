@@ -5,9 +5,13 @@ import { ReviewService } from './review.service.js';
 const NOW = new Date('2026-10-16T12:00:00Z');
 const daysAgo = (days: number) => new Date(NOW.getTime() - days * 86_400_000);
 
+/**
+ * By default a game that gets a card without any signal: completable, of
+ * unknown length, played for 10 h and not being played now.
+ */
 const row = (overrides: Record<string, unknown> = {}) => ({
   id: 'ug1',
-  status: 'PLAYING',
+  status: 'ON_HOLD',
   playtimeMin: 600,
   lastPlayedAt: daysAgo(5),
   achievementsUnlocked: 3,
@@ -16,7 +20,14 @@ const row = (overrides: Record<string, unknown> = {}) => ({
   completionConfidence: null,
   reviewedAt: null,
   reviewedSignal: null,
-  game: { title: 'Game', coverUrl: null, heroUrl: null, ttbMainMin: 700 },
+  typeOverride: null,
+  game: {
+    title: 'Game',
+    coverUrl: null,
+    heroUrl: null,
+    ttbMainMin: null,
+    gameType: 'COMPLETABLE',
+  },
   achievements: [],
   ...overrides,
 });
@@ -60,6 +71,51 @@ describe('ReviewService', () => {
       });
     });
 
+    it('asks without a signal only about completable games of unknown length', async () => {
+      const game = (gameType: string, ttbMainMin: number | null) => ({
+        title: 'Game',
+        coverUrl: null,
+        heroUrl: null,
+        ttbMainMin,
+        gameType,
+      });
+      prisma.userGame.findMany.mockResolvedValue([
+        row({ id: 'unknown-length' }),
+        // Known length under 80 %: no signal, no card (Hades at 66 %).
+        row({ id: 'known-length', game: game('COMPLETABLE', 2321) }),
+        // Under 5 hours.
+        row({ id: 'short', playtimeMin: 299 }),
+        // Being played now: obviously not finished.
+        row({ id: 'playing', status: 'PLAYING' }),
+        // A sandbox is finished by its goal, not its hours.
+        row({ id: 'sandbox', game: game('SANDBOX', null) }),
+        row({ id: 'unknown-type', game: game('UNKNOWN', null) }),
+        // The player's type wins: they said it's completable.
+        row({
+          id: 'override',
+          typeOverride: 'COMPLETABLE',
+          game: game('SANDBOX', null),
+        }),
+        // Any signal is enough, whatever the rest.
+        row({
+          id: 'signal',
+          status: 'PLAYING',
+          playtimeMin: 60,
+          completionSignal: 'FINALE_ACHIEVEMENT',
+          completionConfidence: 0.9,
+          game: game('SANDBOX', 2000),
+        }),
+      ]);
+
+      const { items } = await service.queue('u1', 20, NOW);
+      expect(
+        items
+          .filter((card) => card.question === 'finished')
+          .map((card) => card.id)
+          .sort(),
+      ).toEqual(['override', 'signal', 'unknown-length']);
+    });
+
     it('puts the most likely finished first, then the most played', async () => {
       prisma.userGame.findMany.mockResolvedValue([
         row({ id: 'played-a-lot', playtimeMin: 3000 }),
@@ -68,7 +124,7 @@ describe('ReviewService', () => {
           completionSignal: 'PLAYTIME',
           completionConfidence: 0.6,
         }),
-        row({ id: 'played-a-bit', playtimeMin: 30 }),
+        row({ id: 'played-a-bit', playtimeMin: 400 }),
         row({
           id: 'finale',
           completionSignal: 'FINALE_ACHIEVEMENT',
@@ -175,6 +231,13 @@ describe('ReviewService', () => {
         row({
           completionSignal: 'FINALE_ACHIEVEMENT',
           completionConfidence: 0.9,
+          game: {
+            title: 'Moonlighter',
+            coverUrl: null,
+            heroUrl: null,
+            ttbMainMin: 700,
+            gameType: 'COMPLETABLE',
+          },
           achievements: [
             {
               achievement: {

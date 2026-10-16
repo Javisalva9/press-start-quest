@@ -154,6 +154,11 @@
       "finished": "Did you finish it?",
       "abandoned": "Did you drop it?"
     },
+    "pausedIntro": {
+      "title": "Games on hold",
+      "body": "Next come the games you haven’t touched in a while, and the question changes: did you drop them?",
+      "continue": "Continue"
+    },
     "reason": {
       "allAchievements": "You have all {{total}} of its achievements.",
       "finale": "You have “{{name}}”: {{description}}",
@@ -166,6 +171,7 @@
     },
     "answer": {
       "finished": "Yes",
+      "finishedIt": "I finished it",
       "notFinished": "No",
       "resume": "I’ll get back to it",
       "abandoned": "I dropped it",
