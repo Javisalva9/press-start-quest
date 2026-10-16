@@ -111,6 +111,19 @@ describe('API (e2e)', () => {
     return request(app.getHttpServer()).get('/api/library').expect(401);
   });
 
+  it('GET /api/library/review-queue requires a token', () => {
+    return request(app.getHttpServer())
+      .get('/api/library/review-queue')
+      .expect(401);
+  });
+
+  it('POST /api/library/review-queue/:id requires a token', () => {
+    return request(app.getHttpServer())
+      .post('/api/library/review-queue/x')
+      .send({ answer: 'finished' })
+      .expect(401);
+  });
+
   it('PATCH /api/library/:id/length requires a token', () => {
     return request(app.getHttpServer())
       .patch('/api/library/x/length')
