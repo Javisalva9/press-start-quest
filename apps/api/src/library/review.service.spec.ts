@@ -2,9 +2,14 @@ import { Test } from '@nestjs/testing';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { ReviewService } from './review.service.js';
 
+const NOW = new Date('2026-10-16T12:00:00Z');
+const daysAgo = (days: number) => new Date(NOW.getTime() - days * 86_400_000);
+
 const row = (overrides: Record<string, unknown> = {}) => ({
   id: 'ug1',
+  status: 'PLAYING',
   playtimeMin: 600,
+  lastPlayedAt: daysAgo(5),
   achievementsUnlocked: 3,
   achievementsTotal: 10,
   completionSignal: null,
@@ -34,7 +39,7 @@ describe('ReviewService', () => {
   describe('queue', () => {
     it('asks only about games whose status the player has not set', async () => {
       prisma.userGame.findMany.mockResolvedValue([]);
-      await service.queue('u1', 20);
+      await service.queue('u1', 20, NOW);
       expect(prisma.userGame.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           where: expect.objectContaining({
@@ -62,7 +67,7 @@ describe('ReviewService', () => {
         }),
       ]);
 
-      const { items, total } = await service.queue('u1', 20);
+      const { items, total } = await service.queue('u1', 20, NOW);
       expect(items.map((card) => card.id)).toEqual([
         'finale',
         'playtime',
@@ -99,10 +104,51 @@ describe('ReviewService', () => {
         row({ id: 'nothing-new', reviewedAt: reviewed, reviewedSignal: null }),
       ]);
 
-      const { items } = await service.queue('u1', 20);
+      const { items } = await service.queue('u1', 20, NOW);
       expect(items.map((card) => card.id).sort()).toEqual([
         'first-signal',
         'stronger',
+      ]);
+    });
+
+    it('asks "did you drop it?" after 3 months on hold, after the rest', async () => {
+      prisma.userGame.findMany.mockResolvedValue([
+        // Paused 4 months, answered "no" before its last session: asks.
+        row({
+          id: 'paused-long',
+          status: 'ON_HOLD',
+          lastPlayedAt: daysAgo(120),
+          reviewedAt: daysAgo(200),
+        }),
+        // Paused 2 months: not yet.
+        row({
+          id: 'paused-short',
+          status: 'ON_HOLD',
+          lastPlayedAt: daysAgo(60),
+          reviewedAt: daysAgo(200),
+        }),
+        // Answered after its last session: already had the chance.
+        row({
+          id: 'answered',
+          status: 'ON_HOLD',
+          lastPlayedAt: daysAgo(120),
+          reviewedAt: daysAgo(10),
+        }),
+        // No date and answered: final.
+        row({
+          id: 'no-date',
+          status: 'ON_HOLD',
+          lastPlayedAt: null,
+          reviewedAt: daysAgo(10),
+        }),
+        // Never reviewed: the initial "did you finish it?" comes first.
+        row({ id: 'triage', status: 'ON_HOLD', lastPlayedAt: daysAgo(120) }),
+      ]);
+
+      const { items } = await service.queue('u1', 20, NOW);
+      expect(items.map((card) => [card.id, card.question])).toEqual([
+        ['triage', 'finished'],
+        ['paused-long', 'abandoned'],
       ]);
     });
 
@@ -110,7 +156,7 @@ describe('ReviewService', () => {
       prisma.userGame.findMany.mockResolvedValue(
         Array.from({ length: 5 }, (_, i) => row({ id: `ug${i}` })),
       );
-      const { items, total } = await service.queue('u1', 2);
+      const { items, total } = await service.queue('u1', 2, NOW);
       expect(items).toHaveLength(2);
       expect(total).toBe(5);
     });
@@ -130,10 +176,11 @@ describe('ReviewService', () => {
           ],
         }),
       ]);
-      const { items } = await service.queue('u1', 20);
+      const { items } = await service.queue('u1', 20, NOW);
       expect(items[0]).toMatchObject({
         signal: 'FINALE_ACHIEVEMENT',
         confidence: 0.9,
+        question: 'finished',
         finaleAchievement: { name: 'Careful Merchant' },
         achievements: { unlocked: 3, total: 10 },
         mainStoryMinutes: 700,

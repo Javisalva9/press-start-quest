@@ -13,6 +13,7 @@ import {
   StatusSource,
   type Prisma,
 } from '../generated/prisma/client.js';
+import { pausedLongEnough } from '../catalog/auto-status.js';
 import { PrismaService } from '../prisma/prisma.service.js';
 
 /** How strong each signal is: a card comes back only with a stronger one. */
@@ -28,7 +29,9 @@ const strength = (signal: CompletionSignal | null) =>
 /** What a card needs, and what decides whether it shows. */
 const cardSelect = {
   id: true,
+  status: true,
   playtimeMin: true,
+  lastPlayedAt: true,
   achievementsUnlocked: true,
   achievementsTotal: true,
   completionSignal: true,
@@ -48,15 +51,27 @@ const cardSelect = {
 type CardRow = Prisma.UserGameGetPayload<{ select: typeof cardSelect }>;
 
 /**
- * The confirmation queue: games that look finished, plus, on the first
- * load, every played one (the initial triage). The player answers with a
- * swipe, and each answer takes the game out of the queue.
+ * The confirmation queue. Two kinds of cards, "did you finish it?" first:
+ *
+ * - Finished: games that look finished, plus, on the first load, every
+ *   played one (the initial triage). Back after a "no" only with a
+ *   stronger signal.
+ * - Abandoned: games the app put on hold, unplayed for 3 months, that the
+ *   player hasn't answered about since their last session. Any earlier
+ *   card already offered "I dropped it", so after an answer it only comes
+ *   back if they play again and pause again.
+ *
+ * The player answers with a swipe, and each answer takes the card out.
  */
 @Injectable()
 export class ReviewService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async queue(userId: string, limit: number): Promise<ReviewQueue> {
+  async queue(
+    userId: string,
+    limit: number,
+    now = new Date(),
+  ): Promise<ReviewQueue> {
     const rows = await this.prisma.userGame.findMany({
       where: {
         userId,
@@ -88,8 +103,9 @@ export class ReviewService {
     });
 
     // "Stronger than the one answered" compares enum values, which Prisma
-    // can't filter by order: done here, on the few rows left.
-    const waiting = rows
+    // can't filter by order, and the dates compare two columns: done here,
+    // on the few rows left.
+    const finished = rows
       .filter(
         (row) =>
           row.reviewedAt === null ||
@@ -101,11 +117,29 @@ export class ReviewService {
           (b.completionConfidence ?? 0) - (a.completionConfidence ?? 0) ||
           b.playtimeMin - a.playtimeMin,
       );
+    const asked = new Set(finished.map((row) => row.id));
+    const abandoned = rows
+      .filter(
+        (row) =>
+          !asked.has(row.id) &&
+          row.status === GameStatus.ON_HOLD &&
+          pausedLongEnough(row.lastPlayedAt, now) &&
+          // Not answered since the last session. With no date, any answer
+          // is final: there's no "playing again" to notice.
+          (row.reviewedAt === null ||
+            (row.lastPlayedAt !== null && row.reviewedAt < row.lastPlayedAt)),
+      )
+      // Paused the longest first.
+      .sort(
+        (a, b) =>
+          (a.lastPlayedAt?.getTime() ?? 0) - (b.lastPlayedAt?.getTime() ?? 0),
+      );
 
-    return {
-      items: waiting.slice(0, limit).map(toReviewCard),
-      total: waiting.length,
-    };
+    const cards = [
+      ...finished.map((row) => toReviewCard(row, 'finished')),
+      ...abandoned.map((row) => toReviewCard(row, 'abandoned')),
+    ];
+    return { items: cards.slice(0, limit), total: cards.length };
   }
 
   /**
@@ -172,14 +206,19 @@ function isAnswerStatus(status: GameStatus): boolean {
   );
 }
 
-function toReviewCard(row: CardRow): ReviewCard {
+function toReviewCard(
+  row: CardRow,
+  question: ReviewCard['question'],
+): ReviewCard {
   const finale = row.achievements[0]?.achievement ?? null;
   return {
     id: row.id,
+    question,
     title: row.game.title,
     coverUrl: row.game.coverUrl,
     heroUrl: row.game.heroUrl,
     playtimeMinutes: row.playtimeMin,
+    lastPlayedAt: row.lastPlayedAt?.toISOString() ?? null,
     mainStoryMinutes: row.game.ttbMainMin,
     achievements:
       row.achievementsTotal !== null && row.achievementsTotal > 0

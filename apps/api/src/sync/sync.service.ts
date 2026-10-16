@@ -18,6 +18,7 @@ import {
 } from '../generated/prisma/client.js';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { AchievementsImporter } from './achievements-importer.js';
+import { AutoStatusUpdater } from './auto-status-updater.js';
 import { CatalogEnricher } from './catalog-enricher.js';
 import { CompletionDetector } from './completion-detector.js';
 import { FinaleRuleUpdater } from './finale-rule-updater.js';
@@ -65,6 +66,7 @@ export class SyncService implements BeforeApplicationShutdown {
     private readonly achievements: AchievementsImporter,
     private readonly finaleRules: FinaleRuleUpdater,
     private readonly completions: CompletionDetector,
+    private readonly statuses: AutoStatusUpdater,
   ) {}
 
   /** Starts a sync, or returns the one already running for this user. */
@@ -221,6 +223,7 @@ export class SyncService implements BeforeApplicationShutdown {
       // Needs the achievements just read; both only read our database.
       await this.finaleRules.update(userId);
       await this.completions.update(userId);
+      await this.statuses.update(userId);
       const coverage = await this.enricher.coverage(userId);
       const stats: SyncStats = {
         ...imported.stats,

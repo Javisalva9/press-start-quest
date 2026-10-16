@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { IgdbModule } from '../providers/igdb/igdb.module.js';
 import { SteamModule } from '../providers/steam/steam.module.js';
 import { AchievementsImporter } from './achievements-importer.js';
+import { AutoStatusUpdater } from './auto-status-updater.js';
 import { CatalogEnricher } from './catalog-enricher.js';
 import { CompletionDetector } from './completion-detector.js';
 import { FinaleRuleUpdater } from './finale-rule-updater.js';
@@ -25,6 +26,7 @@ import { WishlistImporter } from './wishlist-importer.js';
     AchievementsImporter,
     FinaleRuleUpdater,
     CompletionDetector,
+    AutoStatusUpdater,
   ],
 })
 export class SyncModule {}
