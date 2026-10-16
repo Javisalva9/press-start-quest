@@ -36,8 +36,8 @@ interface ReadGame {
  *
  * One request per game, so only for games that need it: played and never
  * read (achievementsTotal is null), whose playtime changed in this sync, or
- * with unlocked achievements but no names saved. A game without
- * achievements is saved as 0 / 0, so it's not asked again.
+ * whose catalog or unlocks are missing. A game without achievements is
+ * saved as 0 / 0, so it's not asked again.
  */
 @Injectable()
 export class AchievementsImporter {
@@ -65,8 +65,13 @@ export class AchievementsImporter {
         OR: [
           { achievementsTotal: null },
           { id: { in: touchedUserGameIds } },
-          // Counted but without names: read before names were saved (or
-          // their rows were lost). Heals itself on the next sync.
+          // Read before names were saved, or rows lost: the game has
+          // achievements but none in the catalog, or the player has
+          // unlocked some but none is linked. Heals itself on the next sync.
+          {
+            achievementsTotal: { gt: 0 },
+            game: { achievements: { none: { platform: Platform.STEAM } } },
+          },
           { achievementsUnlocked: { gt: 0 }, achievements: { none: {} } },
         ],
       },

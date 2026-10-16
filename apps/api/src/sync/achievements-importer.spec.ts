@@ -160,7 +160,7 @@ describe('AchievementsImporter', () => {
     expect(JSON.stringify(transaction())).not.toContain('ug1');
   });
 
-  it('reads again games counted before names were saved', async () => {
+  it('reads again games counted before names were saved, even with none unlocked', async () => {
     prisma.userGame.findMany.mockResolvedValue([]);
 
     await importer.importSteam('u1', ['ug9'], () => Promise.resolve());
@@ -171,6 +171,10 @@ describe('AchievementsImporter', () => {
           OR: [
             { achievementsTotal: null },
             { id: { in: ['ug9'] } },
+            {
+              achievementsTotal: { gt: 0 },
+              game: { achievements: { none: { platform: 'STEAM' } } },
+            },
             { achievementsUnlocked: { gt: 0 }, achievements: { none: {} } },
           ],
         }),
