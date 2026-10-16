@@ -1,21 +1,44 @@
-import { Body, Controller, Get, Param, Patch, Query } from '@nestjs/common';
-import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  Param,
+  Patch,
+  Post,
+  Query,
+} from '@nestjs/common';
+import {
+  ApiBearerAuth,
+  ApiNoContentResponse,
+  ApiOkResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import {
   LibraryQuerySchema,
+  ReviewAnswerRequestSchema,
+  ReviewQueueQuerySchema,
   UpdateLengthRequestSchema,
   type LibraryGame,
   type LibraryPage,
   type LibraryQuery,
+  type ReviewAnswerRequest,
+  type ReviewQueue,
+  type ReviewQueueQuery,
   type UpdateLengthRequest,
 } from '@psq/shared';
 import { CurrentUser, type AuthUser } from '../auth/current-user.decorator.js';
 import { LibraryService } from './library.service.js';
+import { ReviewService } from './review.service.js';
 
 @ApiTags('library')
 @ApiBearerAuth()
 @Controller('library')
 export class LibraryController {
-  constructor(private readonly library: LibraryService) {}
+  constructor(
+    private readonly library: LibraryService,
+    private readonly review: ReviewService,
+  ) {}
 
   @Get()
   @ApiOkResponse({ description: 'A page of the library, filtered and sorted' })
@@ -24,6 +47,27 @@ export class LibraryController {
     @Query({ schema: LibraryQuerySchema }) query: LibraryQuery,
   ): Promise<LibraryPage> {
     return this.library.list(user.id, query);
+  }
+
+  // Before ':id', or "review-queue" would be taken for a game id.
+  @Get('review-queue')
+  @ApiOkResponse({ description: 'Games waiting for "did you finish it?"' })
+  reviewQueue(
+    @CurrentUser() user: AuthUser,
+    @Query({ schema: ReviewQueueQuerySchema }) query: ReviewQueueQuery,
+  ): Promise<ReviewQueue> {
+    return this.review.queue(user.id, query.limit);
+  }
+
+  @Post('review-queue/:id')
+  @HttpCode(204)
+  @ApiNoContentResponse({ description: 'Answer saved' })
+  answerReview(
+    @CurrentUser() user: AuthUser,
+    @Param('id') id: string,
+    @Body({ schema: ReviewAnswerRequestSchema }) body: ReviewAnswerRequest,
+  ): Promise<void> {
+    return this.review.answer(user.id, id, body);
   }
 
   @Get(':id')

@@ -201,6 +201,10 @@ model UserGame {
   statusSource         StatusSource       @default(AUTO)
   completionConfidence Float?
   completionSignal     CompletionSignal?
+  // The player's last "no, not finished" on the confirmation queue, and
+  // the signal it answered: the card only comes back with a stronger one.
+  reviewedAt           DateTime?
+  reviewedSignal       CompletionSignal?
   owned                Boolean            @default(true)
   wishlistPriority     Int?
   wishlistedAt         DateTime?
