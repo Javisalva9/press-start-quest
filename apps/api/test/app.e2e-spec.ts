@@ -12,7 +12,7 @@ describe('API (e2e)', () => {
   let app: INestApplication<App>;
   const prisma = {
     $queryRaw: vi.fn().mockResolvedValue([]),
-    user: { findUnique: vi.fn() },
+    user: { findUnique: vi.fn(), findMany: vi.fn().mockResolvedValue([]) },
     session: {
       findUnique: vi.fn().mockResolvedValue(null),
       deleteMany: vi.fn().mockResolvedValue({ count: 0 }),
@@ -105,6 +105,39 @@ describe('API (e2e)', () => {
     return request(app.getHttpServer())
       .get('/api/sources/steam/privacy')
       .expect(401);
+  });
+
+  describe('POST /api/internal/jobs/daily', () => {
+    const route = '/api/internal/jobs/daily';
+
+    it('needs the jobs token', () => {
+      return request(app.getHttpServer()).post(route).expect(401);
+    });
+
+    it("doesn't take a user's session instead", async () => {
+      const userToken = await app
+        .get(JwtService)
+        .signAsync({ sub: 'u1' }, { algorithm: 'HS256' });
+      return request(app.getHttpServer())
+        .post(route)
+        .set('Authorization', `Bearer ${userToken}`)
+        .expect(401);
+    });
+
+    it('runs with the jobs token', () => {
+      return request(app.getHttpServer())
+        .post(route)
+        .set('Authorization', `Bearer ${process.env.JOBS_TOKEN}`)
+        .expect(200)
+        .expect((res) => {
+          expect(res.body).toEqual({
+            users: 0,
+            synced: 0,
+            skipped: 0,
+            failed: 0,
+          });
+        });
+    });
   });
 
   it('GET /api/library requires a token', () => {

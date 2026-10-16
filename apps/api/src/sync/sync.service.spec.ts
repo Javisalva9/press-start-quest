@@ -9,6 +9,7 @@ import { FinaleRuleUpdater } from './finale-rule-updater.js';
 import { GameTypeUpdater } from './game-type-updater.js';
 import { LibraryImporter } from './library-importer.js';
 import { ServerStatusUpdater } from './server-status-updater.js';
+import { SnapshotRecorder } from './snapshot-recorder.js';
 import { WishlistImporter } from './wishlist-importer.js';
 import { SyncError } from './sync-error.js';
 import { HEARTBEAT_MS, STALE_AFTER_MS, SyncService } from './sync.service.js';
@@ -49,6 +50,7 @@ describe('SyncService', () => {
   const finaleRules = { update: vi.fn() };
   const completions = { update: vi.fn() };
   const statuses = { update: vi.fn() };
+  const snapshots = { record: vi.fn() };
   let service: SyncService;
 
   /** Lets the background job run until it settles. */
@@ -84,6 +86,7 @@ describe('SyncService', () => {
     finaleRules.update.mockResolvedValue(0);
     completions.update.mockResolvedValue(0);
     statuses.update.mockResolvedValue(0);
+    snapshots.record.mockResolvedValue(0);
   };
 
   beforeEach(async () => {
@@ -102,6 +105,7 @@ describe('SyncService', () => {
         { provide: FinaleRuleUpdater, useValue: finaleRules },
         { provide: CompletionDetector, useValue: completions },
         { provide: AutoStatusUpdater, useValue: statuses },
+        { provide: SnapshotRecorder, useValue: snapshots },
       ],
     }).compile();
     service = moduleRef.get(SyncService);
@@ -127,6 +131,12 @@ describe('SyncService', () => {
     // After the achievements: the detector needs them.
     expect(completions.update).toHaveBeenCalledWith('u1');
     expect(statuses.update).toHaveBeenCalledWith('u1');
+    // Today's playtime photo of what changed.
+    expect(snapshots.record).toHaveBeenCalledWith(
+      'u1',
+      ['ug1'],
+      expect.stringMatching(/^\d{4}-\d{2}-\d{2}$/),
+    );
     expect(achievements.importSteam).toHaveBeenCalledWith(
       'u1',
       ['ug1'],
@@ -332,5 +342,28 @@ describe('SyncService', () => {
   it('does not touch the database on shutdown when nothing runs', async () => {
     await service.beforeApplicationShutdown('SIGTERM');
     expect(prisma.syncJob.updateMany).not.toHaveBeenCalled();
+  });
+
+  it('runs a sync and waits for it, for the nightly job', async () => {
+    prisma.syncJob.findFirst.mockResolvedValue(null);
+    prisma.syncJob.create.mockResolvedValue(job());
+    succeedingSync();
+    prisma.syncJob.findUniqueOrThrow.mockResolvedValue(
+      job({ status: 'DONE', progress: 100 }),
+    );
+
+    await expect(service.runAndWait('u1')).resolves.toMatchObject({
+      status: 'DONE',
+    });
+    // Waited: the sync had already finished.
+    expect(achievements.importSteam).toHaveBeenCalled();
+  });
+
+  it('does not wait for a sync started elsewhere', async () => {
+    prisma.syncJob.findFirst.mockResolvedValue(
+      job({ status: 'RUNNING', updatedAt: new Date() }),
+    );
+    await expect(service.runAndWait('u1')).resolves.toBeNull();
+    expect(prisma.syncJob.create).not.toHaveBeenCalled();
   });
 });

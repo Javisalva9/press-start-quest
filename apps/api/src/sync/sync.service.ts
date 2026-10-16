@@ -25,6 +25,8 @@ import { FinaleRuleUpdater } from './finale-rule-updater.js';
 import { GameTypeUpdater } from './game-type-updater.js';
 import { LibraryImporter } from './library-importer.js';
 import { ServerStatusUpdater } from './server-status-updater.js';
+import { SnapshotRecorder } from './snapshot-recorder.js';
+import { gamingDay } from './gaming-day.js';
 import { WishlistImporter } from './wishlist-importer.js';
 import { SyncError } from './sync-error.js';
 
@@ -67,13 +69,41 @@ export class SyncService implements BeforeApplicationShutdown {
     private readonly finaleRules: FinaleRuleUpdater,
     private readonly completions: CompletionDetector,
     private readonly statuses: AutoStatusUpdater,
+    private readonly snapshots: SnapshotRecorder,
   ) {}
 
   /** Starts a sync, or returns the one already running for this user. */
   async start(userId: string): Promise<SyncJob> {
+    const { job, done } = await this.begin(userId);
+    // Not awaited on purpose: it goes on after the response is sent.
+    // run() never throws: every error ends up in the job.
+    void done;
+    return job;
+  }
+
+  /**
+   * For the nightly job: starts a sync and waits until it's over, so the
+   * request that asked for it keeps the API awake meanwhile. Null if one
+   * was already running for this user (started from their phone).
+   */
+  async runAndWait(userId: string): Promise<SyncJob | null> {
+    const { job, done } = await this.begin(userId);
+    if (!done) {
+      return null;
+    }
+    await done;
+    return toSyncJob(
+      await this.prisma.syncJob.findUniqueOrThrow({ where: { id: job.id } }),
+    );
+  }
+
+  /** Creates the job and starts it; `done` is null if one was running. */
+  private async begin(
+    userId: string,
+  ): Promise<{ job: SyncJob; done: Promise<void> | null }> {
     const active = await this.findActive(userId);
     if (active && !isStale(active)) {
-      return toSyncJob(active);
+      return { job: toSyncJob(active), done: null };
     }
     if (active) {
       await this.markInterruptedIfStale(active.id);
@@ -89,16 +119,13 @@ export class SyncService implements BeforeApplicationShutdown {
         ? await this.findActive(userId)
         : null;
       if (winner) {
-        return toSyncJob(winner);
+        return { job: toSyncJob(winner), done: null };
       }
       throw error;
     }
 
     this.running.add(job.id);
-    // Not awaited on purpose: it goes on after the response is sent.
-    // run() never throws: every error ends up in the job.
-    void this.run(job.id, userId);
-    return toSyncJob(job);
+    return { job: toSyncJob(job), done: this.run(job.id, userId) };
   }
 
   async getJob(userId: string, jobId: string): Promise<SyncJob> {
@@ -204,6 +231,12 @@ export class SyncService implements BeforeApplicationShutdown {
       // the Steam Store (wishlist names, enrichment) is the slow part.
       const imported = await this.importer.importSteam(userId, (value) =>
         progress(5 + value * 0.1),
+      );
+      // Playtime history: today's photo of what changed.
+      await this.snapshots.record(
+        userId,
+        imported.touchedUserGameIds,
+        gamingDay(new Date()),
       );
       const { wishlistItems } = await this.wishlist.importSteam(
         userId,
