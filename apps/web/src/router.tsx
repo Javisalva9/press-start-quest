@@ -1,5 +1,6 @@
 import { createBrowserRouter, Navigate } from 'react-router';
 import { ProtectedLayout } from './components/ProtectedLayout';
+import AddGamePage from './pages/AddGamePage';
 import GamePage from './pages/GamePage';
 import HomePage from './pages/HomePage';
 import LibraryPage from './pages/LibraryPage';
@@ -18,6 +19,7 @@ export const router = createBrowserRouter([
       { index: true, element: <HomePage /> },
       { path: 'sync', element: <SyncPage /> },
       { path: 'library', element: <LibraryPage /> },
+      { path: 'library/add', element: <AddGamePage /> },
       { path: 'library/:id', element: <GamePage /> },
       { path: 'review', element: <ReviewPage /> },
     ],

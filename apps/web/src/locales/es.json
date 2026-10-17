@@ -114,7 +114,8 @@
     "loadMore": "Cargar más",
     "played": "{{hours}} jugadas",
     "notPlayed": "Sin jugar",
-    "lengthSuffix": " · ~{{hours}}"
+    "lengthSuffix": " · ~{{hours}}",
+    "add": "+ Añadir"
   },
   "game": {
     "back": "← Volver",
@@ -141,10 +142,12 @@
     "statusLabel": "Estado",
     "typeLabel": "Tipo",
     "serversLabel": "Servidores",
-    "automatic": "Automático ({{value}})",
-    "yourCallHint": "Lo que elijas tú manda sobre lo que calcula la app. «Automático» le devuelve la decisión.",
     "closesOn": "Los servidores cierran el {{date}}.",
-    "closedOn": "Los servidores cerraron el {{date}}."
+    "closedOn": "Los servidores cerraron el {{date}}.",
+    "ownedIn": "Lo tienes en: {{stores}}",
+    "chosenByYou": "Elegido por ti",
+    "backToAutomatic": "Volver a automático",
+    "setByApp": "Calculado por la app"
   },
   "review": {
     "title": "Repaso",
@@ -196,6 +199,32 @@
     "PARTIAL": "Parcial",
     "CLOSED": "Cerrados",
     "UNKNOWN": "Sin datos"
+  },
+  "platform": {
+    "STEAM": "Steam",
+    "EPIC": "Epic",
+    "EXTERNAL": "Otra tienda"
+  },
+  "add": {
+    "title": "Añadir juego",
+    "searchLabel": "Busca el juego",
+    "searchPlaceholder": "Hades, Half-Life: Alyx…",
+    "noResults": "No encontramos juegos de PC con ese nombre.",
+    "inLibrary": {
+      "owned": "Ya lo tienes",
+      "wishlist": "En «Lo quiero»"
+    },
+    "originLabel": "¿Lo tienes?",
+    "originWishlist": "No, lo quiero",
+    "originExternal": "Sí, fuera de Steam",
+    "sourceLabel": "¿Dónde?",
+    "sourcePlaceholder": "Jack Sparrow, Epic…",
+    "hoursLabel": "Horas jugadas (opcional)",
+    "hoursInvalid": "Escribe un número de horas, como 12 o 1,5.",
+    "statusAutomatic": "Lo calcula la app",
+    "back": "Elegir otro",
+    "submit": "Añadir",
+    "adding": "Añadiendo…"
   },
   "errors": {
     "VALIDATION_FAILED": "Algo de la petición no era correcto. Vuelve a intentarlo.",

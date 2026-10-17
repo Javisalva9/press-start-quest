@@ -28,6 +28,8 @@ export const OWNED_STATUSES = [
   'DISCARDED',
 ] as const satisfies readonly GameStatus[];
 
+export type OwnedStatus = (typeof OWNED_STATUSES)[number];
+
 /** Same values as the GameType enum in the database. */
 export const GAME_TYPES = [
   'COMPLETABLE',

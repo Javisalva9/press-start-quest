@@ -135,6 +135,8 @@ export default function GamePage() {
           ))}
         </dl>
 
+        <StoresLine game={data} />
+
         <YourCallSection game={data} />
 
         <LengthSection game={data} />
@@ -310,55 +312,56 @@ function YourCallSection({ game }: { game: LibraryGame }) {
         <Picker
           id="game-status"
           label={t('game.statusLabel')}
-          value={game.statusSource === 'MANUAL' ? game.status : ''}
-          automatic={t(`status.${game.automaticStatus}`)}
+          value={game.status}
+          chosenByPlayer={game.statusSource === 'MANUAL'}
           options={OWNED_STATUSES.map((status) => [
             status,
             t(`status.${status}`),
           ])}
           disabled={update.isPending}
-          onChange={(value) =>
-            update.mutate({
-              status: (value || null) as (typeof OWNED_STATUSES)[number] | null,
-            })
+          onPick={(value) =>
+            update.mutate({ status: value as (typeof OWNED_STATUSES)[number] })
           }
+          onReset={() => update.mutate({ status: null })}
         />
       )}
 
       <Picker
         id="game-type"
         label={t('game.typeLabel')}
-        value={game.gameType.override ?? ''}
-        automatic={t(`gameType.${game.gameType.catalog}`)}
+        value={game.gameType.override ?? game.gameType.catalog}
+        chosenByPlayer={game.gameType.override !== null}
         options={PICKABLE_GAME_TYPES.map((type) => [
           type,
           t(`gameType.${type}`),
         ])}
+        unknownLabel={t('gameType.UNKNOWN')}
         disabled={update.isPending}
-        onChange={(value) =>
+        onPick={(value) =>
           update.mutate({
-            gameType: (value || null) as
-              (typeof PICKABLE_GAME_TYPES)[number] | null,
+            gameType: value as (typeof PICKABLE_GAME_TYPES)[number],
           })
         }
+        onReset={() => update.mutate({ gameType: null })}
       />
 
       <Picker
         id="game-servers"
         label={t('game.serversLabel')}
-        value={game.serverStatus.override ?? ''}
-        automatic={t(`serverStatus.${game.serverStatus.catalog}`)}
+        value={server}
+        chosenByPlayer={game.serverStatus.override !== null}
         options={PICKABLE_SERVER_STATUSES.map((status) => [
           status,
           t(`serverStatus.${status}`),
         ])}
+        unknownLabel={t('serverStatus.UNKNOWN')}
         disabled={update.isPending}
-        onChange={(value) =>
+        onPick={(value) =>
           update.mutate({
-            serverStatus: (value || null) as
-              (typeof PICKABLE_SERVER_STATUSES)[number] | null,
+            serverStatus: value as (typeof PICKABLE_SERVER_STATUSES)[number],
           })
         }
+        onReset={() => update.mutate({ serverStatus: null })}
       />
       {closingNote && (
         <p
@@ -373,49 +376,107 @@ function YourCallSection({ game }: { game: LibraryGame }) {
           {t(`errors.${errorCode}`)}
         </p>
       )}
-      <p className="text-xs text-muted">{t('game.yourCallHint')}</p>
     </section>
   );
 }
 
-/** A labelled select whose first option, "automatic", is the empty value. */
+/**
+ * A labelled select showing the value itself ("On hold"), not who set it.
+ * Below, in small print, where it comes from: the app, or the player with
+ * a way to hand it back. Picking a value makes it the player's.
+ */
 function Picker({
   id,
   label,
   value,
-  automatic,
+  chosenByPlayer,
   options,
+  unknownLabel,
   disabled,
-  onChange,
+  onPick,
+  onReset,
 }: {
   id: string;
   label: string;
   value: string;
-  automatic: string;
+  chosenByPlayer: boolean;
   options: ReadonlyArray<readonly [string, string]>;
+  /** Shown, but not pickable, when the app doesn't know ("UNKNOWN"). */
+  unknownLabel?: string;
   disabled: boolean;
-  onChange: (value: string) => void;
+  onPick: (value: string) => void;
+  onReset: () => void;
 }) {
   const { t } = useTranslation();
+  const known = options.some(([option]) => option === value);
   return (
-    <div className="flex items-center justify-between gap-3">
-      <label htmlFor={id} className="text-sm text-muted">
-        {label}
-      </label>
-      <select
-        id={id}
-        value={value}
-        disabled={disabled}
-        onChange={(event) => onChange(event.target.value)}
-        className="min-w-0 rounded-lg border border-line bg-canvas px-2 py-1.5 text-sm disabled:opacity-60"
-      >
-        <option value="">{t('game.automatic', { value: automatic })}</option>
-        {options.map(([option, text]) => (
-          <option key={option} value={option}>
-            {text}
-          </option>
-        ))}
-      </select>
+    <div className="flex flex-col gap-1">
+      <div className="flex items-center justify-between gap-3">
+        <label htmlFor={id} className="text-sm text-muted">
+          {label}
+        </label>
+        <select
+          id={id}
+          value={value}
+          disabled={disabled}
+          onChange={(event) => onPick(event.target.value)}
+          className="min-w-0 rounded-lg border border-line bg-canvas px-2 py-1.5 text-sm disabled:opacity-60"
+        >
+          {!known && (
+            <option value={value} disabled>
+              {unknownLabel ?? value}
+            </option>
+          )}
+          {options.map(([option, text]) => (
+            <option key={option} value={option}>
+              {text}
+            </option>
+          ))}
+        </select>
+      </div>
+      <p className="self-end text-xs text-muted">
+        {chosenByPlayer ? (
+          <>
+            {t('game.chosenByYou')}
+            {' · '}
+            <button
+              type="button"
+              onClick={onReset}
+              disabled={disabled}
+              className="text-cyan underline-offset-2 hover:underline"
+            >
+              {t('game.backToAutomatic')}
+            </button>
+          </>
+        ) : (
+          t('game.setByApp')
+        )}
+      </p>
     </div>
+  );
+}
+
+/**
+ * Where the game is owned, when it's more than plain Steam: an external
+ * store ("Jack Sparrow") or several, each with its hours.
+ */
+function StoresLine({ game }: { game: LibraryGame }) {
+  const { t, i18n } = useTranslation();
+  const worthShowing =
+    game.ownerships.length > 1 ||
+    game.ownerships.some((ownership) => ownership.platform !== 'STEAM');
+  if (!worthShowing) {
+    return null;
+  }
+  const stores = game.ownerships.map((ownership) => {
+    const name = ownership.sourceName ?? t(`platform.${ownership.platform}`);
+    return ownership.playtimeMinutes > 0
+      ? `${name} (${formatHours(ownership.playtimeMinutes, i18n.language)})`
+      : name;
+  });
+  return (
+    <p className="text-sm text-muted">
+      {t('game.ownedIn', { stores: stores.join(' · ') })}
+    </p>
   );
 }
