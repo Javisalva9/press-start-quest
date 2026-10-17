@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { FinaleModule } from '../finale/finale.module.js';
 import { IgdbModule } from '../providers/igdb/igdb.module.js';
 import { SteamModule } from '../providers/steam/steam.module.js';
 import { AchievementsImporter } from './achievements-importer.js';
@@ -15,7 +16,7 @@ import { SyncService } from './sync.service.js';
 import { WishlistImporter } from './wishlist-importer.js';
 
 @Module({
-  imports: [SteamModule, IgdbModule],
+  imports: [SteamModule, IgdbModule, FinaleModule],
   controllers: [SyncController],
   providers: [
     SyncService,
@@ -31,6 +32,6 @@ import { WishlistImporter } from './wishlist-importer.js';
     SnapshotRecorder,
   ],
   // The nightly job (internal module) runs syncs too.
-  exports: [SyncService],
+  exports: [SyncService, CompletionDetector],
 })
 export class SyncModule {}

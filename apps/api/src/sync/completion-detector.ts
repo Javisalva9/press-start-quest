@@ -5,6 +5,7 @@ import {
   GameKind,
   StatusSource,
 } from '../generated/prisma/client.js';
+import { FinaleResolver } from '../finale/finale-resolver.js';
 import { PrismaService } from '../prisma/prisma.service.js';
 
 /**
@@ -19,7 +20,10 @@ import { PrismaService } from '../prisma/prisma.service.js';
 export class CompletionDetector {
   private readonly logger = new Logger(CompletionDetector.name);
 
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly finales: FinaleResolver,
+  ) {}
 
   /** Returns how many games changed. */
   async update(userId: string): Promise<number> {
@@ -39,14 +43,17 @@ export class CompletionDetector {
         completionSignal: true,
         completionConfidence: true,
         game: { select: { gameType: true, ttbMainMin: true } },
-        // One unlocked finale achievement is enough.
-        achievements: {
-          where: { achievement: { finaleByRule: true } },
-          select: { achievementId: true },
-          take: 1,
-        },
+        // Every unlocked one: rules and votes decide which are finales.
+        achievements: { select: { achievementId: true } },
       },
     });
+
+    const finales = await this.finales.finales(
+      userId,
+      entries.flatMap((entry) =>
+        entry.achievements.map(({ achievementId }) => achievementId),
+      ),
+    );
 
     // Grouped by result: one UPDATE per signal instead of one per game.
     const changes = new Map<string, string[]>();
@@ -58,7 +65,9 @@ export class CompletionDetector {
         ttbMainMin: entry.game.ttbMainMin,
         achievementsUnlocked: entry.achievementsUnlocked,
         achievementsTotal: entry.achievementsTotal,
-        finaleUnlocked: entry.achievements.length > 0,
+        finaleUnlocked: entry.achievements.some(({ achievementId }) =>
+          finales.has(achievementId),
+        ),
       });
       const signal = result?.signal ?? null;
       const confidence = result?.confidence ?? null;

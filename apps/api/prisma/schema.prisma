@@ -88,12 +88,12 @@ enum JobStatus {
 }
 
 model User {
-  id                   String                @id @default(cuid())
-  email                String?               @unique
+  id                   String                  @id @default(cuid())
+  email                String?                 @unique
   displayName          String
-  locale               String                @default("en") // en | es
-  settings             Json                  @default("{}")
-  createdAt            DateTime              @default(now())
+  locale               String                  @default("en") // en | es
+  settings             Json                    @default("{}")
+  createdAt            DateTime                @default(now())
   sources              Source[]
   games                UserGame[]
   curators             Curator[] // own friends (FRIEND)
@@ -102,6 +102,7 @@ model User {
   recommendationEvents RecommendationEvent[]
   syncJobs             SyncJob[]
   sessions             Session[]
+  finaleVotes          AchievementFinaleVote[]
 
   @@map("users")
 }
@@ -258,21 +259,38 @@ model Ownership {
 // A game's achievements, shared by every player: the catalog, like games.
 // Read in English, so a name can tell a "finish the game" achievement.
 model Achievement {
-  id           String            @id @default(cuid())
-  gameId       String
-  platform     Platform
+  id                     String                  @id @default(cuid())
+  gameId                 String
+  platform               Platform
   // The store's own id (Steam's apiname): unique within a game and store.
-  externalId   String
-  name         String
-  description  String
+  externalId             String
+  name                   String
+  description            String
   // A "finish the game" achievement according to the phrase rules
   // (catalog/finale-achievement.ts), kept up to date on every sync.
-  finaleByRule Boolean           @default(false)
-  game         Game              @relation(fields: [gameId], references: [id], onDelete: Cascade)
-  unlocks      UserAchievement[]
+  finaleByRule           Boolean                 @default(false)
+  game                   Game                    @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  unlocks                UserAchievement[]
+  achievementFinaleVotes AchievementFinaleVote[]
 
   @@unique([gameId, platform, externalId])
   @@map("achievements")
+}
+
+// A player's say on whether an achievement marks the end of its game, for
+// the ones the phrase rules miss (hidden achievements) or get wrong. Their
+// own vote wins for them; enough agreeing votes win for everyone else.
+model AchievementFinaleVote {
+  userId        String
+  achievementId String
+  isFinale      Boolean
+  votedAt       DateTime    @default(now()) @updatedAt
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  achievement   Achievement @relation(fields: [achievementId], references: [id], onDelete: Cascade)
+
+  @@id([userId, achievementId])
+  @@index([achievementId])
+  @@map("achievement_finale_votes")
 }
 
 // The achievements a player unlocked. A locked one has no row.

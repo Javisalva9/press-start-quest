@@ -1,4 +1,5 @@
 import { Test } from '@nestjs/testing';
+import { FinaleResolver } from '../finale/finale-resolver.js';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { CompletionDetector } from './completion-detector.js';
 
@@ -20,16 +21,27 @@ describe('CompletionDetector', () => {
     userGame: { findMany: vi.fn(), updateMany: vi.fn() },
     $transaction: vi.fn(),
   };
+  // The unlocked achievements given are finales (rules and votes are
+  // FinaleResolver's job, tested apart).
+  const finales = {
+    finales: vi.fn((_userId: string, ids: string[]) =>
+      Promise.resolve(new Set(ids)),
+    ),
+  };
   let detector: CompletionDetector;
 
   beforeEach(async () => {
     vi.resetAllMocks();
+    finales.finales.mockImplementation((_userId: string, ids: string[]) =>
+      Promise.resolve(new Set(ids)),
+    );
     prisma.userGame.updateMany.mockImplementation((args) => args);
     prisma.$transaction.mockResolvedValue([]);
     const moduleRef = await Test.createTestingModule({
       providers: [
         CompletionDetector,
         { provide: PrismaService, useValue: prisma },
+        { provide: FinaleResolver, useValue: finales },
       ],
     }).compile();
     detector = moduleRef.get(CompletionDetector);
@@ -73,6 +85,14 @@ describe('CompletionDetector', () => {
         data: { completionSignal: 'PLAYTIME', completionConfidence: 0.6 },
       },
     ]);
+  });
+
+  it('counts only the unlocked achievements that are finales', async () => {
+    finales.finales.mockResolvedValue(new Set());
+    prisma.userGame.findMany.mockResolvedValue([
+      entry({ achievements: [{ achievementId: 'not-a-finale' }] }),
+    ]);
+    await expect(detector.update('u1')).resolves.toBe(0);
   });
 
   it("uses the player's type over the catalog's", async () => {

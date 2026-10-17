@@ -14,6 +14,7 @@ import {
   type Prisma,
 } from '../generated/prisma/client.js';
 import { pausedLongEnough, STARTED_MIN } from '../catalog/auto-status.js';
+import { FinaleResolver } from '../finale/finale-resolver.js';
 import { PrismaService } from '../prisma/prisma.service.js';
 
 /** How strong each signal is: a card comes back only with a stronger one. */
@@ -57,10 +58,12 @@ const cardSelect = {
       gameType: true,
     },
   },
+  // Every unlocked one: rules and votes decide which is the finale shown.
   achievements: {
-    where: { achievement: { finaleByRule: true } },
-    select: { achievement: { select: { name: true, description: true } } },
-    take: 1,
+    select: {
+      achievementId: true,
+      achievement: { select: { name: true, description: true } },
+    },
   },
 } satisfies Prisma.UserGameSelect;
 
@@ -82,7 +85,10 @@ type CardRow = Prisma.UserGameGetPayload<{ select: typeof cardSelect }>;
  */
 @Injectable()
 export class ReviewService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly finales: FinaleResolver,
+  ) {}
 
   async queue(
     userId: string,
@@ -155,11 +161,27 @@ export class ReviewService {
           (a.lastPlayedAt?.getTime() ?? 0) - (b.lastPlayedAt?.getTime() ?? 0),
       );
 
-    const cards = [
-      ...finished.map((row) => toReviewCard(row, 'finished')),
-      ...abandoned.map((row) => toReviewCard(row, 'abandoned')),
+    const page = [
+      ...finished.map((row) => [row, 'finished'] as const),
+      ...abandoned.map((row) => [row, 'abandoned'] as const),
     ];
-    return { items: cards.slice(0, limit), total: cards.length };
+    const shown = page.slice(0, limit);
+    // The finale achievement behind a FINALE_ACHIEVEMENT card: only for
+    // the cards on this page that need it.
+    const finales = await this.finales.finales(
+      userId,
+      shown.flatMap(([row]) =>
+        row.completionSignal === CompletionSignal.FINALE_ACHIEVEMENT
+          ? row.achievements.map(({ achievementId }) => achievementId)
+          : [],
+      ),
+    );
+    return {
+      items: shown.map(([row, question]) =>
+        toReviewCard(row, question, finales),
+      ),
+      total: page.length,
+    };
   }
 
   /**
@@ -243,8 +265,11 @@ function isAnswerStatus(status: GameStatus): boolean {
 function toReviewCard(
   row: CardRow,
   question: ReviewCard['question'],
+  finales: ReadonlySet<string>,
 ): ReviewCard {
-  const finale = row.achievements[0]?.achievement ?? null;
+  const finale =
+    row.achievements.find(({ achievementId }) => finales.has(achievementId))
+      ?.achievement ?? null;
   return {
     id: row.id,
     question,

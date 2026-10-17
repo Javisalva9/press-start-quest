@@ -281,6 +281,7 @@
     "IGDB_UNAVAILABLE": "IGDB isn’t answering right now. Try again in a while.",
     "LIBRARY_GAME_NOT_WISHED": "That game isn’t on your wishlist.",
     "CURATOR_NOT_FOUND": "We couldn’t find that list.",
+    "ACHIEVEMENT_NOT_FOUND": "We couldn’t find that achievement in this game.",
     "UNKNOWN": "Something went wrong. Please try again."
   }
 }
