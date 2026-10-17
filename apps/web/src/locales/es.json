@@ -281,6 +281,7 @@
     "IGDB_UNAVAILABLE": "IGDB no responde ahora mismo. Prueba en un rato.",
     "LIBRARY_GAME_NOT_WISHED": "Ese juego no está en «Lo quiero».",
     "CURATOR_NOT_FOUND": "No encontramos esa lista.",
+    "ACHIEVEMENT_NOT_FOUND": "No encontramos ese logro en este juego.",
     "UNKNOWN": "Algo ha fallado. Vuelve a intentarlo."
   }
 }

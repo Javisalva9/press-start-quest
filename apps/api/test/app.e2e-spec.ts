@@ -173,6 +173,19 @@ describe('API (e2e)', () => {
       .expect(401);
   });
 
+  it('GET /api/library/:id/achievements requires a token', () => {
+    return request(app.getHttpServer())
+      .get('/api/library/x/achievements')
+      .expect(401);
+  });
+
+  it('PUT /api/library/:id/achievements/:id/finale-vote requires a token', () => {
+    return request(app.getHttpServer())
+      .put('/api/library/x/achievements/a/finale-vote')
+      .send({ isFinale: true })
+      .expect(401);
+  });
+
   it('GET /api/library requires a token', () => {
     return request(app.getHttpServer()).get('/api/library').expect(401);
   });

@@ -1,4 +1,5 @@
 import { Test } from '@nestjs/testing';
+import { FinaleResolver } from '../finale/finale-resolver.js';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { ReviewService } from './review.service.js';
 
@@ -36,13 +37,26 @@ describe('ReviewService', () => {
   const prisma = {
     userGame: { findMany: vi.fn(), findFirst: vi.fn(), update: vi.fn() },
   };
+  // Every achievement it's asked about is a finale, unless a test says.
+  const finales = {
+    finales: vi.fn((_userId: string, ids: string[]) =>
+      Promise.resolve(new Set(ids)),
+    ),
+  };
   let service: ReviewService;
   const reviewed = new Date('2026-10-01T00:00:00Z');
 
   beforeEach(async () => {
     vi.resetAllMocks();
+    finales.finales.mockImplementation((_userId: string, ids: string[]) =>
+      Promise.resolve(new Set(ids)),
+    );
     const moduleRef = await Test.createTestingModule({
-      providers: [ReviewService, { provide: PrismaService, useValue: prisma }],
+      providers: [
+        ReviewService,
+        { provide: PrismaService, useValue: prisma },
+        { provide: FinaleResolver, useValue: finales },
+      ],
     }).compile();
     service = moduleRef.get(ReviewService);
   });
@@ -240,6 +254,7 @@ describe('ReviewService', () => {
           },
           achievements: [
             {
+              achievementId: 'a1',
               achievement: {
                 name: 'Careful Merchant',
                 description: 'Complete the game under 40 deaths',

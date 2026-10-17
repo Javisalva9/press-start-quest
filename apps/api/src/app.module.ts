@@ -4,6 +4,7 @@ import { APP_PIPE } from '@nestjs/core';
 import { AuthModule } from './auth/auth.module.js';
 import { ApiValidationPipe } from './common/api-validation.pipe.js';
 import { validateEnv } from './config/env.js';
+import { AchievementsModule } from './achievements/achievements.module.js';
 import { CuratorsModule } from './curators/curators.module.js';
 import { HealthModule } from './health/health.module.js';
 import { InternalModule } from './internal/internal.module.js';
@@ -28,6 +29,7 @@ import { UsersModule } from './users/users.module.js';
     InternalModule,
     StatsModule,
     CuratorsModule,
+    AchievementsModule,
   ],
   providers: [
     // Global pipe registered here (not in main.ts) so tests get it too.

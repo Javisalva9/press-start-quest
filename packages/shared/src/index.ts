@@ -1,3 +1,4 @@
+export * from './achievements.js';
 export * from './auth.js';
 export * from './curators.js';
 export * from './errors.js';
