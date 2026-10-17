@@ -1,4 +1,5 @@
 import type { AuthTokens } from '@psq/shared';
+import { CACHE_STORAGE_KEY } from '../cache';
 
 /**
  * The session lives in localStorage, shared by every tab of the app.
@@ -35,6 +36,9 @@ export function saveSession(tokens: AuthTokens, now = Date.now()): Session {
 
 export function clearSession(): void {
   localStorage.removeItem(STORAGE_KEY);
+  // The saved copy of the user's data goes too: nobody else should see
+  // their library on this device.
+  localStorage.removeItem(CACHE_STORAGE_KEY);
   window.dispatchEvent(new Event(CHANGE_EVENT));
 }
 

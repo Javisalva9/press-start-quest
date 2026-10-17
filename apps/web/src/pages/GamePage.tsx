@@ -29,9 +29,24 @@ export default function GamePage() {
     location.key === 'default' ? navigate('/library') : navigate(-1);
 
   if (game.isPending) {
-    return <p className="p-6 text-muted">{t('home.loading')}</p>;
+    // The page's shape while it loads: header image, title, two blocks.
+    return (
+      <main
+        aria-busy
+        aria-label={t('home.loading')}
+        className="mx-auto flex max-w-3xl animate-pulse flex-col gap-4 pb-24"
+      >
+        <div className="aspect-[460/215] bg-card" />
+        <div className="flex flex-col gap-4 px-4">
+          <div className="h-8 w-2/3 rounded-lg bg-card" />
+          <div className="h-24 rounded-2xl bg-card" />
+          <div className="h-40 rounded-2xl bg-card" />
+        </div>
+      </main>
+    );
   }
-  if (game.isError) {
+  // An error only without data: if the API fails, what's saved stays.
+  if (game.isError && !game.data) {
     const code =
       game.error instanceof ApiRequestError && game.error.code
         ? game.error.code

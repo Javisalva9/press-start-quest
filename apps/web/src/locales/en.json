@@ -246,6 +246,9 @@
     "submit": "Add",
     "adding": "Adding…"
   },
+  "server": {
+    "waking": "Waking the server up… The first load can take up to a minute."
+  },
   "errors": {
     "VALIDATION_FAILED": "Something in the request wasn't right. Please try again.",
     "UNAUTHENTICATED": "Your session has ended. Please sign in again.",
