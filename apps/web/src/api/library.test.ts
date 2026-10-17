@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { filtersFromSearchParams, toSearchParams } from './library';
+import {
+  activeFilterCount,
+  filtersFromSearchParams,
+  toSearchParams,
+} from './library';
 
 describe('toSearchParams', () => {
   it('leaves out default values and joins lists', () => {
@@ -27,5 +31,25 @@ describe('filtersFromSearchParams', () => {
     expect(filtersFromSearchParams(new URLSearchParams('sort=random'))).toEqual(
       { view: 'library', sort: 'lastPlayed' },
     );
+  });
+});
+
+describe('activeFilterCount', () => {
+  const base = { view: 'library', sort: 'lastPlayed' } as const;
+
+  it('is 0 with only the view and the order', () => {
+    expect(activeFilterCount(base)).toBe(0);
+  });
+
+  it('counts the search, each status chip, the length and the store', () => {
+    expect(
+      activeFilterCount({
+        ...base,
+        q: 'hades',
+        status: ['BACKLOG', 'PLAYING'],
+        length: 'short',
+        source: 'STEAM',
+      }),
+    ).toBe(5);
   });
 });

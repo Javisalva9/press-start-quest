@@ -135,7 +135,10 @@
     "played": "{{hours}} played",
     "notPlayed": "Not played yet",
     "lengthSuffix": " · ~{{hours}}",
-    "add": "+ Add"
+    "add": "+ Add",
+    "activeFilters_one": "{{count}} filter on",
+    "activeFilters_other": "{{count}} filters on",
+    "clearFilters": "Clear filters"
   },
   "game": {
     "back": "← Back",

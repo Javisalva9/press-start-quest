@@ -14,9 +14,11 @@
     "typecheck": "pnpm --recursive typecheck",
     "test": "pnpm --recursive test",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "prepare": "lefthook install"
   },
   "devDependencies": {
+    "lefthook": "2.1.16",
     "prettier": "^3.9.10"
   }
 }

@@ -1,0 +1,6 @@
+# Git hooks, installed by `pnpm install` (the root "prepare" script runs
+# `lefthook install`).
+pre-commit:
+  commands:
+    secrets:
+      run: node scripts/check-secrets.mjs

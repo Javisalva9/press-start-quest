@@ -36,6 +36,24 @@ export function toSearchParams(query: Partial<LibraryQuery>): URLSearchParams {
   return params;
 }
 
+/** The filters that narrow the list (the order doesn't): to count and clear. */
+export const CLEARABLE_FILTERS = {
+  q: undefined,
+  status: undefined,
+  length: undefined,
+  source: undefined,
+} satisfies Partial<LibraryFilters>;
+
+/** How many filters are narrowing the list; each status chip counts. */
+export function activeFilterCount(filters: LibraryFilters): number {
+  return (
+    (filters.q ? 1 : 0) +
+    (filters.status?.length ?? 0) +
+    (filters.length ? 1 : 0) +
+    (filters.source ? 1 : 0)
+  );
+}
+
 /** Reads the filters from the screen's URL; anything invalid falls back. */
 export function filtersFromSearchParams(
   params: URLSearchParams,

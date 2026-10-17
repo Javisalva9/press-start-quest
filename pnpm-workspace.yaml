@@ -13,3 +13,6 @@ allowBuilds:
   prisma: true
   # Telemetry bundled with swagger-ui-dist: not needed.
   '@scarf/scarf': false
+  # Its own script would install the git hooks; the root "prepare" script
+  # does it instead (lefthook install), in plain sight.
+  lefthook: false
