@@ -167,7 +167,10 @@
     "ownedIn": "You have it on: {{stores}}",
     "chosenByYou": "Chosen by you",
     "backToAutomatic": "Back to automatic",
-    "setByApp": "Worked out by the app"
+    "setByApp": "Worked out by the app",
+    "recommendedBy": "Recommended by",
+    "removeFromWishlist": "Remove from wishlist",
+    "removeFromWishlistHint": "It won’t come back, even if it’s on a list you follow."
   },
   "review": {
     "title": "Catch up",
@@ -248,6 +251,17 @@
   },
   "server": {
     "waking": "Waking the server up… The first load can take up to a minute."
+  },
+  "curators": {
+    "title": "Recommended lists",
+    "games_one": "{{count}} game",
+    "games_other": "{{count}} games",
+    "preview_one": "You have {{owned}}. The other one would go to your wishlist.",
+    "preview_other": "You have {{owned}}. The other {{count}} would go to your wishlist.",
+    "following": "You follow it: its games carry its label, and the ones you don’t have are on your wishlist.",
+    "follow": "Follow",
+    "unfollow": "Unfollow",
+    "unfollowConfirm": "Unfollowing removes from your wishlist the games from this list you haven’t touched. Sure?"
   },
   "errors": {
     "VALIDATION_FAILED": "Something in the request wasn't right. Please try again.",

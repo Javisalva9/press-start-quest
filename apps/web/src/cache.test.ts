@@ -14,6 +14,7 @@ describe('shouldPersist', () => {
     [['library', { view: 'library' }]],
     [['library-game', 'ug1']],
     [['external-sources']],
+    [['curators']],
     [['review-queue', 1]],
   ])('keeps %o', (key) => {
     expect(shouldPersist(key)).toBe(true);

@@ -18,6 +18,7 @@ const PERSISTED: ReadonlySet<string> = new Set([
   'library',
   'library-game',
   'external-sources',
+  'curators',
 ]);
 
 export function shouldPersist(queryKey: QueryKey): boolean {
