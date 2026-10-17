@@ -3,6 +3,7 @@ export * from './errors.js';
 export * from './health.js';
 export * from './language.js';
 export * from './library.js';
+export * from './manual.js';
 export * from './review.js';
 export * from './sources.js';
 export * from './sync.js';

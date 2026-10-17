@@ -15,11 +15,13 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import {
+  AddManualGameRequestSchema,
   LibraryQuerySchema,
   ReviewAnswerRequestSchema,
   ReviewQueueQuerySchema,
   UpdateLengthRequestSchema,
   UpdateLibraryGameRequestSchema,
+  type AddManualGameRequest,
   type LibraryGame,
   type LibraryPage,
   type LibraryQuery,
@@ -31,6 +33,7 @@ import {
 } from '@psq/shared';
 import { CurrentUser, type AuthUser } from '../auth/current-user.decorator.js';
 import { LibraryService } from './library.service.js';
+import { ManualGamesService } from './manual-games.service.js';
 import { ReviewService } from './review.service.js';
 
 @ApiTags('library')
@@ -40,6 +43,7 @@ export class LibraryController {
   constructor(
     private readonly library: LibraryService,
     private readonly review: ReviewService,
+    private readonly manual: ManualGamesService,
   ) {}
 
   @Get()
@@ -49,6 +53,15 @@ export class LibraryController {
     @Query({ schema: LibraryQuerySchema }) query: LibraryQuery,
   ): Promise<LibraryPage> {
     return this.library.list(user.id, query);
+  }
+
+  @Post('manual')
+  @ApiOkResponse({ description: 'The game, added to the library' })
+  addManual(
+    @CurrentUser() user: AuthUser,
+    @Body({ schema: AddManualGameRequestSchema }) body: AddManualGameRequest,
+  ): Promise<LibraryGame> {
+    return this.manual.add(user.id, body);
   }
 
   // Before ':id', or "review-queue" would be taken for a game id.

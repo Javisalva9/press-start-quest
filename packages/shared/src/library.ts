@@ -195,6 +195,8 @@ export const LibraryGameSchema = LibraryItemSchema.extend({
   ownerships: z.array(
     z.object({
       platform: PlatformSchema,
+      /** An external source's name ("Jack Sparrow"); null for synced stores. */
+      sourceName: z.string().nullable(),
       playtimeMinutes: z.number().int().nonnegative(),
       lastPlayedAt: z.iso.datetime().nullable(),
     }),

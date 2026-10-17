@@ -17,3 +17,9 @@ export function steamGameSlug(title: string, appId: number): string {
   const name = slugify(title);
   return name ? `${name}-${appId}` : `steam-${appId}`;
 }
+
+/** A game added from IGDB with no Steam page: the IGDB id keeps it unique. */
+export function igdbGameSlug(title: string, igdbId: number): string {
+  const name = slugify(title);
+  return name ? `${name}-igdb-${igdbId}` : `igdb-${igdbId}`;
+}

@@ -152,6 +152,27 @@ export class IgdbApi {
     return matches;
   }
 
+  /** The Steam appid of each IGDB game that has one: IGDB id → appid. */
+  async findSteamAppIds(igdbIds: number[]): Promise<Map<number, number>> {
+    const matches = new Map<number, number>();
+    for (const batch of chunk(igdbIds, MAX_LIMIT)) {
+      const rows = ExternalGamesSchema.parse(
+        await this.query(
+          'external_games',
+          `fields game,uid; where external_game_source = ${STEAM_SOURCE} & game = (${batch.join(',')}); limit ${MAX_LIMIT};`,
+        ),
+      );
+      for (const row of rows) {
+        const appId = Number(row.uid);
+        // The first one wins: a game can list a demo or a soundtrack too.
+        if (Number.isInteger(appId) && !matches.has(row.game)) {
+          matches.set(row.game, appId);
+        }
+      }
+    }
+    return matches;
+  }
+
   /** Details of several games, in any order. */
   async getGames(igdbIds: number[]): Promise<IgdbGame[]> {
     const games: IgdbGame[] = [];
