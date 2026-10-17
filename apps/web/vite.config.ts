@@ -9,6 +9,11 @@ const background = '#0E0F14';
 
 // https://vite.dev/config/
 export default defineConfig({
+  define: {
+    // Tells apart each build: the data saved on the device is dropped when
+    // it changes (src/query-client.ts).
+    __BUILD_ID__: JSON.stringify(new Date().toISOString()),
+  },
   plugins: [
     react(),
     tailwindcss(),

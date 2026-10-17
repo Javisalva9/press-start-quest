@@ -246,6 +246,9 @@
     "submit": "Añadir",
     "adding": "Añadiendo…"
   },
+  "server": {
+    "waking": "Despertando el servidor… La primera carga puede tardar hasta un minuto."
+  },
   "errors": {
     "VALIDATION_FAILED": "Algo de la petición no era correcto. Vuelve a intentarlo.",
     "UNAUTHENTICATED": "Tu sesión ha terminado. Vuelve a entrar.",

@@ -179,12 +179,25 @@ export default function LibraryPage() {
         </p>
       )}
 
-      {library.isError ? (
+      {/* An error only without data: if the API fails, what's saved stays. */}
+      {library.isError && !library.data ? (
         <p role="alert" className="text-danger">
           {t('errors.UNKNOWN')}
         </p>
       ) : library.isPending ? (
-        <p className="text-muted">{t('home.loading')}</p>
+        // Cover-shaped placeholders while nothing is saved on the device.
+        <ul
+          aria-busy
+          aria-label={t('home.loading')}
+          className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-5"
+        >
+          {Array.from({ length: 9 }, (_, index) => (
+            <li
+              key={index}
+              className="aspect-[3/4] animate-pulse rounded-xl bg-card"
+            />
+          ))}
+        </ul>
       ) : items.length === 0 ? (
         <p className="py-10 text-center text-muted">{t('library.empty')}</p>
       ) : (
