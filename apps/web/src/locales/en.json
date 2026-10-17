@@ -114,7 +114,8 @@
     "loadMore": "Load more",
     "played": "{{hours}} played",
     "notPlayed": "Not played yet",
-    "lengthSuffix": " · ~{{hours}}"
+    "lengthSuffix": " · ~{{hours}}",
+    "add": "+ Add"
   },
   "game": {
     "back": "← Back",
@@ -141,10 +142,12 @@
     "statusLabel": "Status",
     "typeLabel": "Type",
     "serversLabel": "Servers",
-    "automatic": "Automatic ({{value}})",
-    "yourCallHint": "What you pick wins over what the app works out. “Automatic” hands the decision back to it.",
     "closesOn": "Servers close on {{date}}.",
-    "closedOn": "Servers closed on {{date}}."
+    "closedOn": "Servers closed on {{date}}.",
+    "ownedIn": "You have it on: {{stores}}",
+    "chosenByYou": "Chosen by you",
+    "backToAutomatic": "Back to automatic",
+    "setByApp": "Worked out by the app"
   },
   "review": {
     "title": "Catch up",
@@ -196,6 +199,32 @@
     "PARTIAL": "Partial",
     "CLOSED": "Closed",
     "UNKNOWN": "No data"
+  },
+  "platform": {
+    "STEAM": "Steam",
+    "EPIC": "Epic",
+    "EXTERNAL": "Another store"
+  },
+  "add": {
+    "title": "Add a game",
+    "searchLabel": "Search for the game",
+    "searchPlaceholder": "Hades, Half-Life: Alyx…",
+    "noResults": "No PC games found with that name.",
+    "inLibrary": {
+      "owned": "Already yours",
+      "wishlist": "On your wishlist"
+    },
+    "originLabel": "Do you have it?",
+    "originWishlist": "No, I want it",
+    "originExternal": "Yes, outside Steam",
+    "sourceLabel": "Where?",
+    "sourcePlaceholder": "Jack Sparrow, Epic…",
+    "hoursLabel": "Hours played (optional)",
+    "hoursInvalid": "Type a number of hours, like 12 or 1.5.",
+    "statusAutomatic": "Let the app work it out",
+    "back": "Pick another",
+    "submit": "Add",
+    "adding": "Adding…"
   },
   "errors": {
     "VALIDATION_FAILED": "Something in the request wasn't right. Please try again.",

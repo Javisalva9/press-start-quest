@@ -69,7 +69,17 @@ export default function LibraryPage() {
 
   return (
     <main className="mx-auto flex max-w-3xl flex-col gap-4 px-4 pt-6 pb-24">
-      <h1 className="font-display text-2xl font-bold">{t('library.title')}</h1>
+      <div className="flex items-center justify-between gap-3">
+        <h1 className="font-display text-2xl font-bold">
+          {t('library.title')}
+        </h1>
+        <Link
+          to="/library/add"
+          className="rounded-xl border border-line bg-card px-3 py-2 text-sm font-semibold"
+        >
+          {t('library.add')}
+        </Link>
+      </div>
 
       <div role="tablist" className="grid grid-cols-2 rounded-xl bg-card p-1">
         {(['library', 'wishlist'] as const).map((view) => (
