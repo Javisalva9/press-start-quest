@@ -15,6 +15,7 @@ import {
   useSetLength,
   useUpdateLibraryGame,
 } from '../api/library';
+import { AchievementsSection } from '../components/AchievementsSection';
 import { CuratorLabel } from '../components/CuratorLabel';
 import { GameCover } from '../components/GameCover';
 import { formatHours, yearOf } from '../format';
@@ -176,6 +177,8 @@ export default function GamePage() {
         <YourCallSection game={data} />
 
         <LengthSection game={data} />
+
+        <AchievementsSection game={data} />
 
         {tags.length > 0 && (
           <ul className="flex flex-wrap gap-2">

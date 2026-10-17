@@ -333,7 +333,7 @@
     "game": "Moonlighter",
     "name": "Gotta go fast!",
     "description": "Beat Game Under 10 hours",
-    "finale": false
+    "finale": true
   },
   {
     "game": "Moonlighter",

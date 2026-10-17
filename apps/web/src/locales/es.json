@@ -263,6 +263,22 @@
     "unfollow": "Dejar de seguir",
     "unfollowConfirm": "Al dejar de seguirla se quitarán de «Lo quiero» los juegos de esta lista que no hayas tocado. ¿Seguro?"
   },
+  "achievements": {
+    "title": "Logros ({{unlocked}}/{{total}})",
+    "show": "Ver",
+    "hide": "Ocultar",
+    "hint": "Si el logro que marca el final no aparece como tal (los ocultos no tienen descripción), márcalo: así la app sabrá que te lo has pasado.",
+    "hidden": "Logro oculto",
+    "finale": "Final",
+    "byYou": "según tú",
+    "byCommunity": "según la comunidad",
+    "byRules": "según las reglas",
+    "markFinale": "Es el final",
+    "markNotFinale": "No es el final",
+    "takeBackVote": "Quitar mi voto",
+    "withLocked": "Ver también los bloqueados",
+    "onlyUnlocked": "Ver solo los desbloqueados"
+  },
   "errors": {
     "VALIDATION_FAILED": "Algo de la petición no era correcto. Vuelve a intentarlo.",
     "UNAUTHENTICATED": "Tu sesión ha terminado. Vuelve a entrar.",
