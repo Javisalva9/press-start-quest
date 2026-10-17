@@ -4,6 +4,7 @@ import {
   buildGameUpdate,
   type GameSources,
 } from '../catalog/game-metadata.js';
+import { saveGameTags } from '../catalog/game-tags.js';
 import { chunk } from '../common/chunk.js';
 import { GameKind } from '../generated/prisma/client.js';
 import { PrismaService } from '../prisma/prisma.service.js';
@@ -231,7 +232,10 @@ export class CatalogEnricher {
         }),
       ),
     );
-    await this.saveTags(games, sources);
+    await saveGameTags(
+      this.prisma,
+      games.map((game) => [game.id, buildGameTags(sources.get(game.id)!)]),
+    );
   }
 
   /**
@@ -303,38 +307,4 @@ export class CatalogEnricher {
   }
 
   /** Replaces the tags of the enriched games with the fresh ones. */
-  private async saveTags(
-    games: CatalogGame[],
-    sources: Map<string, GameSources>,
-  ): Promise<void> {
-    const tagsByGame = new Map(
-      games.map((game) => [game.id, buildGameTags(sources.get(game.id)!)]),
-    );
-    const allTags = [...tagsByGame.values()].flat();
-    if (allTags.length > 0) {
-      await this.prisma.tag.createMany({ data: allTags, skipDuplicates: true });
-    }
-    const tags = await this.prisma.tag.findMany({
-      where: { name: { in: [...new Set(allTags.map((tag) => tag.name))] } },
-      select: { id: true, name: true, kind: true },
-    });
-    const tagId = new Map(
-      tags.map((tag) => [`${tag.kind}:${tag.name}`, tag.id]),
-    );
-
-    await this.prisma.$transaction([
-      this.prisma.gameTag.deleteMany({
-        where: { gameId: { in: games.map((game) => game.id) } },
-      }),
-      this.prisma.gameTag.createMany({
-        data: [...tagsByGame].flatMap(([gameId, gameTags]) =>
-          gameTags.flatMap((tag) => {
-            const id = tagId.get(`${tag.kind}:${tag.name}`);
-            return id ? [{ gameId, tagId: id }] : [];
-          }),
-        ),
-        skipDuplicates: true,
-      }),
-    ]);
-  }
 }

@@ -140,6 +140,25 @@ describe('API (e2e)', () => {
     });
   });
 
+  it('GET /api/games/search requires a token', () => {
+    return request(app.getHttpServer())
+      .get('/api/games/search?q=hades')
+      .expect(401);
+  });
+
+  it('POST /api/library/manual requires a token', () => {
+    return request(app.getHttpServer())
+      .post('/api/library/manual')
+      .send({ origin: 'wishlist', igdbId: 1 })
+      .expect(401);
+  });
+
+  it('GET /api/sources/external requires a token', () => {
+    return request(app.getHttpServer())
+      .get('/api/sources/external')
+      .expect(401);
+  });
+
   it('GET /api/library requires a token', () => {
     return request(app.getHttpServer()).get('/api/library').expect(401);
   });

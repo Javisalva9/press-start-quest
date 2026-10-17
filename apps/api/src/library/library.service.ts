@@ -212,7 +212,7 @@ export class LibraryService {
           select: {
             playtimeMin: true,
             lastPlayedAt: true,
-            source: { select: { platform: true } },
+            source: { select: { platform: true, displayName: true } },
           },
         },
       },
@@ -266,6 +266,10 @@ export class LibraryService {
       },
       ownerships: row.ownerships.map((ownership) => ({
         platform: ownership.source.platform,
+        sourceName:
+          ownership.source.platform === 'EXTERNAL'
+            ? ownership.source.displayName
+            : null,
         playtimeMinutes: ownership.playtimeMin,
         lastPlayedAt: ownership.lastPlayedAt?.toISOString() ?? null,
       })),

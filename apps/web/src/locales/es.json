@@ -210,6 +210,9 @@
     "SYNC_FAILED": "La importación ha fallado. Inténtalo de nuevo en unos minutos.",
     "LIBRARY_GAME_NOT_FOUND": "Ese juego no está en tu biblioteca.",
     "LIBRARY_GAME_NOT_OWNED": "Ese juego no es tuyo todavía: está en tu lista de «Lo quiero».",
+    "LIBRARY_GAME_ALREADY_OWNED": "Ese juego ya está en tu biblioteca.",
+    "IGDB_GAME_NOT_FOUND": "No encontramos ese juego en IGDB.",
+    "IGDB_UNAVAILABLE": "IGDB no responde ahora mismo. Prueba en un rato.",
     "UNKNOWN": "Algo ha fallado. Vuelve a intentarlo."
   }
 }
