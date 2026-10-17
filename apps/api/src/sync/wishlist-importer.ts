@@ -143,7 +143,8 @@ export class WishlistImporter {
     }
 
     // 3. Removed from the Steam wishlist without buying it: it leaves
-    //    "Lo quiero", unless the user added it or chose its status by hand.
+    //    "Lo quiero", unless the user added it or chose its status by hand,
+    //    or a followed curator's list brought it (it was never on Steam).
     await this.prisma.userGame.deleteMany({
       where: {
         userId,
@@ -151,6 +152,7 @@ export class WishlistImporter {
         status: GameStatus.WISHLIST,
         statusSource: StatusSource.AUTO,
         addedManually: false,
+        addedByCuratorId: null,
         gameId: { notIn: wished.map((item) => item.gameId) },
       },
     });

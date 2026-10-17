@@ -7,6 +7,7 @@
 // and prints every match with its alternatives, marking the doubtful ones
 // (no exact title, or not the expected year) to be reviewed by hand.
 import 'dotenv/config';
+import { execSync } from 'node:child_process';
 import { readFileSync, writeFileSync } from 'node:fs';
 import { IgdbApi } from '../dist/providers/igdb/igdb-api.js';
 
@@ -111,10 +112,14 @@ for (const entry of source.entries) {
   }
 }
 
+const output = `data/curators/${name}.json`;
 writeFileSync(
-  `data/curators/${name}.json`,
+  output,
   `${JSON.stringify({ curator: source.curator, games: [...games.values()] }, null, 2)}\n`,
 );
+// The repository's format (short arrays on one line…), so the file passes
+// pnpm format:check as written.
+execSync(`pnpm exec prettier --write ${output}`, { stdio: 'ignore' });
 console.log(
   `\n${games.size} games written to data/curators/${name}.json, ${doubtful} to review (??).`,
 );

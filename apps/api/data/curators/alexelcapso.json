@@ -1,7 +1,8 @@
 {
   "curator": {
     "name": "AlexElCapso",
-    "kind": "CREATOR"
+    "kind": "CREATOR",
+    "color": "#F59E0B"
   },
   "games": [
     {

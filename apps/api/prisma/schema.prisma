@@ -221,6 +221,9 @@ model UserGame {
   hidden               Boolean            @default(false)
   snoozedUntil         DateTime?
   addedManually        Boolean            @default(false)
+  // The curator whose list brought it to "Lo quiero": unfollowing removes
+  // the ones still untouched.
+  addedByCuratorId     String?
   createdAt            DateTime           @default(now())
   updatedAt            DateTime           @updatedAt
   user                 User               @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -229,7 +232,10 @@ model UserGame {
   snapshots            PlaytimeSnapshot[]
   achievements         UserAchievement[]
 
+  addedByCurator Curator? @relation(fields: [addedByCuratorId], references: [id], onDelete: SetNull)
+
   @@unique([userId, gameId])
+  @@index([addedByCuratorId])
   @@index([userId, status])
   @@map("user_games")
 }
@@ -294,14 +300,15 @@ model PlaytimeSnapshot {
 }
 
 model Curator {
-  id        String        @id @default(cuid())
-  userId    String? // empty = global creator (CREATOR); set = that user's friend (FRIEND)
-  name      String
-  kind      CuratorKind   @default(FRIEND)
-  color     String?
-  user      User?         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  picks     CuratorPick[]
-  followers UserCurator[]
+  id         String        @id @default(cuid())
+  userId     String? // empty = global creator (CREATOR); set = that user's friend (FRIEND)
+  name       String
+  kind       CuratorKind   @default(FRIEND)
+  color      String?
+  user       User?         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  picks      CuratorPick[]
+  followers  UserCurator[]
+  addedGames UserGame[]
 
   @@unique([userId, name]) // + partial index in the migration: unique name among global creators
   @@map("curators")

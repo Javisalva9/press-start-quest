@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   Param,
@@ -113,5 +114,15 @@ export class LibraryController {
     body: UpdateLibraryGameRequest,
   ): Promise<LibraryGame> {
     return this.library.update(user.id, id, body);
+  }
+
+  @Delete(':id/wishlist')
+  @HttpCode(204)
+  @ApiNoContentResponse({ description: 'Out of "Lo quiero" for good' })
+  removeFromWishlist(
+    @CurrentUser() user: AuthUser,
+    @Param('id') id: string,
+  ): Promise<void> {
+    return this.library.removeFromWishlist(user.id, id);
   }
 }

@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { RecommendedBySchema } from './curators.js';
 
 /** Same values as the GameStatus enum in the database. */
 export const GAME_STATUSES = [
@@ -144,6 +145,8 @@ export const LibraryItemSchema = z.object({
   wishlistPriority: z.number().int().nullable(),
   /** Stores where the user has it. */
   sources: z.array(PlatformSchema),
+  /** Followed curators whose list has it ("Recommended by…"). */
+  recommendedBy: z.array(RecommendedBySchema),
 });
 
 export type LibraryItem = z.infer<typeof LibraryItemSchema>;
