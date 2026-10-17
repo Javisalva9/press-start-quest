@@ -1,7 +1,8 @@
 {
   "curator": {
     "name": "AlexElCapso",
-    "kind": "CREATOR"
+    "kind": "CREATOR",
+    "color": "#F59E0B"
   },
   "rules": "The 100 as listed. Each one is looked up on IGDB by \"search\" (its newest PC edition); \"alternatives\" are other texts tried if it finds nothing, \"year\" picks between games with the same name, and \"slug\" (the name in the igdb.com address) pins the game when the search can't. Games not on PC are left out: the app is PC only.",
   "entries": [

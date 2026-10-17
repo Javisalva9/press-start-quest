@@ -9,6 +9,7 @@ import type {
   LibraryItem,
   LibraryPage,
   LibraryQuery,
+  RecommendedBy,
   UpdateLibraryGameRequest,
 } from '@psq/shared';
 import { autoStatus } from '../catalog/auto-status.js';
@@ -24,6 +25,7 @@ import { buildLibraryOrderBy, buildLibraryWhere } from './library-query.js';
 /** What the list needs from each entry: nothing more is read. */
 const listSelect = {
   id: true,
+  gameId: true,
   status: true,
   owned: true,
   playtimeMin: true,
@@ -63,8 +65,12 @@ export class LibraryService {
       }),
       this.prisma.userGame.count({ where }),
     ]);
+    const labels = await this.recommendedBy(
+      userId,
+      rows.map((row) => row.gameId),
+    );
     return {
-      items: rows.map(toLibraryItem),
+      items: rows.map((row) => toLibraryItem(row, labels.get(row.gameId))),
       total,
       page: query.page,
       pageSize: query.pageSize,
@@ -182,6 +188,55 @@ export class LibraryService {
     return this.get(userId, id);
   }
 
+  /**
+   * Takes a game out of "Lo quiero". It's hidden, not deleted: deleted, it
+   * would come back with the next load of a followed curator's list.
+   */
+  async removeFromWishlist(userId: string, id: string): Promise<void> {
+    const entry = await this.prisma.userGame.findFirst({
+      where: { id, userId },
+      select: { owned: true, status: true },
+    });
+    if (!entry) {
+      throw notFound();
+    }
+    if (entry.owned || entry.status !== GameStatus.WISHLIST) {
+      throw new ConflictException({
+        statusCode: 409,
+        code: entry.owned
+          ? 'LIBRARY_GAME_ALREADY_OWNED'
+          : 'LIBRARY_GAME_NOT_WISHED',
+      } satisfies ApiError);
+    }
+    await this.prisma.userGame.update({
+      where: { id },
+      data: { hidden: true },
+    });
+  }
+
+  /** The followed curators that recommend each game: gameId → labels. */
+  private async recommendedBy(
+    userId: string,
+    gameIds: string[],
+  ): Promise<Map<string, RecommendedBy[]>> {
+    const picks = await this.prisma.curatorPick.findMany({
+      where: {
+        gameId: { in: gameIds },
+        curator: { followers: { some: { userId } } },
+      },
+      select: {
+        gameId: true,
+        curator: { select: { name: true, color: true } },
+      },
+      orderBy: { curator: { name: 'asc' } },
+    });
+    const labels = new Map<string, RecommendedBy[]>();
+    for (const { gameId, curator } of picks) {
+      labels.set(gameId, [...(labels.get(gameId) ?? []), curator]);
+    }
+    return labels;
+  }
+
   async get(userId: string, id: string): Promise<LibraryGame> {
     const row = await this.prisma.userGame.findFirst({
       // userId in the filter: another user's entry is simply "not found".
@@ -226,8 +281,9 @@ export class LibraryService {
       game.tags
         .filter(({ tag }) => tag.kind === kind)
         .map(({ tag }) => tag.name);
+    const labels = await this.recommendedBy(userId, [row.gameId]);
     return {
-      ...toLibraryItem(row),
+      ...toLibraryItem(row, labels.get(row.gameId)),
       summary: game.summary,
       developer: game.developer,
       releaseDate: game.releaseDate?.toISOString() ?? null,
@@ -293,7 +349,10 @@ function notFound(): NotFoundException {
   } satisfies ApiError);
 }
 
-function toLibraryItem(row: ListRow): LibraryItem {
+function toLibraryItem(
+  row: ListRow,
+  recommendedBy: RecommendedBy[] = [],
+): LibraryItem {
   return {
     id: row.id,
     title: row.game.title,
@@ -314,5 +373,6 @@ function toLibraryItem(row: ListRow): LibraryItem {
           },
     wishlistPriority: row.wishlistPriority,
     sources: [...new Set(row.ownerships.map(({ source }) => source.platform))],
+    recommendedBy,
   };
 }

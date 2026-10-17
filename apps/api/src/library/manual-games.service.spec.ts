@@ -1,4 +1,4 @@
-import { Prisma } from '../generated/prisma/client.js';
+import { IgdbUnavailableError } from '../catalog/igdb-catalog.service.js';
 import { ManualGamesService } from './manual-games.service.js';
 
 const igdbGame = {
@@ -44,10 +44,12 @@ describe('ManualGamesService', () => {
     getTimesToBeat: vi.fn(),
   };
   const library = { get: vi.fn() };
+  const catalog = { ensure: vi.fn() };
   const service = new ManualGamesService(
     prisma as never,
     igdb as never,
     library as never,
+    catalog as never,
   );
 
   beforeEach(() => {
@@ -100,119 +102,26 @@ describe('ManualGamesService', () => {
   });
 
   describe('the catalog game', () => {
-    beforeEach(() => {
-      prisma.userGame.findUnique.mockResolvedValue(null);
-      prisma.userGame.create.mockResolvedValue({ id: 'ug1' });
-    });
-
-    it('reuses a game already in the catalog, without asking IGDB', async () => {
-      prisma.game.findUnique.mockResolvedValueOnce({
-        id: 'g1',
-        gameType: 'COMPLETABLE',
-      });
-      await service.add('u1', { origin: 'wishlist', igdbId: 7 });
-      expect(igdb.getGames).not.toHaveBeenCalled();
-      expect(prisma.game.create).not.toHaveBeenCalled();
-    });
-
-    it('reuses the game Steam already brought, found by its appid', async () => {
-      igdb.findSteamAppIds.mockResolvedValue(new Map([[7, 546560]]));
-      prisma.game.findUnique
-        .mockResolvedValueOnce(null) // by IGDB id
-        .mockResolvedValueOnce({
-          id: 'g-steam',
-          gameType: 'COMPLETABLE',
-          igdbId: null,
-        });
-      await service.add('u1', { origin: 'wishlist', igdbId: 7 });
-      expect(prisma.game.create).not.toHaveBeenCalled();
-      // It gets its IGDB id now, so the search finds it at once.
-      expect(prisma.game.update).toHaveBeenCalledWith({
-        where: { id: 'g-steam' },
-        data: { igdbId: 7 },
-      });
-      expect(prisma.userGame.create).toHaveBeenCalledWith(
-        expect.objectContaining({
-          data: expect.objectContaining({ gameId: 'g-steam' }),
-        }),
-      );
-    });
-
-    it('creates it from IGDB, with its Steam appid, type and tags', async () => {
-      igdb.findSteamAppIds.mockResolvedValue(new Map([[7, 546560]]));
-      prisma.game.findUnique.mockResolvedValue(null);
-      prisma.game.create.mockResolvedValue({
-        id: 'g1',
-        gameType: 'COMPLETABLE',
-      });
-
-      await service.add('u1', { origin: 'wishlist', igdbId: 7 });
-
-      expect(prisma.game.create).toHaveBeenCalledWith(
-        expect.objectContaining({
-          data: expect.objectContaining({
-            title: 'Half-Life: Alyx',
-            slug: 'half-life-alyx-546560',
-            igdbId: 7,
-            steamAppId: 546560,
-            coverUrl: 'https://images.igdb.com/cover.jpg',
-            ttbMainMin: 660,
-            gameType: 'COMPLETABLE',
-            // The next sync adds the Steam store's data.
-            metadataAt: null,
-          }),
-        }),
-      );
-      expect(prisma.tag.createMany).toHaveBeenCalled();
-    });
-
-    it('gives a game with no Steam page an IGDB slug, already enriched', async () => {
-      prisma.game.findUnique.mockResolvedValue(null);
-      prisma.game.create.mockResolvedValue({
-        id: 'g1',
-        gameType: 'COMPLETABLE',
-      });
-      await service.add('u1', { origin: 'wishlist', igdbId: 7 });
-      expect(prisma.game.create.mock.calls[0][0].data).toMatchObject({
-        slug: 'half-life-alyx-igdb-7',
-        steamAppId: null,
-        metadataAt: expect.any(Date),
-      });
-    });
-
-    it('takes the game another request created a moment ago', async () => {
-      prisma.game.findUnique.mockResolvedValue(null);
-      prisma.game.create.mockRejectedValue(
-        new Prisma.PrismaClientKnownRequestError('Unique constraint', {
-          code: 'P2002',
-          clientVersion: 'test',
-        }),
-      );
-      prisma.game.findUniqueOrThrow.mockResolvedValue({
-        id: 'g-other',
-        gameType: 'COMPLETABLE',
-      });
-      await service.add('u1', { origin: 'wishlist', igdbId: 7 });
-      expect(prisma.userGame.create.mock.calls[0][0].data.gameId).toBe(
-        'g-other',
-      );
-    });
-
     it('answers 404 for an IGDB id with no game', async () => {
-      prisma.game.findUnique.mockResolvedValue(null);
-      igdb.getGames.mockResolvedValue([]);
+      catalog.ensure.mockResolvedValue(new Map());
       await expect(
         service.add('u1', { origin: 'wishlist', igdbId: 7 }),
       ).rejects.toMatchObject({ status: 404 });
+    });
+
+    it('answers 502 when IGDB fails', async () => {
+      catalog.ensure.mockRejectedValue(new IgdbUnavailableError('down'));
+      await expect(
+        service.add('u1', { origin: 'wishlist', igdbId: 7 }),
+      ).rejects.toMatchObject({ status: 502 });
     });
   });
 
   describe('adding', () => {
     beforeEach(() => {
-      prisma.game.findUnique.mockResolvedValue({
-        id: 'g1',
-        gameType: 'COMPLETABLE',
-      });
+      catalog.ensure.mockResolvedValue(
+        new Map([[7, { id: 'g1', gameType: 'COMPLETABLE' }]]),
+      );
     });
 
     it('adds a wished-for game, kept by the Steam wishlist sync', async () => {

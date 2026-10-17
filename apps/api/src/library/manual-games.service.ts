@@ -12,15 +12,15 @@ import type {
   LibraryGame,
 } from '@psq/shared';
 import { autoStatus } from '../catalog/auto-status.js';
-import { buildGameTags, buildGameUpdate } from '../catalog/game-metadata.js';
-import { saveGameTags } from '../catalog/game-tags.js';
-import { classifyGameType } from '../catalog/game-type.js';
-import { igdbGameSlug, steamGameSlug } from '../catalog/slug.js';
+import {
+  IgdbCatalog,
+  IgdbUnavailableError,
+  type CatalogEntry,
+} from '../catalog/igdb-catalog.service.js';
 import {
   GameStatus,
-  type GameType,
   Platform,
-  Prisma,
+  type Prisma,
   StatusSource,
 } from '../generated/prisma/client.js';
 import { PrismaService } from '../prisma/prisma.service.js';
@@ -38,6 +38,7 @@ export class ManualGamesService {
     private readonly prisma: PrismaService,
     private readonly igdb: IgdbApi,
     private readonly library: LibraryService,
+    private readonly catalog: IgdbCatalog,
   ) {}
 
   /** PC games on IGDB, each marked if it's already in the library. */
@@ -177,107 +178,25 @@ export class ManualGamesService {
     return this.library.get(userId, id);
   }
 
-  /**
-   * The catalog's game for an IGDB id: the one already there, or a new one
-   * filled from IGDB. If IGDB knows its Steam page, the game gets that
-   * appid, so it's the same game when Steam brings it later (bought, or in
-   * someone else's library) instead of a duplicate.
-   */
-  private async catalogGame(
-    igdbId: number,
-  ): Promise<{ id: string; gameType: GameType }> {
-    const select = { id: true, gameType: true } as const;
-    const known = await this.prisma.game.findUnique({
-      where: { igdbId },
-      select,
-    });
-    if (known) {
-      return known;
+  /** The catalog's game for an IGDB id, created from IGDB if missing. */
+  private async catalogGame(igdbId: number): Promise<CatalogEntry> {
+    let found: Map<number, CatalogEntry>;
+    try {
+      found = await this.catalog.ensure([igdbId]);
+    } catch (error) {
+      if (error instanceof IgdbUnavailableError) {
+        throw igdbUnavailable();
+      }
+      throw error;
     }
-
-    const [details, steamAppIds, timesToBeat] = await this.fromIgdb(() =>
-      Promise.all([
-        this.igdb.getGames([igdbId]),
-        this.igdb.findSteamAppIds([igdbId]),
-        this.igdb.getTimesToBeat([igdbId]),
-      ]),
-    );
-    const igdb = details[0];
-    if (!igdb) {
+    const game = found.get(igdbId);
+    if (!game) {
       throw new NotFoundException({
         statusCode: 404,
         code: 'IGDB_GAME_NOT_FOUND',
       } satisfies ApiError);
     }
-    const steamAppId = steamAppIds.get(igdbId) ?? null;
-    if (steamAppId !== null) {
-      // Already in the catalog from someone's Steam library. It gets its
-      // IGDB id now if it had none yet, so the search finds it at once;
-      // no other game has it (looked up first).
-      const fromSteam = await this.prisma.game.findUnique({
-        where: { steamAppId },
-        select: { ...select, igdbId: true },
-      });
-      if (fromSteam) {
-        if (fromSteam.igdbId === null) {
-          await this.prisma.game.update({
-            where: { id: fromSteam.id },
-            data: { igdbId },
-          });
-        }
-        return { id: fromSteam.id, gameType: fromSteam.gameType };
-      }
-    }
-
-    const sources = {
-      store: null,
-      igdb,
-      timeToBeat: timesToBeat[0] ?? null,
-    };
-    const update = buildGameUpdate(
-      { title: igdb.title, ttbSource: null },
-      sources,
-    );
-    const { type } = classifyGameType({
-      modes: igdb.modes,
-      genres: igdb.genres,
-      themes: igdb.themes,
-      storeCategories: [],
-      ttbMainMin: update.ttbMainMin ?? null,
-    });
-    try {
-      const game = await this.prisma.game.create({
-        data: {
-          ...update,
-          title: igdb.title,
-          slug:
-            steamAppId === null
-              ? igdbGameSlug(igdb.title, igdbId)
-              : steamGameSlug(igdb.title, steamAppId),
-          igdbId,
-          steamAppId,
-          gameType: type,
-          // With a Steam page, the next sync adds the store's data (header
-          // image, categories); without one, IGDB is all there is.
-          metadataAt: steamAppId === null ? new Date() : null,
-        },
-        select,
-      });
-      await saveGameTags(this.prisma, [[game.id, buildGameTags(sources)]]);
-      return game;
-    } catch (error) {
-      // Someone added the same game a moment ago.
-      if (
-        error instanceof Prisma.PrismaClientKnownRequestError &&
-        error.code === 'P2002'
-      ) {
-        return this.prisma.game.findUniqueOrThrow({
-          where: { igdbId },
-          select,
-        });
-      }
-      throw error;
-    }
+    return game;
   }
 
   /** The player's external source with that name (any case), or a new one. */
@@ -310,10 +229,14 @@ export class ManualGamesService {
     try {
       return await call();
     } catch {
-      throw new BadGatewayException({
-        statusCode: 502,
-        code: 'IGDB_UNAVAILABLE',
-      } satisfies ApiError);
+      throw igdbUnavailable();
     }
   }
+}
+
+function igdbUnavailable(): BadGatewayException {
+  return new BadGatewayException({
+    statusCode: 502,
+    code: 'IGDB_UNAVAILABLE',
+  } satisfies ApiError);
 }

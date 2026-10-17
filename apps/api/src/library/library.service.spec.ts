@@ -154,3 +154,33 @@ describe('LibraryService.update', () => {
     ).rejects.toMatchObject({ status: 404 });
   });
 });
+
+describe('LibraryService.removeFromWishlist', () => {
+  const prisma = { userGame: { findFirst: vi.fn(), update: vi.fn() } };
+  const service = new LibraryService(prisma as never);
+
+  beforeEach(() => vi.resetAllMocks());
+
+  it('hides it instead of deleting it, so a list cannot bring it back', async () => {
+    prisma.userGame.findFirst.mockResolvedValue({
+      owned: false,
+      status: 'WISHLIST',
+    });
+    await service.removeFromWishlist('u1', 'ug1');
+    expect(prisma.userGame.update).toHaveBeenCalledWith({
+      where: { id: 'ug1' },
+      data: { hidden: true },
+    });
+  });
+
+  it.each([
+    [{ owned: true, status: 'BACKLOG' }, 'LIBRARY_GAME_ALREADY_OWNED'],
+    [{ owned: false, status: 'DISCARDED' }, 'LIBRARY_GAME_NOT_WISHED'],
+  ])('refuses %o with 409 %s', async (entry, code) => {
+    prisma.userGame.findFirst.mockResolvedValue(entry);
+    await expect(service.removeFromWishlist('u1', 'ug1')).rejects.toMatchObject(
+      { status: 409, response: { code } },
+    );
+    expect(prisma.userGame.update).not.toHaveBeenCalled();
+  });
+});
