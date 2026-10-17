@@ -6,6 +6,13 @@ import { useTranslation } from 'react-i18next';
 const WAKING_AFTER_MS = 3000;
 
 /**
+ * Once shown, it waits this long without requests before hiding: requests
+ * often come one after another, and the short gap between them would make
+ * it flicker.
+ */
+const HIDE_AFTER_MS = 1500;
+
+/**
  * "Waking the server up…" while a request takes longer than usual. On
  * Render's free plan the API sleeps after 15 minutes idle and takes up to
  * a minute to start; meanwhile the app shows the data it saved last time.
@@ -14,20 +21,23 @@ const WAKING_AFTER_MS = 3000;
 export function ServerWakingBanner() {
   const { t } = useTranslation();
   const busy = useIsFetching() + useIsMutating() > 0;
-  const [slow, setSlow] = useState(false);
+  const [shown, setShown] = useState(false);
 
   useEffect(() => {
-    if (!busy) {
+    if (busy && shown) {
+      // Still going: stays as it is.
       return;
     }
-    const timer = setTimeout(() => setSlow(true), WAKING_AFTER_MS);
-    return () => {
-      clearTimeout(timer);
-      setSlow(false);
-    };
-  }, [busy]);
+    // Busy and not shown yet: show it if it lasts. Calm and shown: hide it
+    // if it stays calm. A change in between cancels the pending one.
+    const timer = setTimeout(
+      () => setShown(busy),
+      busy ? WAKING_AFTER_MS : HIDE_AFTER_MS,
+    );
+    return () => clearTimeout(timer);
+  }, [busy, shown]);
 
-  if (!busy || !slow) {
+  if (!shown) {
     return null;
   }
   return (
