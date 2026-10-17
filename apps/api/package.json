@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {
     "build": "prisma generate --no-hints && nest build",
+    "curators:resolve": "node scripts/resolve-curator-list.mjs",
     "db:deploy": "prisma migrate deploy",
     "db:migrate": "prisma migrate dev",
     "db:studio": "prisma studio",

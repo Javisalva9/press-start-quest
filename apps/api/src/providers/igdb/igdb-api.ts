@@ -249,6 +249,28 @@ export class IgdbApi {
   }
 
   /**
+   * A game by its slug, the name in its igdb.com address
+   * (igdb.com/games/half-life-alyx): exact, unlike a search.
+   */
+  async findBySlug(slug: string): Promise<IgdbSearchResult | null> {
+    const [row] = SearchSchema.parse(
+      await this.query(
+        'games',
+        `fields name,first_release_date,cover.image_id; where slug = "${escapeQuery(slug)}"; limit 1;`,
+      ),
+    );
+    return row
+      ? {
+          igdbId: row.id,
+          title: row.name,
+          releaseYear:
+            fromUnixSeconds(row.first_release_date)?.getUTCFullYear() ?? null,
+          coverUrl: coverUrl(row.cover?.image_id),
+        }
+      : null;
+  }
+
+  /**
    * IGDB id of a game found by its exact name, ignoring case, symbols and
    * punctuation ("DOOM®" = "Doom"). Null rather than a guess: a wrong
    * match would show another game's cover, rating and length.

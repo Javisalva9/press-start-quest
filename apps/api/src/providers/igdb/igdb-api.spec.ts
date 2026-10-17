@@ -141,6 +141,24 @@ describe('IgdbApi', () => {
     );
   });
 
+  it('finds a game by its slug, or null', async () => {
+    answers.games = () =>
+      json([
+        { id: 7, name: 'Half-Life: Alyx', first_release_date: 1584921600 },
+      ]);
+    await expect(igdb.findBySlug('half-life-alyx')).resolves.toMatchObject({
+      igdbId: 7,
+      title: 'Half-Life: Alyx',
+      releaseYear: 2020,
+    });
+    expect(igdbCalls()[0][1]?.body).toBe(
+      'fields name,first_release_date,cover.image_id; where slug = "half-life-alyx"; limit 1;',
+    );
+
+    answers.games = () => json([]);
+    await expect(igdb.findBySlug('nope')).resolves.toBeNull();
+  });
+
   describe('findByName', () => {
     it('accepts only an exact match once normalized', async () => {
       answers.games = () =>

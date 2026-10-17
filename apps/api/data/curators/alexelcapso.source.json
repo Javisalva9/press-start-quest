@@ -1,0 +1,438 @@
+{
+  "curator": {
+    "name": "AlexElCapso",
+    "kind": "CREATOR"
+  },
+  "rules": "The 100 as listed. Each one is looked up on IGDB by \"search\" (its newest PC edition); \"alternatives\" are other texts tried if it finds nothing, \"year\" picks between games with the same name, and \"slug\" (the name in the igdb.com address) pins the game when the search can't. Games not on PC are left out: the app is PC only.",
+  "entries": [
+    {
+      "listed": "Minecraft",
+      "search": "Minecraft"
+    },
+    {
+      "listed": "Hollow Knight",
+      "search": "Hollow Knight"
+    },
+    {
+      "listed": "Stardew Valley",
+      "search": "Stardew Valley"
+    },
+    {
+      "listed": "Balatro",
+      "search": "Balatro"
+    },
+    {
+      "listed": "Outer Wilds",
+      "search": "Outer Wilds"
+    },
+    {
+      "listed": "Satisfactory",
+      "search": "Satisfactory"
+    },
+    {
+      "listed": "Factorio",
+      "search": "Factorio"
+    },
+    {
+      "listed": "The Binding of Isaac",
+      "search": "The Binding of Isaac: Rebirth",
+      "note": "The PC edition sold today"
+    },
+    {
+      "listed": "Hades",
+      "search": "Hades",
+      "year": 2020,
+      "note": "Not Hades II"
+    },
+    {
+      "listed": "Terraria",
+      "search": "Terraria"
+    },
+    {
+      "listed": "Sekiro",
+      "search": "Sekiro: Shadows Die Twice"
+    },
+    {
+      "listed": "League of Legends",
+      "search": "League of Legends"
+    },
+    {
+      "listed": "Half-Life 2",
+      "search": "Half-Life 2"
+    },
+    {
+      "listed": "Half-Life Alyx",
+      "search": "Half-Life: Alyx",
+      "slug": "half-life-alyx"
+    },
+    {
+      "listed": "Persona 5: Royal",
+      "search": "Persona 5 Royal"
+    },
+    {
+      "listed": "Expedition 33",
+      "search": "Clair Obscur: Expedition 33"
+    },
+    {
+      "listed": "Final Fantasy VII",
+      "search": "Final Fantasy VII Remake Intergrade"
+    },
+    {
+      "listed": "Final Fantasy X",
+      "search": "Final Fantasy X/X-2 HD Remaster"
+    },
+    {
+      "listed": "Chrono Trigger",
+      "search": "Chrono Trigger"
+    },
+    {
+      "listed": "Portal",
+      "search": "Portal",
+      "year": 2007,
+      "note": "Not Portal 2"
+    },
+    {
+      "listed": "The Talos Principle II",
+      "search": "The Talos Principle II"
+    },
+    {
+      "listed": "Lorelei and the Laser Eyes",
+      "search": "Lorelei and the Laser Eyes"
+    },
+    {
+      "listed": "Shadow of the Colossus",
+      "excluded": "not-on-pc"
+    },
+    {
+      "listed": "Ico",
+      "excluded": "not-on-pc"
+    },
+    {
+      "listed": "Resident Evil Remake",
+      "search": "Resident Evil",
+      "year": 2014,
+      "note": "The remake of the first one (2002). Its PC version, the HD Remaster, is just \"Resident Evil\" (2014) on IGDB"
+    },
+    {
+      "listed": "Resident Evil 2 Remake",
+      "search": "Resident Evil 2",
+      "year": 2019
+    },
+    {
+      "listed": "Resident Evil 4",
+      "search": "Resident Evil 4",
+      "year": 2023,
+      "note": "The 2023 remake"
+    },
+    {
+      "listed": "The Witcher 3",
+      "search": "The Witcher 3: Wild Hunt"
+    },
+    {
+      "listed": "Age of Empires II",
+      "search": "Age of Empires II: Definitive Edition"
+    },
+    {
+      "listed": "Warcraft III",
+      "search": "Warcraft III: Reforged"
+    },
+    {
+      "listed": "Street Fighter VI",
+      "search": "Street Fighter 6"
+    },
+    {
+      "listed": "Ocarina of Time",
+      "excluded": "not-on-pc"
+    },
+    {
+      "listed": "Breath of the Wild",
+      "excluded": "not-on-pc"
+    },
+    {
+      "listed": "Mario Galaxy",
+      "excluded": "not-on-pc"
+    },
+    {
+      "listed": "GTA III",
+      "search": "Grand Theft Auto III: The Definitive Edition"
+    },
+    {
+      "listed": "Silent Hill 2 Remake",
+      "search": "Silent Hill 2",
+      "year": 2024
+    },
+    {
+      "listed": "Metal Gear Solid",
+      "search": "Metal Gear Solid Master Collection: Volume 1",
+      "note": "Holds Metal Gear Solid and Metal Gear Solid 2"
+    },
+    {
+      "listed": "Kingdom Hearts II",
+      "search": "Kingdom Hearts HD 1.5 2.5 ReMIX",
+      "alternatives": ["Kingdom Hearts 1.5 2.5", "Kingdom Hearts HD 1.5+2.5"]
+    },
+    {
+      "listed": "Halo 3",
+      "search": "Halo: The Master Chief Collection"
+    },
+    {
+      "listed": "Gears of War",
+      "search": "Gears of War: Reloaded"
+    },
+    {
+      "listed": "BioShock",
+      "search": "BioShock Remastered"
+    },
+    {
+      "listed": "DOOM (2016)",
+      "search": "Doom",
+      "year": 2016
+    },
+    {
+      "listed": "Baldur's Gate III",
+      "search": "Baldur's Gate III"
+    },
+    {
+      "listed": "The Last of Us",
+      "search": "The Last of Us Part I"
+    },
+    {
+      "listed": "Jak and Daxter",
+      "excluded": "not-on-pc"
+    },
+    {
+      "listed": "Celeste",
+      "search": "Celeste"
+    },
+    {
+      "listed": "Diablo III",
+      "search": "Diablo III"
+    },
+    {
+      "listed": "Overwatch",
+      "slug": "overwatch--1",
+      "note": "The original was replaced by Overwatch 2, which IGDB keeps under overwatch--1"
+    },
+    {
+      "listed": "It Takes Two",
+      "search": "It Takes Two"
+    },
+    {
+      "listed": "The Walking Dead",
+      "search": "The Walking Dead: The Telltale Definitive Series"
+    },
+    {
+      "listed": "SOMA",
+      "search": "SOMA"
+    },
+    {
+      "listed": "God of War II",
+      "excluded": "not-on-pc"
+    },
+    {
+      "listed": "God of War: Ragnarök",
+      "search": "God of War Ragnarök"
+    },
+    {
+      "listed": "Assassin's Creed 2",
+      "search": "Assassin's Creed II"
+    },
+    {
+      "listed": "Pokémon Plata",
+      "excluded": "not-on-pc"
+    },
+    {
+      "listed": "Yakuza 0",
+      "search": "Yakuza 0"
+    },
+    {
+      "listed": "Borderlands 2",
+      "search": "Borderlands 2"
+    },
+    {
+      "listed": "Monster Hunter World",
+      "search": "Monster Hunter: World"
+    },
+    {
+      "listed": "Devil May Cry 5",
+      "search": "Devil May Cry 5"
+    },
+    {
+      "listed": "Bayonetta",
+      "search": "Bayonetta",
+      "year": 2009,
+      "note": "The first one"
+    },
+    {
+      "listed": "Papers, Please",
+      "search": "Papers, Please"
+    },
+    {
+      "listed": "Slay the Spire",
+      "search": "Slay the Spire"
+    },
+    {
+      "listed": "Inscryption",
+      "search": "Inscryption"
+    },
+    {
+      "listed": "Cities Skylines",
+      "search": "Cities: Skylines",
+      "note": "Not Cities: Skylines II"
+    },
+    {
+      "listed": "Triangle Strategy",
+      "search": "Triangle Strategy"
+    },
+    {
+      "listed": "X-COM 2",
+      "search": "XCOM 2"
+    },
+    {
+      "listed": "Counter Strike 2",
+      "search": "Counter-Strike 2"
+    },
+    {
+      "listed": "Battlefield 4",
+      "search": "Battlefield 4"
+    },
+    {
+      "listed": "Call of Duty: Modern Warfare",
+      "search": "Call of Duty: Modern Warfare Remastered",
+      "alternatives": ["Modern Warfare Remastered"]
+    },
+    {
+      "listed": "INSIDE",
+      "search": "Inside",
+      "year": 2016
+    },
+    {
+      "listed": "Subnautica",
+      "search": "Subnautica",
+      "note": "Not Below Zero"
+    },
+    {
+      "listed": "Fallout 4",
+      "search": "Fallout 4"
+    },
+    {
+      "listed": "Mass Effect",
+      "search": "Mass Effect Legendary Edition"
+    },
+    {
+      "listed": "Dead Space Remake",
+      "search": "Dead Space",
+      "year": 2023
+    },
+    {
+      "listed": "Civilization VI",
+      "search": "Sid Meier's Civilization VI"
+    },
+    {
+      "listed": "Batman: Arkham Asylum",
+      "search": "Batman: Arkham Asylum Game of the Year Edition"
+    },
+    {
+      "listed": "Far Cry 4",
+      "search": "Far Cry 4"
+    },
+    {
+      "listed": "Metro: Last Light",
+      "search": "Metro: Last Light Redux"
+    },
+    {
+      "listed": "Death Stranding",
+      "search": "Death Stranding",
+      "note": "The PC edition sold today is the Director's Cut if IGDB has it apart"
+    },
+    {
+      "listed": "Mirror's Edge",
+      "search": "Mirror's Edge",
+      "year": 2008,
+      "note": "Not Catalyst"
+    },
+    {
+      "listed": "Blasphemous II",
+      "search": "Blasphemous II"
+    },
+    {
+      "listed": "NieR: Automata",
+      "search": "NieR: Automata"
+    },
+    {
+      "listed": "Dark Souls",
+      "search": "Dark Souls: Remastered"
+    },
+    {
+      "listed": "Los Sims 4",
+      "search": "The Sims 4"
+    },
+    {
+      "listed": "Uncharted 2",
+      "excluded": "not-on-pc"
+    },
+    {
+      "listed": "Tetris Effect",
+      "search": "Tetris Effect: Connected"
+    },
+    {
+      "listed": "Gran Turismo 3",
+      "excluded": "not-on-pc"
+    },
+    {
+      "listed": "Left 4 Dead 2",
+      "search": "Left 4 Dead 2"
+    },
+    {
+      "listed": "What Remains of Edith Finch",
+      "search": "What Remains of Edith Finch"
+    },
+    {
+      "listed": "Undertale",
+      "search": "Undertale"
+    },
+    {
+      "listed": "Enter the Gungeon",
+      "search": "Enter the Gungeon"
+    },
+    {
+      "listed": "Prey (2016)",
+      "search": "Prey",
+      "year": 2017,
+      "note": "The list says 2016; the game is from 2017"
+    },
+    {
+      "listed": "Risk of Rain 2",
+      "search": "Risk of Rain 2"
+    },
+    {
+      "listed": "Elden Ring",
+      "search": "Elden Ring"
+    },
+    {
+      "listed": "Metal Gear Solid 2",
+      "search": "Metal Gear Solid Master Collection: Volume 1",
+      "note": "Same game as Metal Gear Solid in PC"
+    },
+    {
+      "listed": "Marvel's Spider-Man (2018)",
+      "search": "Marvel's Spider-Man Remastered"
+    },
+    {
+      "listed": "Dredge",
+      "search": "Dredge"
+    },
+    {
+      "listed": "Luigi's Mansion 3",
+      "excluded": "not-on-pc"
+    },
+    {
+      "listed": "Dragon Quest VIII",
+      "excluded": "not-on-pc"
+    },
+    {
+      "listed": "Cookie Clicker",
+      "search": "Cookie Clicker"
+    }
+  ]
+}

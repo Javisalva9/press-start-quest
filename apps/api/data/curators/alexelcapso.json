@@ -1,0 +1,530 @@
+{
+  "curator": {
+    "name": "AlexElCapso",
+    "kind": "CREATOR"
+  },
+  "games": [
+    {
+      "igdbId": 135400,
+      "title": "Minecraft",
+      "year": 2016,
+      "listedAs": ["Minecraft"]
+    },
+    {
+      "igdbId": 14593,
+      "title": "Hollow Knight",
+      "year": 2017,
+      "listedAs": ["Hollow Knight"]
+    },
+    {
+      "igdbId": 17000,
+      "title": "Stardew Valley",
+      "year": 2016,
+      "listedAs": ["Stardew Valley"]
+    },
+    {
+      "igdbId": 251833,
+      "title": "Balatro",
+      "year": 2024,
+      "listedAs": ["Balatro"]
+    },
+    {
+      "igdbId": 11737,
+      "title": "Outer Wilds",
+      "year": 2019,
+      "listedAs": ["Outer Wilds"]
+    },
+    {
+      "igdbId": 90558,
+      "title": "Satisfactory",
+      "year": 2024,
+      "listedAs": ["Satisfactory"]
+    },
+    {
+      "igdbId": 7046,
+      "title": "Factorio",
+      "year": 2020,
+      "listedAs": ["Factorio"]
+    },
+    {
+      "igdbId": 7789,
+      "title": "The Binding of Isaac: Rebirth",
+      "year": 2014,
+      "listedAs": ["The Binding of Isaac"]
+    },
+    {
+      "igdbId": 113112,
+      "title": "Hades",
+      "year": 2020,
+      "listedAs": ["Hades"]
+    },
+    {
+      "igdbId": 1879,
+      "title": "Terraria",
+      "year": 2011,
+      "listedAs": ["Terraria"]
+    },
+    {
+      "igdbId": 76882,
+      "title": "Sekiro: Shadows Die Twice",
+      "year": 2019,
+      "listedAs": ["Sekiro"]
+    },
+    {
+      "igdbId": 115,
+      "title": "League of Legends",
+      "year": 2009,
+      "listedAs": ["League of Legends"]
+    },
+    {
+      "igdbId": 233,
+      "title": "Half-Life 2",
+      "year": 2004,
+      "listedAs": ["Half-Life 2"]
+    },
+    {
+      "igdbId": 126098,
+      "title": "Half-Life: Alyx",
+      "year": 2020,
+      "listedAs": ["Half-Life Alyx"]
+    },
+    {
+      "igdbId": 114283,
+      "title": "Persona 5 Royal",
+      "year": 2019,
+      "listedAs": ["Persona 5: Royal"]
+    },
+    {
+      "igdbId": 305152,
+      "title": "Clair Obscur: Expedition 33",
+      "year": 2025,
+      "listedAs": ["Expedition 33"]
+    },
+    {
+      "igdbId": 144024,
+      "title": "Final Fantasy VII Remake Intergrade",
+      "year": 2021,
+      "listedAs": ["Final Fantasy VII"]
+    },
+    {
+      "igdbId": 14144,
+      "title": "Final Fantasy X/X-2 HD Remaster",
+      "year": 2013,
+      "listedAs": ["Final Fantasy X"]
+    },
+    {
+      "igdbId": 206320,
+      "title": "Chrono Trigger",
+      "year": 2018,
+      "listedAs": ["Chrono Trigger"]
+    },
+    {
+      "igdbId": 71,
+      "title": "Portal",
+      "year": 2007,
+      "listedAs": ["Portal"]
+    },
+    {
+      "igdbId": 79864,
+      "title": "The Talos Principle II",
+      "year": 2023,
+      "listedAs": ["The Talos Principle II"]
+    },
+    {
+      "igdbId": 206806,
+      "title": "Lorelei and the Laser Eyes",
+      "year": 2024,
+      "listedAs": ["Lorelei and the Laser Eyes"]
+    },
+    {
+      "igdbId": 8254,
+      "title": "Resident Evil",
+      "year": 2014,
+      "listedAs": ["Resident Evil Remake"]
+    },
+    {
+      "igdbId": 19686,
+      "title": "Resident Evil 2",
+      "year": 2019,
+      "listedAs": ["Resident Evil 2 Remake"]
+    },
+    {
+      "igdbId": 132181,
+      "title": "Resident Evil 4",
+      "year": 2023,
+      "listedAs": ["Resident Evil 4"]
+    },
+    {
+      "igdbId": 1942,
+      "title": "The Witcher 3: Wild Hunt",
+      "year": 2015,
+      "listedAs": ["The Witcher 3"]
+    },
+    {
+      "igdbId": 55056,
+      "title": "Age of Empires II: Definitive Edition",
+      "year": 2019,
+      "listedAs": ["Age of Empires II"]
+    },
+    {
+      "igdbId": 111650,
+      "title": "Warcraft III: Reforged",
+      "year": 2020,
+      "listedAs": ["Warcraft III"]
+    },
+    {
+      "igdbId": 191692,
+      "title": "Street Fighter 6",
+      "year": 2023,
+      "listedAs": ["Street Fighter VI"]
+    },
+    {
+      "igdbId": 178123,
+      "title": "Grand Theft Auto III: The Definitive Edition",
+      "year": 2021,
+      "listedAs": ["GTA III"]
+    },
+    {
+      "igdbId": 222341,
+      "title": "Silent Hill 2",
+      "year": 2024,
+      "listedAs": ["Silent Hill 2 Remake"]
+    },
+    {
+      "igdbId": 250635,
+      "title": "Metal Gear Solid Master Collection: Volume 1",
+      "year": 2023,
+      "listedAs": ["Metal Gear Solid", "Metal Gear Solid 2"]
+    },
+    {
+      "igdbId": 27979,
+      "title": "Kingdom Hearts HD 1.5 + 2.5 Remix",
+      "year": 2017,
+      "listedAs": ["Kingdom Hearts II"]
+    },
+    {
+      "igdbId": 7348,
+      "title": "Halo: The Master Chief Collection",
+      "year": 2014,
+      "listedAs": ["Halo 3"]
+    },
+    {
+      "igdbId": 342721,
+      "title": "Gears of War: Reloaded",
+      "year": 2025,
+      "listedAs": ["Gears of War"]
+    },
+    {
+      "igdbId": 34293,
+      "title": "BioShock Remastered",
+      "year": 2016,
+      "listedAs": ["BioShock"]
+    },
+    {
+      "igdbId": 7351,
+      "title": "Doom",
+      "year": 2016,
+      "listedAs": ["DOOM (2016)"]
+    },
+    {
+      "igdbId": 119171,
+      "title": "Baldur's Gate III",
+      "year": 2023,
+      "listedAs": ["Baldur's Gate III"]
+    },
+    {
+      "igdbId": 204350,
+      "title": "The Last of Us Part I",
+      "year": 2022,
+      "listedAs": ["The Last of Us"]
+    },
+    {
+      "igdbId": 26226,
+      "title": "Celeste",
+      "year": 2018,
+      "listedAs": ["Celeste"]
+    },
+    {
+      "igdbId": 120,
+      "title": "Diablo III",
+      "year": 2012,
+      "listedAs": ["Diablo III"]
+    },
+    {
+      "igdbId": 125174,
+      "title": "Overwatch",
+      "year": 2023,
+      "listedAs": ["Overwatch"]
+    },
+    {
+      "igdbId": 135243,
+      "title": "It Takes Two",
+      "year": 2021,
+      "listedAs": ["It Takes Two"]
+    },
+    {
+      "igdbId": 117514,
+      "title": "The Walking Dead: The Telltale Definitive Series",
+      "year": 2019,
+      "listedAs": ["The Walking Dead"]
+    },
+    {
+      "igdbId": 9727,
+      "title": "Soma",
+      "year": 2015,
+      "listedAs": ["SOMA"]
+    },
+    {
+      "igdbId": 112875,
+      "title": "God of War Ragnarök",
+      "year": 2022,
+      "listedAs": ["God of War: Ragnarök"]
+    },
+    {
+      "igdbId": 127,
+      "title": "Assassin's Creed II",
+      "year": 2009,
+      "listedAs": ["Assassin's Creed 2"]
+    },
+    {
+      "igdbId": 11397,
+      "title": "Yakuza 0",
+      "year": 2015,
+      "listedAs": ["Yakuza 0"]
+    },
+    {
+      "igdbId": 1011,
+      "title": "Borderlands 2",
+      "year": 2012,
+      "listedAs": ["Borderlands 2"]
+    },
+    {
+      "igdbId": 36926,
+      "title": "Monster Hunter: World",
+      "year": 2018,
+      "listedAs": ["Monster Hunter World"]
+    },
+    {
+      "igdbId": 76253,
+      "title": "Devil May Cry 5",
+      "year": 2019,
+      "listedAs": ["Devil May Cry 5"]
+    },
+    {
+      "igdbId": 2136,
+      "title": "Bayonetta",
+      "year": 2009,
+      "listedAs": ["Bayonetta"]
+    },
+    {
+      "igdbId": 2935,
+      "title": "Papers, Please",
+      "year": 2013,
+      "listedAs": ["Papers, Please"]
+    },
+    {
+      "igdbId": 40477,
+      "title": "Slay the Spire",
+      "year": 2019,
+      "listedAs": ["Slay the Spire"]
+    },
+    {
+      "igdbId": 139090,
+      "title": "Inscryption",
+      "year": 2021,
+      "listedAs": ["Inscryption"]
+    },
+    {
+      "igdbId": 9066,
+      "title": "Cities: Skylines",
+      "year": 2015,
+      "listedAs": ["Cities Skylines"]
+    },
+    {
+      "igdbId": 143610,
+      "title": "Triangle Strategy",
+      "year": 2022,
+      "listedAs": ["Triangle Strategy"]
+    },
+    {
+      "igdbId": 10919,
+      "title": "XCOM 2",
+      "year": 2016,
+      "listedAs": ["X-COM 2"]
+    },
+    {
+      "igdbId": 242408,
+      "title": "Counter-Strike 2",
+      "year": 2023,
+      "listedAs": ["Counter Strike 2"]
+    },
+    {
+      "igdbId": 1979,
+      "title": "Battlefield 4",
+      "year": 2013,
+      "listedAs": ["Battlefield 4"]
+    },
+    {
+      "igdbId": 24920,
+      "title": "Call of Duty: Modern Warfare Remastered",
+      "year": 2016,
+      "listedAs": ["Call of Duty: Modern Warfare"]
+    },
+    {
+      "igdbId": 7342,
+      "title": "Inside",
+      "year": 2016,
+      "listedAs": ["INSIDE"]
+    },
+    {
+      "igdbId": 9254,
+      "title": "Subnautica",
+      "year": 2018,
+      "listedAs": ["Subnautica"]
+    },
+    {
+      "igdbId": 9630,
+      "title": "Fallout 4",
+      "year": 2015,
+      "listedAs": ["Fallout 4"]
+    },
+    {
+      "igdbId": 140839,
+      "title": "Mass Effect Legendary Edition",
+      "year": 2021,
+      "listedAs": ["Mass Effect"]
+    },
+    {
+      "igdbId": 159119,
+      "title": "Dead Space",
+      "year": 2023,
+      "listedAs": ["Dead Space Remake"]
+    },
+    {
+      "igdbId": 19130,
+      "title": "Sid Meier's Civilization VI",
+      "year": 2016,
+      "listedAs": ["Civilization VI"]
+    },
+    {
+      "igdbId": 27862,
+      "title": "Batman: Arkham Asylum - Game of the Year Edition",
+      "year": 2010,
+      "listedAs": ["Batman: Arkham Asylum"]
+    },
+    {
+      "igdbId": 6801,
+      "title": "Far Cry 4",
+      "year": 2014,
+      "listedAs": ["Far Cry 4"]
+    },
+    {
+      "igdbId": 50199,
+      "title": "Metro: Last Light Redux",
+      "year": 2014,
+      "listedAs": ["Metro: Last Light"]
+    },
+    {
+      "igdbId": 19564,
+      "title": "Death Stranding",
+      "year": 2019,
+      "listedAs": ["Death Stranding"]
+    },
+    {
+      "igdbId": 1051,
+      "title": "Mirror's Edge",
+      "year": 2008,
+      "listedAs": ["Mirror's Edge"]
+    },
+    {
+      "igdbId": 165390,
+      "title": "Blasphemous II",
+      "year": 2023,
+      "listedAs": ["Blasphemous II"]
+    },
+    {
+      "igdbId": 11208,
+      "title": "NieR: Automata",
+      "year": 2017,
+      "listedAs": ["NieR: Automata"]
+    },
+    {
+      "igdbId": 81085,
+      "title": "Dark Souls: Remastered",
+      "year": 2018,
+      "listedAs": ["Dark Souls"]
+    },
+    {
+      "igdbId": 3212,
+      "title": "The Sims 4",
+      "year": 2014,
+      "listedAs": ["Los Sims 4"]
+    },
+    {
+      "igdbId": 135999,
+      "title": "Tetris Effect: Connected",
+      "year": 2020,
+      "listedAs": ["Tetris Effect"]
+    },
+    {
+      "igdbId": 124,
+      "title": "Left 4 Dead 2",
+      "year": 2009,
+      "listedAs": ["Left 4 Dead 2"]
+    },
+    {
+      "igdbId": 11233,
+      "title": "What Remains of Edith Finch",
+      "year": 2017,
+      "listedAs": ["What Remains of Edith Finch"]
+    },
+    {
+      "igdbId": 12517,
+      "title": "Undertale",
+      "year": 2015,
+      "listedAs": ["Undertale"]
+    },
+    {
+      "igdbId": 11182,
+      "title": "Enter the Gungeon",
+      "year": 2016,
+      "listedAs": ["Enter the Gungeon"]
+    },
+    {
+      "igdbId": 19531,
+      "title": "Prey",
+      "year": 2017,
+      "listedAs": ["Prey (2016)"]
+    },
+    {
+      "igdbId": 28512,
+      "title": "Risk of Rain 2",
+      "year": 2020,
+      "listedAs": ["Risk of Rain 2"]
+    },
+    {
+      "igdbId": 119133,
+      "title": "Elden Ring",
+      "year": 2022,
+      "listedAs": ["Elden Ring"]
+    },
+    {
+      "igdbId": 138949,
+      "title": "Marvel's Spider-Man Remastered",
+      "year": 2020,
+      "listedAs": ["Marvel's Spider-Man (2018)"]
+    },
+    {
+      "igdbId": 164867,
+      "title": "Dredge",
+      "year": 2023,
+      "listedAs": ["Dredge"]
+    },
+    {
+      "igdbId": 3241,
+      "title": "Cookie Clicker",
+      "year": 2013,
+      "listedAs": ["Cookie Clicker"]
+    }
+  ]
+}
