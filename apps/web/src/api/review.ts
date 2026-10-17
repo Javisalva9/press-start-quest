@@ -32,6 +32,7 @@ export function useAnswerReview() {
     onSuccess: (_result, { id }) => {
       // Statuses changed: the library and the game page show them.
       void queryClient.invalidateQueries({ queryKey: ['library'] });
+      void queryClient.invalidateQueries({ queryKey: ['stats-overview'] });
       void queryClient.invalidateQueries({ queryKey: ['library-game', id] });
     },
   });

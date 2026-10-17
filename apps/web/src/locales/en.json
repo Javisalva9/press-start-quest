@@ -17,14 +17,34 @@
   "home": {
     "greeting": "Hi, {{name}}!",
     "loading": "Loading…",
-    "comingSoon": "Your library is on its way: it arrives in the next updates.",
     "signOut": "Sign out",
     "lastSync": "Last synced {{date}}",
     "neverSynced": "Never synced",
     "syncNow": "Sync now",
     "review_one": "You have {{count}} game to review",
     "review_other": "You have {{count}} games to review",
-    "reviewNow": "Review"
+    "reviewNow": "Review",
+    "progress": {
+      "percent": "{{percent}}%",
+      "title": "Your progress",
+      "empty": "Once your library has games with an ending, you’ll see here how many you’ve completed.",
+      "completedOf": "{{completed}} of {{total}} completed",
+      "pending_one": "{{count}} game left",
+      "pending_other": "{{count}} games left",
+      "remaining": "Hours to play",
+      "withoutLength_one": "and {{count}} game with no length",
+      "withoutLength_other": "and {{count}} games with no length",
+      "streak": "Streak",
+      "days_one": "{{count}} day",
+      "days_other": "{{count}} days",
+      "bestStreak_one": "Best: {{count}} day",
+      "bestStreak_other": "Best: {{count}} days",
+      "endless": "Endless",
+      "abandoned": "Abandoned",
+      "closed": "Servers closed",
+      "since": "Streaks count from {{date}}.",
+      "noHistory": "Streaks start counting after your first sync."
+    }
   },
   "steamPrivacy": {
     "PROFILE_PRIVATE": {

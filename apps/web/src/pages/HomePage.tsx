@@ -3,12 +3,15 @@ import { Link } from 'react-router';
 import { signOut } from '../api/auth';
 import { useMe } from '../api/me';
 import { useReviewQueue } from '../api/review';
+import { useStatsOverview } from '../api/stats';
+import { ProgressCard } from '../components/ProgressCard';
 import { SteamPrivacyNotice } from '../components/SteamPrivacyNotice';
 
-/** Placeholder home: it becomes the progress screen in stage 2. */
+/** Home: "how far have I got", what's waiting to review, and the sync. */
 export default function HomePage() {
   const { t, i18n } = useTranslation();
   const me = useMe();
+  const stats = useStatsOverview();
   // Only the count is needed: one card is enough to get the total.
   const review = useReviewQueue(1);
   const toReview = review.data?.total ?? 0;
@@ -35,14 +38,21 @@ export default function HomePage() {
 
       <SteamPrivacyNotice />
 
-      <section className="rounded-2xl border border-line bg-card p-6">
-        <h1 className="font-display text-2xl font-bold">
-          {me.data
-            ? t('home.greeting', { name: me.data.displayName })
-            : t('home.loading')}
-        </h1>
-        <p className="mt-2 text-muted">{t('home.comingSoon')}</p>
-      </section>
+      <h1 className="font-display text-2xl font-bold">
+        {me.data
+          ? t('home.greeting', { name: me.data.displayName })
+          : t('home.loading')}
+      </h1>
+
+      {stats.data ? (
+        <ProgressCard stats={stats.data} />
+      ) : (
+        // A skeleton while it loads (or the API wakes up), not a blank.
+        <section
+          aria-busy
+          className="h-72 animate-pulse rounded-2xl border border-line bg-card"
+        />
+      )}
 
       {toReview > 0 && (
         <section className="flex items-center justify-between gap-4 rounded-2xl border border-line bg-card p-5">

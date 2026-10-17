@@ -29,3 +29,21 @@
     @apply min-h-dvh bg-canvas font-sans text-fg antialiased;
   }
 }
+
+/* The progress ring fills up when the home screen opens (the plan's small
+   reward). It starts empty and stops at the value set on the element. */
+@keyframes ring-fill {
+  from {
+    stroke-dashoffset: var(--ring-length);
+  }
+}
+
+.ring-fill {
+  animation: ring-fill 900ms ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ring-fill {
+    animation: none;
+  }
+}
