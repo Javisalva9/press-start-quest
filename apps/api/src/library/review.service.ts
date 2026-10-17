@@ -16,6 +16,7 @@ import {
 import { pausedLongEnough, STARTED_MIN } from '../catalog/auto-status.js';
 import { FinaleResolver } from '../finale/finale-resolver.js';
 import { PrismaService } from '../prisma/prisma.service.js';
+import { TasteProfileService } from '../taste/taste-profile.service.js';
 
 /** How strong each signal is: a card comes back only with a stronger one. */
 const STRENGTH: Record<CompletionSignal, number> = {
@@ -88,6 +89,7 @@ export class ReviewService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly finales: FinaleResolver,
+    private readonly taste: TasteProfileService,
   ) {}
 
   async queue(
@@ -236,6 +238,9 @@ export class ReviewService {
                   : {}),
               };
     await this.prisma.userGame.update({ where: { id }, data });
+    // Each answer can change the taste (a game finished, one dropped): a
+    // Repaso session shows in the recommendations at once.
+    await this.taste.refresh(userId);
   }
 }
 

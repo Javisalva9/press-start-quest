@@ -1,5 +1,6 @@
 import { Test } from '@nestjs/testing';
 import { PrismaService } from '../prisma/prisma.service.js';
+import { TasteProfileService } from '../taste/taste-profile.service.js';
 import { LibraryService } from './library.service.js';
 
 describe('LibraryService.setLength', () => {
@@ -7,12 +8,17 @@ describe('LibraryService.setLength', () => {
     userGame: { findFirst: vi.fn() },
     game: { update: vi.fn() },
   };
+  const taste = { refresh: vi.fn() };
   let service: LibraryService;
 
   beforeEach(async () => {
     vi.resetAllMocks();
     const moduleRef = await Test.createTestingModule({
-      providers: [LibraryService, { provide: PrismaService, useValue: prisma }],
+      providers: [
+        LibraryService,
+        { provide: PrismaService, useValue: prisma },
+        { provide: TasteProfileService, useValue: taste },
+      ],
     }).compile();
     service = moduleRef.get(LibraryService);
     // The game page returned afterwards is not what these tests check.
@@ -50,6 +56,7 @@ describe('LibraryService.update', () => {
   const prisma = {
     userGame: { findFirst: vi.fn(), update: vi.fn() },
   };
+  const taste = { refresh: vi.fn() };
   let service: LibraryService;
 
   const entry = (overrides: Record<string, unknown> = {}) => ({
@@ -69,7 +76,11 @@ describe('LibraryService.update', () => {
   beforeEach(async () => {
     vi.resetAllMocks();
     const moduleRef = await Test.createTestingModule({
-      providers: [LibraryService, { provide: PrismaService, useValue: prisma }],
+      providers: [
+        LibraryService,
+        { provide: PrismaService, useValue: prisma },
+        { provide: TasteProfileService, useValue: taste },
+      ],
     }).compile();
     service = moduleRef.get(LibraryService);
     vi.spyOn(service, 'get').mockResolvedValue({} as never);
@@ -125,6 +136,12 @@ describe('LibraryService.update', () => {
     expect(saved()).toEqual({ typeOverride: 'SANDBOX' });
   });
 
+  it('refreshes the taste profile when the status changes', async () => {
+    prisma.userGame.findFirst.mockResolvedValue(entry());
+    await service.update('u1', 'ug1', { status: 'COMPLETED' });
+    expect(taste.refresh).toHaveBeenCalledWith('u1');
+  });
+
   it('saves and clears the server status', async () => {
     prisma.userGame.findFirst.mockResolvedValue(
       entry({ statusSource: 'MANUAL' }),
@@ -135,6 +152,8 @@ describe('LibraryService.update', () => {
     prisma.userGame.update.mockClear();
     await service.update('u1', 'ug1', { serverStatus: null });
     expect(saved()).toEqual({ serverOverride: null });
+    // No status changed: nothing for the taste profile.
+    expect(taste.refresh).not.toHaveBeenCalled();
   });
 
   it('refuses a status for a game that is only wishlisted', async () => {
@@ -157,7 +176,7 @@ describe('LibraryService.update', () => {
 
 describe('LibraryService.removeFromWishlist', () => {
   const prisma = { userGame: { findFirst: vi.fn(), update: vi.fn() } };
-  const service = new LibraryService(prisma as never);
+  const service = new LibraryService(prisma as never, {} as never);
 
   beforeEach(() => vi.resetAllMocks());
 

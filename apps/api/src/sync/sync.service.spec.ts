@@ -1,6 +1,7 @@
 import { Test } from '@nestjs/testing';
 import { Prisma } from '../generated/prisma/client.js';
 import { PrismaService } from '../prisma/prisma.service.js';
+import { TasteProfileService } from '../taste/taste-profile.service.js';
 import { AchievementsImporter } from './achievements-importer.js';
 import { AutoStatusUpdater } from './auto-status-updater.js';
 import { CatalogEnricher } from './catalog-enricher.js';
@@ -51,6 +52,7 @@ describe('SyncService', () => {
   const completions = { update: vi.fn() };
   const statuses = { update: vi.fn() };
   const snapshots = { record: vi.fn() };
+  const taste = { refresh: vi.fn() };
   let service: SyncService;
 
   /** Lets the background job run until it settles. */
@@ -87,6 +89,7 @@ describe('SyncService', () => {
     completions.update.mockResolvedValue(0);
     statuses.update.mockResolvedValue(0);
     snapshots.record.mockResolvedValue(0);
+    taste.refresh.mockResolvedValue(0);
   };
 
   beforeEach(async () => {
@@ -106,6 +109,7 @@ describe('SyncService', () => {
         { provide: CompletionDetector, useValue: completions },
         { provide: AutoStatusUpdater, useValue: statuses },
         { provide: SnapshotRecorder, useValue: snapshots },
+        { provide: TasteProfileService, useValue: taste },
       ],
     }).compile();
     service = moduleRef.get(SyncService);
@@ -131,6 +135,11 @@ describe('SyncService', () => {
     // After the achievements: the detector needs them.
     expect(completions.update).toHaveBeenCalledWith('u1');
     expect(statuses.update).toHaveBeenCalledWith('u1');
+    // After the statuses, which the taste follows.
+    expect(taste.refresh).toHaveBeenCalledWith('u1');
+    expect(taste.refresh.mock.invocationCallOrder[0]).toBeGreaterThan(
+      statuses.update.mock.invocationCallOrder[0]!,
+    );
     // Today's playtime photo of what changed.
     expect(snapshots.record).toHaveBeenCalledWith(
       'u1',
