@@ -53,6 +53,12 @@ press-start-quest/
 
 Requisitos: Node.js 24 (ver `.node-version`) y pnpm 12 (ver `packageManager`).
 
+Recomendado: [gitleaks](https://github.com/gitleaks/gitleaks)
+(`winget install Gitleaks.Gitleaks` en Windows). `pnpm install` deja puesto
+un hook de pre-commit (lefthook) que lo usa para parar cualquier commit con un
+secreto dentro; sin gitleaks solo avisa, y el CI hace la misma comprobación en
+cada pull request.
+
 ```bash
 pnpm install                              # instala todo y genera el cliente de Prisma
 cp apps/api/.env.example apps/api/.env    # y rellena las variables

@@ -9,6 +9,8 @@ import {
   type LibraryItem,
 } from '@psq/shared';
 import {
+  activeFilterCount,
+  CLEARABLE_FILTERS,
   filtersFromSearchParams,
   toSearchParams,
   useLibrary,
@@ -55,6 +57,15 @@ export default function LibraryPage() {
     );
   };
   useEffect(() => () => clearTimeout(searchTimer.current), []);
+
+  // Searching, status chips, length…: how many, and a way to drop them all
+  // (the search box included) without touching the view or the order.
+  const activeFilters = activeFilterCount(filters);
+  const clearFilters = () => {
+    clearTimeout(searchTimer.current);
+    setText('');
+    setFilters(CLEARABLE_FILTERS);
+  };
 
   const library = useLibrary(filters);
   const items = library.data?.pages.flatMap((page) => page.items) ?? [];
@@ -177,11 +188,24 @@ export default function LibraryPage() {
         </select>
       </div>
 
-      {total !== undefined && (
-        <p className="text-sm text-muted">
-          {t('library.count', { count: total })}
-        </p>
-      )}
+      <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1 text-sm">
+        {total !== undefined && (
+          <p className="text-muted">{t('library.count', { count: total })}</p>
+        )}
+        {activeFilters > 0 && (
+          <p className="text-muted">
+            {t('library.activeFilters', { count: activeFilters })}
+            {' · '}
+            <button
+              type="button"
+              onClick={clearFilters}
+              className="font-semibold text-cyan"
+            >
+              {t('library.clearFilters')}
+            </button>
+          </p>
+        )}
+      </div>
 
       {/* An error only without data: if the API fails, what's saved stays. */}
       {library.isError && !library.data ? (
