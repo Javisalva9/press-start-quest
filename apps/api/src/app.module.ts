@@ -13,6 +13,7 @@ import { LibraryModule } from './library/library.module.js';
 import { PrismaModule } from './prisma/prisma.module.js';
 import { SourcesModule } from './sources/sources.module.js';
 import { SyncModule } from './sync/sync.module.js';
+import { TasteModule } from './taste/taste.module.js';
 import { UsersModule } from './users/users.module.js';
 
 @Module({
@@ -30,6 +31,7 @@ import { UsersModule } from './users/users.module.js';
     StatsModule,
     CuratorsModule,
     AchievementsModule,
+    TasteModule,
   ],
   providers: [
     // Global pipe registered here (not in main.ts) so tests get it too.

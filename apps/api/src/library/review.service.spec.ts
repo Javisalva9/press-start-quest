@@ -1,6 +1,7 @@
 import { Test } from '@nestjs/testing';
 import { FinaleResolver } from '../finale/finale-resolver.js';
 import { PrismaService } from '../prisma/prisma.service.js';
+import { TasteProfileService } from '../taste/taste-profile.service.js';
 import { ReviewService } from './review.service.js';
 
 const NOW = new Date('2026-10-16T12:00:00Z');
@@ -43,6 +44,7 @@ describe('ReviewService', () => {
       Promise.resolve(new Set(ids)),
     ),
   };
+  const taste = { refresh: vi.fn() };
   let service: ReviewService;
   const reviewed = new Date('2026-10-01T00:00:00Z');
 
@@ -56,6 +58,7 @@ describe('ReviewService', () => {
         ReviewService,
         { provide: PrismaService, useValue: prisma },
         { provide: FinaleResolver, useValue: finales },
+        { provide: TasteProfileService, useValue: taste },
       ],
     }).compile();
     service = moduleRef.get(ReviewService);
@@ -294,6 +297,8 @@ describe('ReviewService', () => {
           reviewedSignal: 'PLAYTIME',
         }),
       });
+      // A finished game counts in the taste from now on.
+      expect(taste.refresh).toHaveBeenCalledWith('u1');
     });
 
     it.each([

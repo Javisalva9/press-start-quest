@@ -186,6 +186,10 @@ describe('API (e2e)', () => {
       .expect(401);
   });
 
+  it('GET /api/taste-profile requires a token', () => {
+    return request(app.getHttpServer()).get('/api/taste-profile').expect(401);
+  });
+
   it('GET /api/library requires a token', () => {
     return request(app.getHttpServer()).get('/api/library').expect(401);
   });

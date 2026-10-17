@@ -20,6 +20,7 @@ import {
   type Prisma,
 } from '../generated/prisma/client.js';
 import { PrismaService } from '../prisma/prisma.service.js';
+import { TasteProfileService } from '../taste/taste-profile.service.js';
 import { buildLibraryOrderBy, buildLibraryWhere } from './library-query.js';
 
 /** What the list needs from each entry: nothing more is read. */
@@ -50,7 +51,10 @@ type ListRow = Prisma.UserGameGetPayload<{ select: typeof listSelect }>;
 
 @Injectable()
 export class LibraryService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly taste: TasteProfileService,
+  ) {}
 
   async list(userId: string, query: LibraryQuery): Promise<LibraryPage> {
     const where = buildLibraryWhere(userId, query);
@@ -185,6 +189,11 @@ export class LibraryService {
     }
 
     await this.prisma.userGame.update({ where: { id }, data });
+    if (data.status !== undefined) {
+      // Completed or dropped counts in the taste: the next recommendation
+      // already knows, without waiting for the night's sync.
+      await this.taste.refresh(userId);
+    }
     return this.get(userId, id);
   }
 

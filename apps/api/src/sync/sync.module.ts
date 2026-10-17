@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { FinaleModule } from '../finale/finale.module.js';
 import { IgdbModule } from '../providers/igdb/igdb.module.js';
 import { SteamModule } from '../providers/steam/steam.module.js';
+import { TasteModule } from '../taste/taste.module.js';
 import { AchievementsImporter } from './achievements-importer.js';
 import { AutoStatusUpdater } from './auto-status-updater.js';
 import { CatalogEnricher } from './catalog-enricher.js';
@@ -16,7 +17,7 @@ import { SyncService } from './sync.service.js';
 import { WishlistImporter } from './wishlist-importer.js';
 
 @Module({
-  imports: [SteamModule, IgdbModule, FinaleModule],
+  imports: [SteamModule, IgdbModule, FinaleModule, TasteModule],
   controllers: [SyncController],
   providers: [
     SyncService,

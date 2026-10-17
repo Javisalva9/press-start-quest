@@ -10,3 +10,4 @@ export * from './review.js';
 export * from './sources.js';
 export * from './stats.js';
 export * from './sync.js';
+export * from './taste.js';
