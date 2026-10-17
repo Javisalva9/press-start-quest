@@ -122,3 +122,20 @@ export function useUpdateLibraryGame(id: string) {
     },
   });
 }
+
+/** Takes a game out of "Lo quiero" for good (it's hidden, not deleted). */
+export function useRemoveFromWishlist() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: string) => {
+      await authRequest(`/api/library/${encodeURIComponent(id)}/wishlist`, {
+        method: 'DELETE',
+      });
+    },
+    onSuccess: (_result, id) => {
+      queryClient.removeQueries({ queryKey: ['library-game', id] });
+      void queryClient.invalidateQueries({ queryKey: ['library'] });
+      void queryClient.invalidateQueries({ queryKey: ['curators'] });
+    },
+  });
+}

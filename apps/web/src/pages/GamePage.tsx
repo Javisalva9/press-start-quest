@@ -9,10 +9,13 @@ import {
 } from '@psq/shared';
 import { ApiRequestError } from '../api/client';
 import {
+  toSearchParams,
   useLibraryGame,
+  useRemoveFromWishlist,
   useSetLength,
   useUpdateLibraryGame,
 } from '../api/library';
+import { CuratorLabel } from '../components/CuratorLabel';
 import { GameCover } from '../components/GameCover';
 import { formatHours, yearOf } from '../format';
 
@@ -103,12 +106,26 @@ export default function GamePage() {
   return (
     <main className="mx-auto max-w-3xl pb-24">
       <div className="relative">
-        {data.heroUrl && (
+        {data.heroUrl ? (
           <img
             src={data.heroUrl}
             alt=""
             className="h-48 w-full object-cover sm:h-64"
           />
+        ) : (
+          // No wide Steam image yet (games from IGDB get it on the next
+          // sync): the cover, blurred, keeps the same band. Without it the
+          // cover below, pulled up over the band, would end up above the
+          // top of the page, where it can't be scrolled to.
+          <div className="h-48 w-full overflow-hidden bg-card sm:h-64">
+            {data.coverUrl && (
+              <img
+                src={data.coverUrl}
+                alt=""
+                className="size-full scale-125 object-cover opacity-40 blur-2xl"
+              />
+            )}
+          </div>
         )}
         <div className="absolute inset-0 bg-linear-to-t from-canvas to-canvas/10" />
         <button
@@ -151,6 +168,10 @@ export default function GamePage() {
         </dl>
 
         <StoresLine game={data} />
+        <RecommendedByLine game={data} />
+        {!data.owned && data.status === 'WISHLIST' && (
+          <RemoveFromWishlist id={data.id} />
+        )}
 
         <YourCallSection game={data} />
 
@@ -493,5 +514,48 @@ function StoresLine({ game }: { game: LibraryGame }) {
     <p className="text-sm text-muted">
       {t('game.ownedIn', { stores: stores.join(' · ') })}
     </p>
+  );
+}
+
+/** "Recommended by" with the label of each followed curator that does. */
+function RecommendedByLine({ game }: { game: LibraryGame }) {
+  const { t } = useTranslation();
+  if (game.recommendedBy.length === 0) {
+    return null;
+  }
+  return (
+    <p className="flex flex-wrap items-center gap-2 text-sm text-muted">
+      {t('game.recommendedBy')}
+      {game.recommendedBy.map((curator) => (
+        <CuratorLabel key={curator.name} curator={curator} />
+      ))}
+    </p>
+  );
+}
+
+/** Out of "Lo quiero" for good: back to the wishlist afterwards. */
+function RemoveFromWishlist({ id }: { id: string }) {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const remove = useRemoveFromWishlist();
+  return (
+    <div className="flex flex-col gap-1">
+      <button
+        type="button"
+        disabled={remove.isPending}
+        onClick={() =>
+          remove.mutate(id, {
+            onSuccess: () =>
+              navigate(
+                `/library?${toSearchParams({ view: 'wishlist', sort: 'priority' })}`,
+              ),
+          })
+        }
+        className="self-start rounded-xl border border-line px-4 py-2 text-sm font-semibold disabled:opacity-60"
+      >
+        {t('game.removeFromWishlist')}
+      </button>
+      <p className="text-xs text-muted">{t('game.removeFromWishlistHint')}</p>
+    </div>
   );
 }

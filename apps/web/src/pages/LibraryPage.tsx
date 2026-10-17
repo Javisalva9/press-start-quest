@@ -14,7 +14,9 @@ import {
   useLibrary,
   type LibraryFilters,
 } from '../api/library';
+import { CuratorLabel } from '../components/CuratorLabel';
 import { GameCover } from '../components/GameCover';
+import { RecommendedLists } from '../components/RecommendedLists';
 import { formatHours } from '../format';
 
 /** Statuses offered as filters in "My games" (WISHLIST has its own view). */
@@ -103,6 +105,8 @@ export default function LibraryPage() {
           </button>
         ))}
       </div>
+
+      {isWishlist && <RecommendedLists />}
 
       <input
         type="search"
@@ -245,6 +249,13 @@ function GameCard({ item }: { item: LibraryItem }) {
       <span className="line-clamp-2 text-sm leading-tight font-semibold">
         {item.title}
       </span>
+      {item.recommendedBy.length > 0 && (
+        <span className="flex flex-wrap gap-1">
+          {item.recommendedBy.map((curator) => (
+            <CuratorLabel key={curator.name} curator={curator} />
+          ))}
+        </span>
+      )}
       <span className="text-xs text-muted">
         {item.owned ? played : t(`status.${item.status}`)}
         {item.lengthMinutes !== null &&

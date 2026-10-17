@@ -47,6 +47,8 @@ export class ManualGamesService {
     const inLibrary = await this.prisma.userGame.findMany({
       where: {
         userId,
+        // Removed from "Lo quiero" (hidden): as if it weren't there.
+        hidden: false,
         game: { igdbId: { in: results.map((result) => result.igdbId) } },
       },
       select: { owned: true, game: { select: { igdbId: true } } },
@@ -74,6 +76,7 @@ export class ManualGamesService {
         statusSource: true,
         completedAt: true,
         typeOverride: true,
+        hidden: true,
       },
     });
 
@@ -84,7 +87,14 @@ export class ManualGamesService {
           code: 'LIBRARY_GAME_ALREADY_OWNED',
         } satisfies ApiError);
       }
-      // Already wished for: nothing to do.
+      // Removed from "Lo quiero" earlier: adding it by hand brings it back.
+      if (existing?.hidden) {
+        await this.prisma.userGame.update({
+          where: { id: existing.id },
+          data: { hidden: false },
+        });
+      }
+      // Already wished for: nothing else to do.
       const id =
         existing?.id ??
         (
@@ -173,7 +183,14 @@ export class ManualGamesService {
 
     await this.prisma.userGame.update({
       where: { id },
-      data: { owned: true, playtimeMin, lastPlayedAt, ...status },
+      // Owned now: shown, even if it had been removed from "Lo quiero".
+      data: {
+        owned: true,
+        hidden: false,
+        playtimeMin,
+        lastPlayedAt,
+        ...status,
+      },
     });
     return this.library.get(userId, id);
   }

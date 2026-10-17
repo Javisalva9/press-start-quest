@@ -167,7 +167,10 @@
     "ownedIn": "Lo tienes en: {{stores}}",
     "chosenByYou": "Elegido por ti",
     "backToAutomatic": "Volver a automático",
-    "setByApp": "Calculado por la app"
+    "setByApp": "Calculado por la app",
+    "recommendedBy": "Recomendado por",
+    "removeFromWishlist": "Quitar de «Lo quiero»",
+    "removeFromWishlistHint": "No volverá a aparecer, aunque esté en una lista que sigues."
   },
   "review": {
     "title": "Repaso",
@@ -248,6 +251,17 @@
   },
   "server": {
     "waking": "Despertando el servidor… La primera carga puede tardar hasta un minuto."
+  },
+  "curators": {
+    "title": "Listas recomendadas",
+    "games_one": "{{count}} juego",
+    "games_other": "{{count}} juegos",
+    "preview_one": "Ya tienes {{owned}}. El otro entraría en «Lo quiero».",
+    "preview_other": "Ya tienes {{owned}}. Los otros {{count}} entrarían en «Lo quiero».",
+    "following": "La sigues: sus juegos llevan su etiqueta, y los que no tienes están en «Lo quiero».",
+    "follow": "Seguir",
+    "unfollow": "Dejar de seguir",
+    "unfollowConfirm": "Al dejar de seguirla se quitarán de «Lo quiero» los juegos de esta lista que no hayas tocado. ¿Seguro?"
   },
   "errors": {
     "VALIDATION_FAILED": "Algo de la petición no era correcto. Vuelve a intentarlo.",

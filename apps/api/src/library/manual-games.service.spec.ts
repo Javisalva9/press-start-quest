@@ -86,6 +86,10 @@ describe('ManualGamesService', () => {
       ]);
 
       const results = await service.search('u1', 'hades');
+      // Removed entries (hidden) don't count as in the library.
+      expect(prisma.userGame.findMany.mock.calls[0][0].where.hidden).toBe(
+        false,
+      );
       expect(results.map((result) => result.inLibrary)).toEqual([
         'owned',
         'wishlist',
@@ -133,6 +137,21 @@ describe('ManualGamesService', () => {
         status: 'WISHLIST',
         addedManually: true,
       });
+    });
+
+    it('brings back a game removed from Lo quiero when added again', async () => {
+      prisma.userGame.findUnique.mockResolvedValue({
+        id: 'ug1',
+        owned: false,
+        status: 'WISHLIST',
+        hidden: true,
+      });
+      await service.add('u1', { origin: 'wishlist', igdbId: 7 });
+      expect(prisma.userGame.update).toHaveBeenCalledWith({
+        where: { id: 'ug1' },
+        data: { hidden: false },
+      });
+      expect(prisma.userGame.create).not.toHaveBeenCalled();
     });
 
     it('refuses to wish for a game already owned', async () => {
