@@ -6,6 +6,7 @@ import { ApiValidationPipe } from './common/api-validation.pipe.js';
 import { validateEnv } from './config/env.js';
 import { HealthModule } from './health/health.module.js';
 import { InternalModule } from './internal/internal.module.js';
+import { StatsModule } from './stats/stats.module.js';
 import { LibraryModule } from './library/library.module.js';
 import { PrismaModule } from './prisma/prisma.module.js';
 import { SourcesModule } from './sources/sources.module.js';
@@ -24,6 +25,7 @@ import { UsersModule } from './users/users.module.js';
     SyncModule,
     LibraryModule,
     InternalModule,
+    StatsModule,
   ],
   providers: [
     // Global pipe registered here (not in main.ts) so tests get it too.

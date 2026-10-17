@@ -17,14 +17,34 @@
   "home": {
     "greeting": "¡Hola, {{name}}!",
     "loading": "Cargando…",
-    "comingSoon": "Tu biblioteca está en camino: llega en las próximas actualizaciones.",
     "signOut": "Cerrar sesión",
     "lastSync": "Última sincronización: {{date}}",
     "neverSynced": "Nunca sincronizada",
     "syncNow": "Sincronizar ahora",
     "review_one": "Tienes {{count}} juego por revisar",
     "review_other": "Tienes {{count}} juegos por revisar",
-    "reviewNow": "Revisar"
+    "reviewNow": "Revisar",
+    "progress": {
+      "percent": "{{percent}} %",
+      "title": "Tu progreso",
+      "empty": "Cuando tengas juegos con final en tu biblioteca, aquí verás cuántos llevas completados.",
+      "completedOf": "{{completed}} de {{total}} completados",
+      "pending_one": "Te queda {{count}} pendiente",
+      "pending_other": "Te quedan {{count}} pendientes",
+      "remaining": "Horas por jugar",
+      "withoutLength_one": "y {{count}} juego sin duración",
+      "withoutLength_other": "y {{count}} juegos sin duración",
+      "streak": "Racha",
+      "days_one": "{{count}} día",
+      "days_other": "{{count}} días",
+      "bestStreak_one": "Mejor: {{count}} día",
+      "bestStreak_other": "Mejor: {{count}} días",
+      "endless": "Sin fin",
+      "abandoned": "Abandonados",
+      "closed": "Servidores cerrados",
+      "since": "Las rachas cuentan desde el {{date}}.",
+      "noHistory": "Las rachas empezarán a contar tras tu primera sincronización."
+    }
   },
   "steamPrivacy": {
     "PROFILE_PRIVATE": {

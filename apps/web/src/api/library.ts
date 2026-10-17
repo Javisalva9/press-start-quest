@@ -118,6 +118,7 @@ export function useUpdateLibraryGame(id: string) {
       // Lists filter by status, and a status set by hand leaves the review.
       void queryClient.invalidateQueries({ queryKey: ['library'] });
       void queryClient.invalidateQueries({ queryKey: ['review-queue'] });
+      void queryClient.invalidateQueries({ queryKey: ['stats-overview'] });
     },
   });
 }

@@ -33,11 +33,13 @@ export default function SyncPage() {
   const phase = current ? syncPhase(current) : 'queued';
   const progress = current?.progress ?? 0;
 
-  // Done: profile (lastSyncAt) and library are out of date now.
+  // Done: profile (lastSyncAt), library, progress and review are stale.
   useEffect(() => {
     if (phase === 'done') {
       void queryClient.invalidateQueries({ queryKey: ['me'] });
       void queryClient.invalidateQueries({ queryKey: ['library'] });
+      void queryClient.invalidateQueries({ queryKey: ['stats-overview'] });
+      void queryClient.invalidateQueries({ queryKey: ['review-queue'] });
     }
   }, [phase, queryClient]);
 

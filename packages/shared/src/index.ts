@@ -6,4 +6,5 @@ export * from './library.js';
 export * from './manual.js';
 export * from './review.js';
 export * from './sources.js';
+export * from './stats.js';
 export * from './sync.js';
