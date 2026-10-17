@@ -263,6 +263,22 @@
     "unfollow": "Unfollow",
     "unfollowConfirm": "Unfollowing removes from your wishlist the games from this list you haven’t touched. Sure?"
   },
+  "achievements": {
+    "title": "Achievements ({{unlocked}}/{{total}})",
+    "show": "Show",
+    "hide": "Hide",
+    "hint": "If the achievement that marks the ending isn’t shown as such (hidden ones have no description), mark it: the app will then know you finished the game.",
+    "hidden": "Hidden achievement",
+    "finale": "Ending",
+    "byYou": "by you",
+    "byCommunity": "by the community",
+    "byRules": "by the rules",
+    "markFinale": "It’s the ending",
+    "markNotFinale": "Not the ending",
+    "takeBackVote": "Take back my vote",
+    "withLocked": "Show locked ones too",
+    "onlyUnlocked": "Show unlocked only"
+  },
   "errors": {
     "VALIDATION_FAILED": "Something in the request wasn't right. Please try again.",
     "UNAUTHENTICATED": "Your session has ended. Please sign in again.",

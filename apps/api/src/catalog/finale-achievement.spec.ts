@@ -36,6 +36,18 @@ describe('isFinaleAchievement', () => {
     ).toBe(true);
   });
 
+  it('accepts "game" with no article, as some games write it', () => {
+    expect(
+      isFinaleAchievement({
+        name: 'Gotta go fast!',
+        description: 'Beat Game Under 10 hours',
+      }),
+    ).toBe(true);
+    expect(
+      isFinaleAchievement({ name: 'X', description: 'Complete game modes' }),
+    ).toBe(false);
+  });
+
   it('rejects levels, tutorials and openings', () => {
     for (const description of [
       'Finish the level Bridge',

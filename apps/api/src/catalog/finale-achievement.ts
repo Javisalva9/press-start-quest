@@ -13,6 +13,9 @@ const RULES: RegExp[] = [
   // Complete / finish / beat / clear the (entire) game, campaign or story.
   // Not "the story's opening sequence", not "a campaign battle".
   /\b(?:complet(?:e|es|ed)|finish(?:es|ed)?|beat(?:en|s)?|clear(?:s|ed)?)\s+(?:the|a|an|your)\s+(?:(?:entire|whole|full|single[- ]player)\s+)?(?:game|campaign|story)\b(?!['’]|\s+(?:battle|level|mission|map|mode)s?\b)/i,
+  // The same with no article, as some games write it: "Beat Game Under 10
+  // hours". Only "game": without an article, "complete story" is too loose.
+  /\b(?:complet(?:e|es|ed)|finish(?:es|ed)?|beat(?:en|s)?|clear(?:s|ed)?)\s+game\b(?!['’]|\s+(?:battle|level|mission|map|mode)s?\b)/i,
   // Win a campaign (strategy games). Only campaigns: "Won a game of
   // Rock/Paper/Scissors" isn't an ending.
   /\b(?:win|won)\s+(?:the|a|an|your)\s+(?:(?:entire|whole|full|single[- ]player)\s+)?campaign\b(?!\s+(?:battle|level|mission|map|mode)s?\b)/i,
