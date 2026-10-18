@@ -38,7 +38,8 @@ describe('TasteProfileService', () => {
           gameId: 'done',
           status: 'COMPLETED',
           playtimeMin: 600,
-          personalRating: 5,
+          // 5 stars, stored as half stars.
+          personalRating: 10,
         },
         {
           gameId: 'dropped',

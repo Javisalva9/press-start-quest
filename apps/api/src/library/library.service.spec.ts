@@ -142,6 +142,37 @@ describe('LibraryService.update', () => {
     expect(taste.refresh).toHaveBeenCalledWith('u1');
   });
 
+  it('saves and takes back the stars, and refreshes the taste', async () => {
+    prisma.userGame.findFirst.mockResolvedValue(
+      entry({ status: 'COMPLETED', statusSource: 'MANUAL' }),
+    );
+    await service.update('u1', 'ug1', { personalRating: 3.5 });
+    // Stored as half stars.
+    expect(saved()).toEqual({ personalRating: 7 });
+    expect(taste.refresh).toHaveBeenCalledWith('u1');
+
+    prisma.userGame.update.mockClear();
+    await service.update('u1', 'ug1', { personalRating: null });
+    expect(saved()).toEqual({ personalRating: null });
+  });
+
+  it('leaves an automatic status alone when only the stars change', async () => {
+    // A review answer may still be on its way: recomputing the status
+    // here could undo it.
+    prisma.userGame.findFirst.mockResolvedValue(entry());
+    await service.update('u1', 'ug1', { personalRating: 4 });
+    expect(saved()).toEqual({ personalRating: 8 });
+  });
+
+  it('refuses stars for a game that is only wishlisted', async () => {
+    prisma.userGame.findFirst.mockResolvedValue(
+      entry({ owned: false, status: 'WISHLIST' }),
+    );
+    await expect(
+      service.update('u1', 'ug1', { personalRating: 4 }),
+    ).rejects.toMatchObject({ status: 409 });
+  });
+
   it('saves and clears the server status', async () => {
     prisma.userGame.findFirst.mockResolvedValue(
       entry({ statusSource: 'MANUAL' }),

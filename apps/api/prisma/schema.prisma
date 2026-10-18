@@ -214,6 +214,7 @@ model UserGame {
   achievementsUnlocked Int?
   achievementsTotal    Int?
   completedAt          DateTime?
+  // The player's stars in half stars, 1–10: 3.5 stars is 7 (common/stars.ts).
   personalRating       Int?
   goal                 String?
   notes                String?

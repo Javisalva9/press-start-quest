@@ -10,8 +10,10 @@ import {
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 import { ApiRequestError } from '../api/client';
+import { useRateGame } from '../api/library';
 import { useAnswerReview, useReviewQueue } from '../api/review';
 import { GameCover } from '../components/GameCover';
+import { StarRating } from '../components/StarRating';
 import { formatHours } from '../format';
 import {
   ANSWER_BY_DIRECTION,
@@ -63,6 +65,12 @@ export default function ReviewPage() {
   const queryClient = useQueryClient();
   const queue = useReviewQueue(BATCH);
   const answer = useAnswerReview();
+  const rate = useRateGame();
+  // The game just finished, to rate it: offered above the next card and
+  // gone with the next answer, so rating never slows the review down.
+  const [toRate, setToRate] = useState<{ id: string; title: string } | null>(
+    null,
+  );
   // Answered in this visit: hidden right away, without waiting for the API.
   const [answered, setAnswered] = useState<ReadonlySet<string>>(new Set());
   const [error, setError] = useState<string | null>(null);
@@ -108,6 +116,9 @@ export default function ReviewPage() {
       const value = ANSWER_BY_DIRECTION[direction];
       setError(null);
       setAnswered((previous) => new Set(previous).add(card.id));
+      setToRate(
+        value === 'finished' ? { id: card.id, title: card.title } : null,
+      );
       if (value === 'finished') {
         // A short buzz on Android to celebrate; iPhones ignore it.
         navigator.vibrate?.(40);
@@ -161,6 +172,36 @@ export default function ReviewPage() {
         <p role="alert" className="text-sm text-danger">
           {error}
         </p>
+      )}
+
+      {toRate && (
+        <section className="flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-line bg-card px-4 py-3">
+          <p className="text-sm font-semibold">
+            {t('review.rate', { title: toRate.title })}
+          </p>
+          <div className="flex items-center gap-2">
+            <StarRating
+              label={t('review.rate', { title: toRate.title })}
+              value={null}
+              onChange={(personalRating) => {
+                setToRate(null);
+                if (personalRating !== null) {
+                  rate.mutate(
+                    { id: toRate.id, personalRating },
+                    { onError: () => setError(t('errors.UNKNOWN')) },
+                  );
+                }
+              }}
+            />
+            <button
+              type="button"
+              onClick={() => setToRate(null)}
+              className="text-sm text-muted hover:text-fg"
+            >
+              {t('review.rateLater')}
+            </button>
+          </div>
+        </section>
       )}
 
       {current?.question === 'abandoned' && !pausedIntroSeen ? (
