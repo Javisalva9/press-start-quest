@@ -93,6 +93,7 @@ export class RecommendationsService {
       select: {
         id: true,
         gameId: true,
+        status: true,
         playtimeMin: true,
         lastPlayedAt: true,
         typeOverride: true,
@@ -164,6 +165,7 @@ export class RecommendationsService {
         const fit = affinity.get(entry.gameId);
         const candidate: Candidate = {
           playtimeMin: entry.playtimeMin,
+          playing: entry.status === GameStatus.PLAYING,
           lastPlayedAt: entry.lastPlayedAt,
           lengthMin,
           sandbox: type === GameType.SANDBOX,

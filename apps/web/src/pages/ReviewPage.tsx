@@ -42,9 +42,12 @@ const LEAVE_OFFSET: Record<SwipeDirection, [number, number]> = {
   up: [0, -700],
 };
 
-/** Icons of the two questions: they tell the cards apart without reading. */
-const FINISHED_ICON = '✓';
-const PAUSED_ICON = '⏸';
+/** Icons of the questions: they tell the cards apart without reading. */
+const ICON: Record<ReviewCard['question'], string> = {
+  finished: '✓',
+  abandoned: '⏸',
+  stillPlaying: '▶',
+};
 
 const ARROW: Record<SwipeDirection, string> = {
   right: '→',
@@ -207,7 +210,7 @@ export default function ReviewPage() {
       {current?.question === 'abandoned' && !pausedIntroSeen ? (
         <section className="mt-6 flex flex-col items-center gap-4 rounded-2xl border border-dashed border-muted bg-card p-8 text-center">
           <span aria-hidden className="text-4xl">
-            {PAUSED_ICON}
+            {ICON.abandoned}
           </span>
           <h2 className="font-display text-xl font-bold">
             {t('review.pausedIntro.title')}
@@ -377,7 +380,9 @@ function CardFace({ card, now }: { card: ReviewCard; now: Date }) {
   const { t, i18n } = useTranslation();
   const hours = (minutes: number) => formatHours(minutes, i18n.language);
   const reason = reasonFor(card, now, hours);
-  const paused = card.question === 'abandoned';
+  // "Did you drop it?" and "still playing it?" look alike: both about a
+  // game left a while, apart from the "did you finish it?" ones.
+  const paused = card.question !== 'finished';
   return (
     <article
       className={`flex h-full flex-col overflow-hidden rounded-2xl border bg-card ${
@@ -391,11 +396,9 @@ function CardFace({ card, now }: { card: ReviewCard; now: Date }) {
         }`}
       >
         <span aria-hidden className="mr-1.5">
-          {paused ? PAUSED_ICON : FINISHED_ICON}
+          {ICON[card.question]}
         </span>
-        {paused
-          ? t('review.question.abandoned')
-          : t('review.question.finished')}
+        {t(`review.question.${card.question}`)}
       </p>
       <GameCover
         title={card.title}
@@ -452,16 +455,19 @@ function answerLabel(
 ): string {
   switch (ANSWER_BY_DIRECTION[direction]) {
     case 'finished':
-      // On "did you drop it?", a bare "yes" would read as "yes, I dropped
-      // it": spelled out instead.
-      return card.question === 'abandoned'
-        ? t('review.answer.finishedIt')
-        : t('review.answer.finished');
+      // Elsewhere a bare "yes" would read as "yes, I dropped it" or "yes,
+      // still playing": spelled out instead.
+      return card.question === 'finished'
+        ? t('review.answer.finished')
+        : t('review.answer.finishedIt');
     case 'notFinished':
-      // On "did you drop it?", "no" means "I'll get back to it".
+      // On "did you drop it?", "no" means "I'll get back to it"; on
+      // "still playing it?", the same swipe means "yes, still on it".
       return card.question === 'abandoned'
         ? t('review.answer.resume')
-        : t('review.answer.notFinished');
+        : card.question === 'stillPlaying'
+          ? t('review.answer.stillPlaying')
+          : t('review.answer.notFinished');
     case 'abandoned':
       return t('review.answer.abandoned');
     case 'wontPlay':

@@ -20,10 +20,15 @@ export type ReviewQueueQuery = z.infer<typeof ReviewQueueQuerySchema>;
 
 /**
  * What a card asks: "did you finish it?" (it looks finished, or it's the
- * initial triage) or "did you drop it?" (paused for 3 months). The answers
- * are the same for both.
+ * initial triage), "did you drop it?" (paused for 3 months) or "still
+ * playing it?" (a game only in external sources, marked as playing by the
+ * player 3 months ago). The answers are the same for all.
  */
-export const REVIEW_QUESTIONS = ['finished', 'abandoned'] as const;
+export const REVIEW_QUESTIONS = [
+  'finished',
+  'abandoned',
+  'stillPlaying',
+] as const;
 
 /** One card of the confirmation queue. */
 export const ReviewCardSchema = z.object({

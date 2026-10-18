@@ -183,7 +183,8 @@
     "remaining_other": "{{count}} left",
     "question": {
       "finished": "Did you finish it?",
-      "abandoned": "Did you drop it?"
+      "abandoned": "Did you drop it?",
+      "stillPlaying": "Still playing it?"
     },
     "pausedIntro": {
       "title": "Games on hold",
@@ -198,7 +199,10 @@
       "played": "You’ve played {{played}}.",
       "paused_one": "You haven’t played it in {{count}} month ({{played}} played).",
       "paused_other": "You haven’t played it in {{count}} months ({{played}} played).",
-      "pausedLongAgo": "You haven’t played it in a long time ({{played}} played)."
+      "pausedLongAgo": "You haven’t played it in a long time ({{played}} played).",
+      "stillPlaying_one": "You’ve had it as “Playing” for {{count}} month.",
+      "stillPlaying_other": "You’ve had it as “Playing” for {{count}} months.",
+      "stillPlayingNoDate": "You have it as “Playing”."
     },
     "answer": {
       "finished": "Yes",
@@ -206,7 +210,8 @@
       "notFinished": "No",
       "resume": "I’ll get back to it",
       "abandoned": "I dropped it",
-      "wontPlay": "I won’t play it"
+      "wontPlay": "I won’t play it",
+      "stillPlaying": "Still on it"
     },
     "hint": "Swipe the card, or use the buttons or the arrow keys.",
     "done": {

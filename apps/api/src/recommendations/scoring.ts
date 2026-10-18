@@ -65,6 +65,8 @@ const ORDINARY = { quality: NEUTRAL_QUALITY, length: UNKNOWN_LENGTH } as const;
 
 export interface Candidate {
   playtimeMin: number;
+  /** Its status is "playing": the app's, or the player's own word. */
+  playing: boolean;
   lastPlayedAt: Date | null;
   /** Main story length (or the player's own estimate), in minutes. */
   lengthMin: number | null;
@@ -149,9 +151,15 @@ export function lengthFactor(candidate: Candidate, mood: Mood | null): number {
   return Math.exp(-(distance * distance) / (2 * spread * spread));
 }
 
-/** I: started, not nearly finished, and played in the last 90 days. */
+/**
+ * I: started, not nearly finished, and played in the last 90 days.
+ * Started is over an hour, or "playing": a game from an external source
+ * has no hours, only the player's word.
+ */
 export function momentumFactor(candidate: Candidate, now: Date): boolean {
-  if (candidate.playtimeMin <= MOMENTUM_MIN_PLAYED || !candidate.lastPlayedAt) {
+  const started =
+    candidate.playing || candidate.playtimeMin > MOMENTUM_MIN_PLAYED;
+  if (!started || !candidate.lastPlayedAt) {
     return false;
   }
   const days = (now.getTime() - candidate.lastPlayedAt.getTime()) / 86_400_000;
@@ -227,7 +235,8 @@ function reasons(
       },
     });
   }
-  if (factors.momentum) {
+  // "You're 40 % in" only with hours to show: never "0 %".
+  if (factors.momentum && candidate.playtimeMin > MOMENTUM_MIN_PLAYED) {
     const percent =
       candidate.lengthMin && !candidate.sandbox
         ? Math.min(

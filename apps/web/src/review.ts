@@ -61,7 +61,9 @@ export type ReasonKey =
   | 'review.reason.playtime'
   | 'review.reason.played'
   | 'review.reason.paused'
-  | 'review.reason.pausedLongAgo';
+  | 'review.reason.pausedLongAgo'
+  | 'review.reason.stillPlaying'
+  | 'review.reason.stillPlayingNoDate';
 
 /**
  * The line under the question that says why we ask: the evidence we have.
@@ -73,6 +75,16 @@ export function reasonFor(
   hours: (minutes: number) => string,
 ): { key: ReasonKey; values: Record<string, string | number> } {
   const played = hours(card.playtimeMinutes);
+
+  if (card.question === 'stillPlaying') {
+    // The date is when the player said "playing": no sessions to go by.
+    return card.lastPlayedAt
+      ? {
+          key: 'review.reason.stillPlaying',
+          values: { count: monthsSince(card.lastPlayedAt, now) },
+        }
+      : { key: 'review.reason.stillPlayingNoDate', values: {} };
+  }
 
   if (card.question === 'abandoned') {
     return card.lastPlayedAt
