@@ -11,6 +11,7 @@ import { InternalModule } from './internal/internal.module.js';
 import { StatsModule } from './stats/stats.module.js';
 import { LibraryModule } from './library/library.module.js';
 import { PrismaModule } from './prisma/prisma.module.js';
+import { RecommendationsModule } from './recommendations/recommendations.module.js';
 import { SourcesModule } from './sources/sources.module.js';
 import { SyncModule } from './sync/sync.module.js';
 import { TasteModule } from './taste/taste.module.js';
@@ -32,6 +33,7 @@ import { UsersModule } from './users/users.module.js';
     CuratorsModule,
     AchievementsModule,
     TasteModule,
+    RecommendationsModule,
   ],
   providers: [
     // Global pipe registered here (not in main.ts) so tests get it too.
