@@ -282,6 +282,54 @@
     "withLocked": "Show locked ones too",
     "onlyUnlocked": "Show unlocked only"
   },
+  "next": {
+    "title": "Your next game",
+    "ranking": "See the ranking",
+    "mood": {
+      "label": "How much do you feel like playing?",
+      "any": "Any",
+      "short": "Short",
+      "medium": "Medium",
+      "long": "Epic",
+      "hint": {
+        "short": "Under 10 h left",
+        "medium": "10–30 h left",
+        "long": "Over 30 h left"
+      }
+    },
+    "play": "Play on Steam",
+    "details": "See game",
+    "another": "Another one",
+    "alternatives": "Or something different",
+    "empty": "Nothing to recommend yet: sync your library, or check what you’ve already finished.",
+    "emptyMood": "No pending games of that length. Try another one.",
+    "error": "We couldn’t load your recommendation.",
+    "reason": {
+      "TASTE_MATCH": "Your kind of game: {{tag}}",
+      "TIME_LEFT": "{{hours}} left",
+      "KEEP_GOING": "You’re {{percent}}% in",
+      "KEEP_GOING_HOURS": "You’ve already played {{hours}}",
+      "HIGHLY_RATED": "Rated {{rating}}",
+      "RECOMMENDED_BY": "{{curator}} recommends it",
+      "SERVERS_CLOSING": "Servers close on {{date}}: play it while you can",
+      "SERVERS_CLOSING_SOON": "Its servers are closing: play it while you can"
+    }
+  },
+  "ranking": {
+    "back": "← Home",
+    "title": "Recommendation ranking",
+    "intro": "The best candidates with every factor of the formula, each from 0 to 1: quality, taste, length, curators and momentum. To tune the weights.",
+    "candidates_one": "{{count}} game fits",
+    "candidates_other": "{{count}} games fit",
+    "position": "{{position}}. {{title}}",
+    "factor": {
+      "quality": "Quality",
+      "affinity": "Taste",
+      "length": "Length",
+      "social": "Curators",
+      "momentum": "Momentum"
+    }
+  },
   "errors": {
     "VALIDATION_FAILED": "Something in the request wasn't right. Please try again.",
     "UNAUTHENTICATED": "Your session has ended. Please sign in again.",

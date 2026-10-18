@@ -17,6 +17,8 @@ describe('shouldPersist', () => {
     [['curators']],
     [['achievements', 'ug1']],
     [['review-queue', 1]],
+    [['recommendation', null, 0]],
+    [['recommendation', 'short', 0]],
   ])('keeps %o', (key) => {
     expect(shouldPersist(key)).toBe(true);
   });
@@ -25,6 +27,8 @@ describe('shouldPersist', () => {
     [['game-search', 'hades']],
     [['sync-job', 'job-1']],
     [['review-queue', 20]],
+    [['recommendation', null, 3]],
+    [['recommendation-ranking', null]],
     [['something-new']],
   ])('leaves out %o', (key) => {
     expect(shouldPersist(key)).toBe(false);

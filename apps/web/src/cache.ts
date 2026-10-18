@@ -9,8 +9,8 @@ export const CACHE_MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000;
 /**
  * Data worth showing at once when the app opens, before the API answers.
  * An allow-list on purpose: a new query isn't kept until it's added here.
- * Left out: searches, sync progress and the review's card batch, which
- * mean nothing a day later.
+ * Left out: searches, sync progress, the review's card batch and the
+ * ranking, which mean nothing a day later.
  */
 const PERSISTED: ReadonlySet<string> = new Set([
   'me',
@@ -27,6 +27,11 @@ export function shouldPersist(queryKey: QueryKey): boolean {
   if (name === 'review-queue') {
     // Only the count on the home screen (limit 1).
     return detail === 1;
+  }
+  if (name === 'recommendation') {
+    // The first pick for each mood: the home screen opens with it. The
+    // ones behind "another one" mean nothing on the next visit.
+    return queryKey[2] === 0;
   }
   return typeof name === 'string' && PERSISTED.has(name);
 }

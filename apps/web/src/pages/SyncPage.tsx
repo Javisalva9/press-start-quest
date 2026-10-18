@@ -40,6 +40,10 @@ export default function SyncPage() {
       void queryClient.invalidateQueries({ queryKey: ['library'] });
       void queryClient.invalidateQueries({ queryKey: ['stats-overview'] });
       void queryClient.invalidateQueries({ queryKey: ['review-queue'] });
+      void queryClient.invalidateQueries({ queryKey: ['recommendation'] });
+      void queryClient.invalidateQueries({
+        queryKey: ['recommendation-ranking'],
+      });
     }
   }, [phase, queryClient]);
 
