@@ -14,6 +14,10 @@
   --color-cyan: #22d3ee;
   --color-success: #34d399;
   --color-danger: #f87171;
+  /* Ratings: lemon, apart from AlexElCapso's amber. */
+  --color-star: #fde047;
+  /* Unlit pixel art: a step above the card's border. */
+  --color-line-strong: #3a3f52;
 
   --font-sans: 'Inter Variable', system-ui, sans-serif;
   --font-display: 'Space Grotesk Variable', system-ui, sans-serif;
@@ -42,8 +46,20 @@
   animation: ring-fill 900ms ease-out both;
 }
 
+/* A star bounces when it lights up: the small reward for rating. */
+@keyframes star-pop {
+  40% {
+    transform: scale(1.3);
+  }
+}
+
+.star-pop {
+  animation: star-pop 260ms ease-out;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .ring-fill {
+  .ring-fill,
+  .star-pop {
     animation: none;
   }
 }

@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import type { TasteProfile, TasteTag } from '@psq/shared';
 import { GameKind, TagKind } from '../generated/prisma/client.js';
 import { PrismaService } from '../prisma/prisma.service.js';
+import { fromHalfStars } from '../common/stars.js';
 import { TASTE_TAG_KINDS, tasteWeight } from './taste-weight.js';
 
 /**
@@ -45,7 +46,17 @@ export class TasteProfileService {
       // The rule lives in TypeScript, where it's tested; adding it up over
       // every tag is a job for SQL.
       const played = entries
-        .map((entry) => ({ gameId: entry.gameId, weight: tasteWeight(entry) }))
+        .map((entry) => ({
+          gameId: entry.gameId,
+          weight: tasteWeight({
+            status: entry.status,
+            playtimeMin: entry.playtimeMin,
+            stars:
+              entry.personalRating === null
+                ? null
+                : fromHalfStars(entry.personalRating),
+          }),
+        }))
         .filter(({ weight }) => weight !== 0);
       const gameIds = played.map(({ gameId }) => gameId);
       const weights = played.map(({ weight }) => weight);

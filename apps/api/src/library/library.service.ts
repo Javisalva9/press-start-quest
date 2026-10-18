@@ -19,6 +19,7 @@ import {
   TagKind,
   type Prisma,
 } from '../generated/prisma/client.js';
+import { fromHalfStars, toHalfStars } from '../common/stars.js';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { TasteProfileService } from '../taste/taste-profile.service.js';
 import { buildLibraryOrderBy, buildLibraryWhere } from './library-query.js';
@@ -136,8 +137,12 @@ export class LibraryService {
     if (!entry) {
       throw notFound();
     }
-    if (body.status !== undefined && !entry.owned) {
-      // A wishlisted game's status comes from the store: "I want it".
+    if (
+      (body.status !== undefined || body.personalRating !== undefined) &&
+      !entry.owned
+    ) {
+      // A wishlisted game's status comes from the store ("I want it"), and
+      // a game not played yet can't be rated.
       throw new ConflictException({
         statusCode: 409,
         code: 'LIBRARY_GAME_NOT_OWNED',
@@ -150,6 +155,12 @@ export class LibraryService {
     }
     if (body.serverStatus !== undefined) {
       data.serverOverride = body.serverStatus;
+    }
+    if (body.personalRating !== undefined) {
+      // Kept if the game stops being completed: the taste only counts it
+      // while it is (see tasteWeight), and it's there if completed again.
+      data.personalRating =
+        body.personalRating === null ? null : toHalfStars(body.personalRating);
     }
 
     const now = new Date();
@@ -167,10 +178,14 @@ export class LibraryService {
       });
     } else if (
       entry.owned &&
-      (body.status === null || entry.statusSource === StatusSource.AUTO)
+      (body.status === null ||
+        (body.gameType !== undefined &&
+          entry.statusSource === StatusSource.AUTO))
     ) {
-      // Back to automatic, or still automatic: the type may have just
-      // changed (an endless game is never "on hold").
+      // Back to automatic, or still automatic and its type just changed
+      // (an endless game is never "on hold"). Nothing else touches the
+      // status: stars given right after a review answer must not undo it
+      // if they arrive while that answer is still being saved.
       const type =
         (body.gameType !== undefined ? body.gameType : entry.typeOverride) ??
         entry.game.gameType;
@@ -189,9 +204,9 @@ export class LibraryService {
     }
 
     await this.prisma.userGame.update({ where: { id }, data });
-    if (data.status !== undefined) {
-      // Completed or dropped counts in the taste: the next recommendation
-      // already knows, without waiting for the night's sync.
+    if (data.status !== undefined || data.personalRating !== undefined) {
+      // Completed, dropped or rated counts in the taste: the next
+      // recommendation already knows, without waiting for the night's sync.
       await this.taste.refresh(userId);
     }
     return this.get(userId, id);
@@ -253,6 +268,7 @@ export class LibraryService {
       select: {
         ...listSelect,
         statusSource: true,
+        personalRating: true,
         typeOverride: true,
         serverOverride: true,
         game: {
@@ -309,6 +325,8 @@ export class LibraryService {
       themes: tagsOf(TagKind.THEME),
       modes: tagsOf(TagKind.MODE),
       perspectives: tagsOf(TagKind.PERSPECTIVE),
+      personalRating:
+        row.personalRating === null ? null : fromHalfStars(row.personalRating),
       statusSource: row.statusSource,
       automaticStatus: row.owned
         ? autoStatus(

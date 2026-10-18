@@ -173,7 +173,9 @@
     "setByApp": "Worked out by the app",
     "recommendedBy": "Recommended by",
     "removeFromWishlist": "Remove from wishlist",
-    "removeFromWishlistHint": "It won’t come back, even if it’s on a list you follow."
+    "removeFromWishlistHint": "It won’t come back, even if it’s on a list you follow.",
+    "yourRating": "Your rating",
+    "yourRatingHint": "Tap the left half of a star to give half of it. Tap your rating again to take it back."
   },
   "review": {
     "title": "Catch up",
@@ -211,7 +213,9 @@
       "title": "All reviewed!",
       "body": "No games left to confirm. When the app spots a new one, it shows up here.",
       "library": "See your library"
-    }
+    },
+    "rate": "How would you rate {{title}}?",
+    "rateLater": "Not now"
   },
   "gameType": {
     "COMPLETABLE": "Completable",
@@ -329,6 +333,10 @@
       "social": "Curators",
       "momentum": "Momentum"
     }
+  },
+  "rating": {
+    "stars_one": "{{stars}} star",
+    "stars_other": "{{stars}} stars"
   },
   "errors": {
     "VALIDATION_FAILED": "Something in the request wasn't right. Please try again.",

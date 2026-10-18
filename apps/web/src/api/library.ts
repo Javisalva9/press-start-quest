@@ -151,6 +151,37 @@ export function useUpdateLibraryGame(id: string) {
   });
 }
 
+/**
+ * The player's stars on a game, from the review (where only the id is at
+ * hand); the game page uses useUpdateLibraryGame.
+ */
+export function useRateGame() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      id,
+      personalRating,
+    }: {
+      id: string;
+      personalRating: number | null;
+    }): Promise<LibraryGame> =>
+      LibraryGameSchema.parse(
+        await authRequest(`/api/library/${encodeURIComponent(id)}`, {
+          method: 'PATCH',
+          body: JSON.stringify({ personalRating }),
+        }),
+      ),
+    onSuccess: (game) => {
+      queryClient.setQueryData(['library-game', game.id], game);
+      // The stars move the taste, and with it the recommendations.
+      void queryClient.invalidateQueries({ queryKey: ['recommendation'] });
+      void queryClient.invalidateQueries({
+        queryKey: ['recommendation-ranking'],
+      });
+    },
+  });
+}
+
 /** Takes a game out of "Lo quiero" for good (it's hidden, not deleted). */
 export function useRemoveFromWishlist() {
   const queryClient = useQueryClient();

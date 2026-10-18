@@ -4,7 +4,7 @@ const game = (overrides: Partial<Parameters<typeof tasteWeight>[0]>) =>
   tasteWeight({
     status: 'BACKLOG',
     playtimeMin: 0,
-    personalRating: null,
+    stars: null,
     ...overrides,
   });
 
@@ -49,12 +49,23 @@ describe('tasteWeight', () => {
     [2, 0.4],
     [1, -0.5],
   ])('gives a completed game with %i stars a weight of %d', (stars, weight) => {
-    expect(game({ status: 'COMPLETED', personalRating: stars })).toBe(weight);
+    expect(game({ status: 'COMPLETED', stars })).toBe(weight);
+  });
+
+  it.each([
+    [3.5, 1.125],
+    [4.5, 1.375],
+    [1.5, -0.05],
+    // Half a star counts as one: it can only go so low.
+    [0.5, -0.5],
+  ])('puts %d stars between the whole ones: %d', (stars, weight) => {
+    expect(game({ status: 'COMPLETED', stars })).toBeCloseTo(weight, 5);
   });
 
   it('only counts the stars while the game is completed', () => {
-    expect(
-      game({ status: 'PLAYING', playtimeMin: 600, personalRating: 5 }),
-    ).toBeCloseTo(0.61, 2);
+    expect(game({ status: 'PLAYING', playtimeMin: 600, stars: 5 })).toBeCloseTo(
+      0.61,
+      2,
+    );
   });
 });

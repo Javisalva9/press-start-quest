@@ -48,6 +48,19 @@ describe('UpdateLibraryGameRequestSchema', () => {
     ).toBe(true);
   });
 
+  it('accepts 0.5 to 5 stars in half steps, or null to take them back', () => {
+    for (const personalRating of [0.5, 3.5, 5, null]) {
+      expect(
+        UpdateLibraryGameRequestSchema.safeParse({ personalRating }).success,
+      ).toBe(true);
+    }
+    for (const personalRating of [0, 3.7, 5.5]) {
+      expect(
+        UpdateLibraryGameRequestSchema.safeParse({ personalRating }).success,
+      ).toBe(false);
+    }
+  });
+
   it('rejects an empty change', () => {
     expect(UpdateLibraryGameRequestSchema.safeParse({}).success).toBe(false);
   });

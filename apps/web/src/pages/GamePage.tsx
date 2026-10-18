@@ -18,6 +18,7 @@ import {
 import { AchievementsSection } from '../components/AchievementsSection';
 import { CuratorLabel } from '../components/CuratorLabel';
 import { GameCover } from '../components/GameCover';
+import { StarRating } from '../components/StarRating';
 import { formatHours, yearOf } from '../format';
 import { tagLabel } from '../tag-names';
 
@@ -364,6 +365,19 @@ function YourCallSection({ game }: { game: LibraryGame }) {
           }
           onReset={() => update.mutate({ status: null })}
         />
+      )}
+
+      {game.owned && game.status === 'COMPLETED' && (
+        <div className="flex flex-col gap-1">
+          <span className="text-sm text-muted">{t('game.yourRating')}</span>
+          <StarRating
+            label={t('game.yourRating')}
+            value={game.personalRating}
+            disabled={update.isPending}
+            onChange={(personalRating) => update.mutate({ personalRating })}
+          />
+          <span className="text-xs text-muted">{t('game.yourRatingHint')}</span>
+        </div>
       )}
 
       <Picker

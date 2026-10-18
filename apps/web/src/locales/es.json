@@ -173,7 +173,9 @@
     "setByApp": "Calculado por la app",
     "recommendedBy": "Recomendado por",
     "removeFromWishlist": "Quitar de «Lo quiero»",
-    "removeFromWishlistHint": "No volverá a aparecer, aunque esté en una lista que sigues."
+    "removeFromWishlistHint": "No volverá a aparecer, aunque esté en una lista que sigues.",
+    "yourRating": "Tu nota",
+    "yourRatingHint": "Toca la mitad izquierda de una estrella para dar media. Si vuelves a pulsar tu nota, se borra."
   },
   "review": {
     "title": "Repaso",
@@ -211,7 +213,9 @@
       "title": "¡Todo revisado!",
       "body": "No te queda ningún juego por confirmar. Cuando la app detecte uno nuevo, aparecerá aquí.",
       "library": "Ver tu biblioteca"
-    }
+    },
+    "rate": "¿Qué nota le das a {{title}}?",
+    "rateLater": "Ahora no"
   },
   "gameType": {
     "COMPLETABLE": "Completable",
@@ -329,6 +333,10 @@
       "social": "Curadores",
       "momentum": "Impulso"
     }
+  },
+  "rating": {
+    "stars_one": "{{stars}} estrella",
+    "stars_other": "{{stars}} estrellas"
   },
   "errors": {
     "VALIDATION_FAILED": "Algo de la petición no era correcto. Vuelve a intentarlo.",

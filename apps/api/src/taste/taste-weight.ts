@@ -18,8 +18,15 @@ export const TASTE_WEIGHTS = {
   /**
    * The player's own stars on a completed game, which win over the plain
    * completion: 3 stars is the same as no stars, 1 star counts against.
+   * Half stars fall in between (3.5 → 1.125); half a star counts as one.
    */
-  stars: { 1: -0.5, 2: 0.4, 3: 1, 4: 1.25, 5: 1.5 } as Record<number, number>,
+  stars: [
+    [1, -0.5],
+    [2, 0.4],
+    [3, 1],
+    [4, 1.25],
+    [5, 1.5],
+  ] as ReadonlyArray<readonly [stars: number, weight: number]>,
 } as const;
 
 /**
@@ -36,8 +43,8 @@ export const TASTE_TAG_KINDS = [
 export interface TasteInput {
   status: GameStatus;
   playtimeMin: number;
-  /** 1–5 stars, or null. */
-  personalRating: number | null;
+  /** The player's stars, 0.5–5, or null. */
+  stars: number | null;
 }
 
 /**
@@ -47,15 +54,11 @@ export interface TasteInput {
 export function tasteWeight({
   status,
   playtimeMin,
-  personalRating,
+  stars,
 }: TasteInput): number {
   switch (status) {
     case GameStatus.COMPLETED:
-      return (
-        (personalRating !== null
-          ? TASTE_WEIGHTS.stars[personalRating]
-          : undefined) ?? TASTE_WEIGHTS.completed
-      );
+      return stars !== null ? starsWeight(stars) : TASTE_WEIGHTS.completed;
     case GameStatus.ABANDONED:
       return playtimeMin > TASTE_WEIGHTS.abandonedAfterMin
         ? TASTE_WEIGHTS.abandoned
@@ -66,6 +69,26 @@ export function tasteWeight({
     default:
       return hoursWeight(playtimeMin);
   }
+}
+
+/** The weight of some stars, in a straight line between the whole ones. */
+export function starsWeight(stars: number): number {
+  const points = TASTE_WEIGHTS.stars;
+  const [first] = points;
+  if (stars <= first![0]) {
+    return first![1];
+  }
+  for (let i = 1; i < points.length; i += 1) {
+    const [toStars, toWeight] = points[i]!;
+    if (stars <= toStars) {
+      const [fromStars, fromWeight] = points[i - 1]!;
+      return (
+        fromWeight +
+        ((toWeight - fromWeight) * (stars - fromStars)) / (toStars - fromStars)
+      );
+    }
+  }
+  return points.at(-1)![1];
 }
 
 /** log(1 + h) / log(1 + 50): 0 h → 0, 1 h → 0.18, 10 h → 0.61, 50 h or more → 1. */

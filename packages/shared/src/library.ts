@@ -181,6 +181,8 @@ export const LibraryGameSchema = LibraryItemSchema.extend({
   themes: z.array(z.string()),
   modes: z.array(z.string()),
   perspectives: z.array(z.string()),
+  /** The player's own stars, 0.5–5 in half steps; null if not rated. */
+  personalRating: z.number().min(0.5).max(5).multipleOf(0.5).nullable(),
   /** Who set the status: the app (AUTO) or the player (MANUAL). */
   statusSource: z.enum(['AUTO', 'MANUAL']),
   /** What the app would set: shown next to "automatic" when editing. */
@@ -230,6 +232,17 @@ export const UpdateLibraryGameRequestSchema = z
     status: z.enum(OWNED_STATUSES).nullable().optional(),
     gameType: z.enum(PICKABLE_GAME_TYPES).nullable().optional(),
     serverStatus: z.enum(PICKABLE_SERVER_STATUSES).nullable().optional(),
+    /**
+     * The player's stars, 0.5–5 in half steps, or null to take them back.
+     * They count in the taste profile while the game is completed.
+     */
+    personalRating: z
+      .number()
+      .min(0.5)
+      .max(5)
+      .multipleOf(0.5)
+      .nullable()
+      .optional(),
   })
   .refine((body) => Object.values(body).some((value) => value !== undefined), {
     message: 'Nothing to change',
