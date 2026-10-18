@@ -4,10 +4,15 @@ import { signOut } from '../api/auth';
 import { useMe } from '../api/me';
 import { useReviewQueue } from '../api/review';
 import { useStatsOverview } from '../api/stats';
+import { NextGameCard } from '../components/NextGameCard';
 import { ProgressCard } from '../components/ProgressCard';
 import { SteamPrivacyNotice } from '../components/SteamPrivacyNotice';
 
-/** Home: "how far have I got", what's waiting to review, and the sync. */
+/**
+ * Home: what to play now, "how far have I got", what's waiting to review,
+ * and the sync. The next game goes first: deciding is the point of opening
+ * the app.
+ */
 export default function HomePage() {
   const { t, i18n } = useTranslation();
   const me = useMe();
@@ -43,6 +48,8 @@ export default function HomePage() {
           ? t('home.greeting', { name: me.data.displayName })
           : t('home.loading')}
       </h1>
+
+      <NextGameCard />
 
       {stats.data ? (
         <ProgressCard stats={stats.data} />

@@ -7,6 +7,7 @@ import LibraryPage from './pages/LibraryPage';
 import LoginPage from './pages/LoginPage';
 import SteamCallbackPage from './pages/SteamCallbackPage';
 import SyncPage from './pages/SyncPage';
+import RankingPage from './pages/RankingPage';
 import ReviewPage from './pages/ReviewPage';
 
 export const router = createBrowserRouter([
@@ -22,6 +23,7 @@ export const router = createBrowserRouter([
       { path: 'library/add', element: <AddGamePage /> },
       { path: 'library/:id', element: <GamePage /> },
       { path: 'review', element: <ReviewPage /> },
+      { path: 'recommendations', element: <RankingPage /> },
     ],
   },
   { path: '*', element: <Navigate to="/" replace /> },

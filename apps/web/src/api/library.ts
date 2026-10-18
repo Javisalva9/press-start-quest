@@ -114,6 +114,11 @@ export function useSetLength(id: string) {
       queryClient.setQueryData(['library-game', id], game);
       // Lists show the length too (and the length filter depends on it).
       void queryClient.invalidateQueries({ queryKey: ['library'] });
+      // So does the mood a game fits.
+      void queryClient.invalidateQueries({ queryKey: ['recommendation'] });
+      void queryClient.invalidateQueries({
+        queryKey: ['recommendation-ranking'],
+      });
     },
   });
 }
@@ -137,6 +142,11 @@ export function useUpdateLibraryGame(id: string) {
       void queryClient.invalidateQueries({ queryKey: ['library'] });
       void queryClient.invalidateQueries({ queryKey: ['review-queue'] });
       void queryClient.invalidateQueries({ queryKey: ['stats-overview'] });
+      // A status or a type changes what can be recommended, and the taste.
+      void queryClient.invalidateQueries({ queryKey: ['recommendation'] });
+      void queryClient.invalidateQueries({
+        queryKey: ['recommendation-ranking'],
+      });
     },
   });
 }

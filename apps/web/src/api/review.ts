@@ -34,6 +34,11 @@ export function useAnswerReview() {
       void queryClient.invalidateQueries({ queryKey: ['library'] });
       void queryClient.invalidateQueries({ queryKey: ['stats-overview'] });
       void queryClient.invalidateQueries({ queryKey: ['library-game', id] });
+      // A finished or dropped game leaves the recommendation and moves the taste.
+      void queryClient.invalidateQueries({ queryKey: ['recommendation'] });
+      void queryClient.invalidateQueries({
+        queryKey: ['recommendation-ranking'],
+      });
     },
   });
 }

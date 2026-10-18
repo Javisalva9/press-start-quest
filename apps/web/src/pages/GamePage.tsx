@@ -19,6 +19,7 @@ import { AchievementsSection } from '../components/AchievementsSection';
 import { CuratorLabel } from '../components/CuratorLabel';
 import { GameCover } from '../components/GameCover';
 import { formatHours, yearOf } from '../format';
+import { tagLabel } from '../tag-names';
 
 export default function GamePage() {
   const { t, i18n } = useTranslation();
@@ -187,7 +188,7 @@ export default function GamePage() {
                 key={tag}
                 className="rounded-full border border-line px-3 py-1 text-sm text-muted"
               >
-                {tag}
+                {tagLabel(tag, i18n.language)}
               </li>
             ))}
           </ul>

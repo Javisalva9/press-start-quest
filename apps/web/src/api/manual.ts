@@ -57,6 +57,10 @@ export function useAddManualGame() {
       void queryClient.invalidateQueries({ queryKey: ['external-sources'] });
       void queryClient.invalidateQueries({ queryKey: ['review-queue'] });
       void queryClient.invalidateQueries({ queryKey: ['stats-overview'] });
+      void queryClient.invalidateQueries({ queryKey: ['recommendation'] });
+      void queryClient.invalidateQueries({
+        queryKey: ['recommendation-ranking'],
+      });
     },
   });
 }

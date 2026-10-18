@@ -282,6 +282,54 @@
     "withLocked": "Ver también los bloqueados",
     "onlyUnlocked": "Ver solo los desbloqueados"
   },
+  "next": {
+    "title": "Tu siguiente juego",
+    "ranking": "Ver el ranking",
+    "mood": {
+      "label": "¿Cuánto te apetece jugar?",
+      "any": "Todos",
+      "short": "Corto",
+      "medium": "Medio",
+      "long": "Épico",
+      "hint": {
+        "short": "Te quedan menos de 10 h",
+        "medium": "Te quedan de 10 a 30 h",
+        "long": "Te quedan más de 30 h"
+      }
+    },
+    "play": "Jugar en Steam",
+    "details": "Ver ficha",
+    "another": "Otro",
+    "alternatives": "O algo distinto",
+    "empty": "Todavía no hay nada que recomendar: sincroniza tu biblioteca o repasa lo que ya terminaste.",
+    "emptyMood": "No tienes juegos pendientes de esa duración. Prueba con otra.",
+    "error": "No hemos podido cargar tu recomendación.",
+    "reason": {
+      "TASTE_MATCH": "Tu tipo de juego: {{tag}}",
+      "TIME_LEFT": "Te faltan {{hours}}",
+      "KEEP_GOING": "Llevas un {{percent}} %",
+      "KEEP_GOING_HOURS": "Ya llevas {{hours}}",
+      "HIGHLY_RATED": "Nota de {{rating}}",
+      "RECOMMENDED_BY": "Lo recomienda {{curator}}",
+      "SERVERS_CLOSING": "Sus servidores cierran el {{date}}: juégalo mientras puedas",
+      "SERVERS_CLOSING_SOON": "Sus servidores van a cerrar: juégalo mientras puedas"
+    }
+  },
+  "ranking": {
+    "back": "← Inicio",
+    "title": "Ranking de recomendaciones",
+    "intro": "Los mejores candidatos con cada factor de la fórmula, de 0 a 1: nota, gusto, duración, curadores e impulso. Para ajustar los pesos.",
+    "candidates_one": "Encaja {{count}} juego",
+    "candidates_other": "Encajan {{count}} juegos",
+    "position": "{{position}}. {{title}}",
+    "factor": {
+      "quality": "Nota",
+      "affinity": "Gusto",
+      "length": "Duración",
+      "social": "Curadores",
+      "momentum": "Impulso"
+    }
+  },
   "errors": {
     "VALIDATION_FAILED": "Algo de la petición no era correcto. Vuelve a intentarlo.",
     "UNAUTHENTICATED": "Tu sesión ha terminado. Vuelve a entrar.",
