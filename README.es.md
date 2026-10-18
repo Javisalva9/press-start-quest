@@ -46,7 +46,7 @@ press-start-quest/
 │  │     └─ providers/    clientes de Steam (Web API y tienda) e IGDB
 │  └─ web/                React + Vite: pages/, components/, api/, locales/
 ├─ packages/shared/       tipos y esquemas zod comunes a web y API
-└─ .github/workflows/     CI en cada pull request
+└─ .github/workflows/     CI, sincronización nocturna y copia semanal
 ```
 
 ## Arrancar en local
@@ -135,3 +135,28 @@ obligatoria, y dice cuál.
 | `STEAM_API_KEY`              | API | Steam Web API                                    |
 | `IGDB_CLIENT_ID` / `_SECRET` | API | IGDB, a través de una aplicación de Twitch       |
 | `VITE_API_URL`               | Web | URL de la API en Render (vacía en local)         |
+
+## Copias de seguridad
+
+El plan gratuito de Neon solo restaura las últimas 6 horas. Cada domingo, el
+workflow **Weekly backup** copia la base de datos entera, la restaura en un
+Postgres vacío para comprobarla, la cifra con [age](https://age-encryption.org)
+y la guarda como artefacto durante 90 días. También se puede lanzar a mano
+desde la pestaña Actions, por ejemplo antes de una migración delicada.
+
+El repositorio es público, y sus artefactos también: solo se sube el fichero
+cifrado. La clave pública (`age1…`, que solo sirve para cifrar) es la variable
+del repositorio `AGE_RECIPIENT`; la privada, la única que descifra, nunca va a
+GitHub. La URL de la base de datos es el secreto `DATABASE_URL_DIRECT`.
+
+Para recuperar una copia:
+
+1. En **Actions → Weekly backup**, abre una ejecución y descarga su artefacto.
+   Descomprímelo: dentro está `psq-backup-AAAA-MM-DD.dump.age`.
+2. Descífralo con la clave privada:
+   `age --decrypt --identity psq-backup-key.txt --output backup.dump psq-backup-AAAA-MM-DD.dump.age`
+3. Restáuralo con `pg_restore` 18 o más nuevo, primero en una rama nueva de
+   Neon para revisarlo antes de tocar producción:
+   `pg_restore --clean --if-exists --no-owner --no-privileges --dbname "<URL directa>" backup.dump`
+
+`pg_restore` también puede recuperar una sola tabla: añade `--table=user_games`.

@@ -46,7 +46,7 @@ press-start-quest/
 │  │     └─ providers/    Steam (Web API and Store) and IGDB clients
 │  └─ web/                React + Vite: pages/, components/, api/, locales/
 ├─ packages/shared/       zod types and schemas shared by web and API
-└─ .github/workflows/     CI on every pull request
+└─ .github/workflows/     CI, nightly sync and weekly backup
 ```
 
 ## Running locally
@@ -134,3 +134,28 @@ one is missing, and says which.
 | `STEAM_API_KEY`              | API | Steam Web API                                  |
 | `IGDB_CLIENT_ID` / `_SECRET` | API | IGDB, through a Twitch application             |
 | `VITE_API_URL`               | Web | API URL on Render (empty locally)              |
+
+## Backups
+
+Neon's free plan can only restore the last 6 hours. Every Sunday the
+**Weekly backup** workflow dumps the whole database, restores it into an empty
+Postgres to check it, encrypts it with [age](https://age-encryption.org) and
+keeps it as an artifact for 90 days. It can also be run by hand from the
+Actions tab, before a risky migration for instance.
+
+The repository is public, and so are its artifacts: only the encrypted file is
+uploaded. The public key (`age1…`, which can only encrypt) is the repository
+variable `AGE_RECIPIENT`; the private key, the only one that decrypts, never
+goes to GitHub. The database URL is the secret `DATABASE_URL_DIRECT`.
+
+To get a backup back:
+
+1. In **Actions → Weekly backup**, open a run and download its artifact. Unzip
+   it: inside is `psq-backup-YYYY-MM-DD.dump.age`.
+2. Decrypt it with the private key:
+   `age --decrypt --identity psq-backup-key.txt --output backup.dump psq-backup-YYYY-MM-DD.dump.age`
+3. Restore it with `pg_restore` 18 or newer, into a new Neon branch first to
+   look at it before touching production:
+   `pg_restore --clean --if-exists --no-owner --no-privileges --dbname "<direct URL>" backup.dump`
+
+`pg_restore` can also bring back a single table: add `--table=user_games`.
