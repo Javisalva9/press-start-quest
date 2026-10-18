@@ -6,8 +6,8 @@ Installable mobile web app (PWA) that imports your PC game library, enriches it
 with length, rating and cover art, and suggests what to play each day so you can
 work through your backlog.
 
-> Status: stage 1 (Steam and catalog) done. Next: stage 2, classification and
-> progress.
+> Status: stages 1 to 3 (Steam and catalog, classification and progress,
+> recommendations) done. Next: stage 4, deals, notifications and motivation.
 
 ## What it does today
 
@@ -19,6 +19,18 @@ work through your backlog.
 - Library with search, filters and sorting, and a page for each game, where
   you can type a length IGDB doesn't know.
 - Warns when the Steam profile is private, with the steps to fix it.
+- Classifies each game as completable, endless or sandbox, flags closed
+  servers, and spots games that look finished (all achievements, the ending
+  achievement or enough hours) for the player to confirm in **Catch up**, a
+  swipe-card review.
+- Home screen with **your next game**: one pick and two alternatives of other
+  genres, with the reasons why, filtered by how long you feel like playing.
+  It scores the backlog on rating, taste, time left, curators and momentum.
+- A taste profile learned from what you play, finish, drop and rate (half
+  stars, on completed games).
+- Progress ring, streaks, games added by hand from IGDB (with external sources
+  such as a friend's), and curators' lists to follow.
+- Nightly sync with daily playtime snapshots, and a weekly encrypted backup.
 - Installable on the phone (PWA), in English and Spanish, and usable offline
   with the last data loaded.
 
@@ -40,9 +52,11 @@ press-start-quest/
 ├─ apps/
 │  ├─ api/                NestJS, schema and migrations in prisma/
 │  │  └─ src/
-│  │     ├─ auth/  users/  sources/  library/
-│  │     ├─ sync/         import, enrichment, wishlist, achievements
+│  │     ├─ auth/  users/  sources/  library/  curators/  stats/
+│  │     ├─ sync/         import, enrichment, classification, nightly photos
 │  │     ├─ catalog/      game classification and metadata rules
+│  │     ├─ taste/        taste profile
+│  │     ├─ recommendations/  scoring and "your next game"
 │  │     └─ providers/    Steam (Web API and Store) and IGDB clients
 │  └─ web/                React + Vite: pages/, components/, api/, locales/
 ├─ packages/shared/       zod types and schemas shared by web and API
@@ -91,7 +105,7 @@ Sign in at http://localhost:5173: the first visit imports your library.
 ## How the sync works
 
 `POST /api/sync` starts a job and answers at once; the web app polls
-`GET /api/sync/jobs/:id` for its progress. The job runs four steps:
+`GET /api/sync/jobs/:id` for its progress. The job runs these steps:
 
 1. **Library**: owned games and playtime from the Steam Web API, written in
    bulk; after the first sync, only what changed.
@@ -100,6 +114,10 @@ Sign in at http://localhost:5173: the first visit imports your library.
    (4 per second) for games never enriched or older than 30 days. The catalog
    is shared, so a game is only fetched once for everyone.
 4. **Achievements**: for played games whose playtime changed.
+5. **Classification**: game type and servers, then the games that look
+   finished and the automatic statuses (playing, on hold). All from the
+   database, no external calls.
+6. **Taste profile**: worked out again, so the next recommendation knows.
 
 ## Languages
 
