@@ -183,7 +183,8 @@
     "remaining_other": "Quedan {{count}}",
     "question": {
       "finished": "¿Te lo pasaste?",
-      "abandoned": "¿Lo dejaste?"
+      "abandoned": "¿Lo dejaste?",
+      "stillPlaying": "¿Sigues con él?"
     },
     "pausedIntro": {
       "title": "Juegos en pausa",
@@ -198,7 +199,10 @@
       "played": "Llevas {{played}} jugadas.",
       "paused_one": "Hace {{count}} mes que no lo juegas ({{played}} jugadas).",
       "paused_other": "Hace {{count}} meses que no lo juegas ({{played}} jugadas).",
-      "pausedLongAgo": "Hace mucho que no lo juegas ({{played}} jugadas)."
+      "pausedLongAgo": "Hace mucho que no lo juegas ({{played}} jugadas).",
+      "stillPlaying_one": "Lo tienes como «Jugando» desde hace {{count}} mes.",
+      "stillPlaying_other": "Lo tienes como «Jugando» desde hace {{count}} meses.",
+      "stillPlayingNoDate": "Lo tienes como «Jugando»."
     },
     "answer": {
       "finished": "Sí",
@@ -206,7 +210,8 @@
       "notFinished": "No",
       "resume": "Lo retomaré",
       "abandoned": "Lo dejé",
-      "wontPlay": "No lo voy a jugar"
+      "wontPlay": "No lo voy a jugar",
+      "stillPlaying": "Sigo con él"
     },
     "hint": "Desliza la tarjeta, usa los botones o las flechas del teclado.",
     "done": {

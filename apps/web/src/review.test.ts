@@ -135,4 +135,20 @@ describe('reasonFor', () => {
       'review.reason.pausedLongAgo',
     );
   });
+
+  it('says since when an external game has been "playing", without hours', () => {
+    expect(
+      reasonFor(
+        card({
+          question: 'stillPlaying',
+          lastPlayedAt: '2026-06-16T12:00:00Z',
+        }),
+        now,
+        hours,
+      ),
+    ).toEqual({ key: 'review.reason.stillPlaying', values: { count: 4 } });
+    expect(reasonFor(card({ question: 'stillPlaying' }), now, hours).key).toBe(
+      'review.reason.stillPlayingNoDate',
+    );
+  });
 });

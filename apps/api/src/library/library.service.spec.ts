@@ -55,6 +55,7 @@ describe('LibraryService.setLength', () => {
 describe('LibraryService.update', () => {
   const prisma = {
     userGame: { findFirst: vi.fn(), update: vi.fn() },
+    ownership: { count: vi.fn(), updateMany: vi.fn() },
   };
   const taste = { refresh: vi.fn() };
   let service: LibraryService;
@@ -134,6 +135,17 @@ describe('LibraryService.update', () => {
     );
     await service.update('u1', 'ug1', { gameType: 'SANDBOX' });
     expect(saved()).toEqual({ typeOverride: 'SANDBOX' });
+  });
+
+  it('dates an external game as played today when set to playing', async () => {
+    prisma.userGame.findFirst.mockResolvedValue(entry());
+    prisma.ownership.count.mockResolvedValue(0);
+    prisma.ownership.updateMany.mockResolvedValue({ count: 1 });
+    await service.update('u1', 'ug1', { status: 'PLAYING' });
+    expect(prisma.ownership.updateMany).toHaveBeenCalledWith({
+      where: { userGameId: 'ug1', source: { platform: 'EXTERNAL' } },
+      data: { lastPlayedAt: expect.any(Date) },
+    });
   });
 
   it('refreshes the taste profile when the status changes', async () => {

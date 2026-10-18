@@ -37,6 +37,7 @@ const row = (overrides: Record<string, unknown> = {}) => ({
 describe('ReviewService', () => {
   const prisma = {
     userGame: { findMany: vi.fn(), findFirst: vi.fn(), update: vi.fn() },
+    ownership: { count: vi.fn(), updateMany: vi.fn() },
   };
   // Every achievement it's asked about is a finale, unless a test says.
   const finales = {
@@ -50,6 +51,7 @@ describe('ReviewService', () => {
 
   beforeEach(async () => {
     vi.resetAllMocks();
+    manual = [];
     finales.finales.mockImplementation((_userId: string, ids: string[]) =>
       Promise.resolve(new Set(ids)),
     );
@@ -64,9 +66,24 @@ describe('ReviewService', () => {
     service = moduleRef.get(ReviewService);
   });
 
+  /**
+   * The rows of the main query (statuses the app set). The "still
+   * playing?" query (the player's own "playing") gets none, unless a test
+   * gives them with manualRows.
+   */
+  let manual: unknown[] = [];
+  const autoRows = (rows: unknown[]) =>
+    prisma.userGame.findMany.mockImplementation(
+      ({ where }: { where: { statusSource: string } }) =>
+        Promise.resolve(where.statusSource === 'MANUAL' ? manual : rows),
+    );
+  const manualRows = (rows: unknown[]) => {
+    manual = rows;
+  };
+
   describe('queue', () => {
     it('asks only about games whose status the player has not set', async () => {
-      prisma.userGame.findMany.mockResolvedValue([]);
+      autoRows([]);
       await service.queue('u1', 20, NOW);
       expect(prisma.userGame.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -80,7 +97,7 @@ describe('ReviewService', () => {
     });
 
     it('asks about games played for an hour, or with a signal', async () => {
-      prisma.userGame.findMany.mockResolvedValue([]);
+      autoRows([]);
       await service.queue('u1', 20, NOW);
       const { where } = prisma.userGame.findMany.mock.calls[0][0];
       expect(where.AND).toContainEqual({
@@ -96,7 +113,7 @@ describe('ReviewService', () => {
         ttbMainMin,
         gameType,
       });
-      prisma.userGame.findMany.mockResolvedValue([
+      autoRows([
         row({ id: 'unknown-length' }),
         // Known length under 80 %: no signal, no card (Hades at 66 %).
         row({ id: 'known-length', game: game('COMPLETABLE', 2321) }),
@@ -134,7 +151,7 @@ describe('ReviewService', () => {
     });
 
     it('puts the most likely finished first, then the most played', async () => {
-      prisma.userGame.findMany.mockResolvedValue([
+      autoRows([
         row({ id: 'played-a-lot', playtimeMin: 3000 }),
         row({
           id: 'playtime',
@@ -160,7 +177,7 @@ describe('ReviewService', () => {
     });
 
     it('brings a turned-down card back only with a stronger signal', async () => {
-      prisma.userGame.findMany.mockResolvedValue([
+      autoRows([
         // Said no to playtime, still playtime: stays out.
         row({
           id: 'same',
@@ -194,7 +211,7 @@ describe('ReviewService', () => {
     });
 
     it('asks "did you drop it?" after 3 months on hold, after the rest', async () => {
-      prisma.userGame.findMany.mockResolvedValue([
+      autoRows([
         // Paused 4 months, answered "no" before its last session: asks.
         row({
           id: 'paused-long',
@@ -234,17 +251,43 @@ describe('ReviewService', () => {
       ]);
     });
 
-    it('returns a page, with the total waiting', async () => {
-      prisma.userGame.findMany.mockResolvedValue(
-        Array.from({ length: 5 }, (_, i) => row({ id: `ug${i}` })),
+    it('asks "still playing it?" about external games marked playing 3 months ago', async () => {
+      autoRows([]);
+      manualRows([
+        row({ id: 'old', status: 'PLAYING', lastPlayedAt: daysAgo(100) }),
+        row({ id: 'recent', status: 'PLAYING', lastPlayedAt: daysAgo(20) }),
+        // Marked before sessions were saved: asked, to date it.
+        row({ id: 'no-date', status: 'PLAYING', lastPlayedAt: null }),
+      ]);
+
+      const { items } = await service.queue('u1', 20, NOW);
+      expect(items.map((card) => [card.id, card.question])).toEqual([
+        ['no-date', 'stillPlaying'],
+        ['old', 'stillPlaying'],
+      ]);
+      expect(prisma.userGame.findMany).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({
+            status: 'PLAYING',
+            statusSource: 'MANUAL',
+            ownerships: {
+              some: {},
+              every: { source: { platform: 'EXTERNAL' } },
+            },
+          }),
+        }),
       );
+    });
+
+    it('returns a page, with the total waiting', async () => {
+      autoRows(Array.from({ length: 5 }, (_, i) => row({ id: `ug${i}` })));
       const { items, total } = await service.queue('u1', 2, NOW);
       expect(items).toHaveLength(2);
       expect(total).toBe(5);
     });
 
     it('shows the finale achievement behind the signal', async () => {
-      prisma.userGame.findMany.mockResolvedValue([
+      autoRows([
         row({
           completionSignal: 'FINALE_ACHIEVEMENT',
           completionConfidence: 0.9,
@@ -339,6 +382,23 @@ describe('ReviewService', () => {
         statusSource: 'AUTO',
         completedAt: null,
       });
+    });
+
+    it('keeps the player\'s "playing" on "still playing", dated today', async () => {
+      prisma.userGame.findFirst.mockResolvedValue({
+        status: 'PLAYING',
+        statusSource: 'MANUAL',
+        completionSignal: null,
+      });
+      prisma.ownership.count.mockResolvedValue(0);
+      prisma.ownership.updateMany.mockResolvedValue({ count: 1 });
+      await service.answer('u1', 'ug1', { answer: 'notFinished' });
+      const [first, second] = prisma.userGame.update.mock.calls;
+      // Reviewed, and the status left as the player set it.
+      expect(first[0].data).not.toHaveProperty('status');
+      expect(first[0].data).not.toHaveProperty('statusSource');
+      // Today's session, so the card waits another 3 months.
+      expect(second[0].data).toEqual({ lastPlayedAt: expect.any(Date) });
     });
 
     it("answers 404 for another user's game", async () => {

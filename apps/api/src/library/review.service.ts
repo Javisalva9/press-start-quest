@@ -10,12 +10,14 @@ import {
   GameKind,
   GameStatus,
   GameType,
+  Platform,
   StatusSource,
   type Prisma,
 } from '../generated/prisma/client.js';
 import { pausedLongEnough, STARTED_MIN } from '../catalog/auto-status.js';
 import { FinaleResolver } from '../finale/finale-resolver.js';
 import { PrismaService } from '../prisma/prisma.service.js';
+import { markPlayedToday } from './external-session.js';
 import { TasteProfileService } from '../taste/taste-profile.service.js';
 
 /** How strong each signal is: a card comes back only with a stronger one. */
@@ -163,9 +165,36 @@ export class ReviewService {
           (a.lastPlayedAt?.getTime() ?? 0) - (b.lastPlayedAt?.getTime() ?? 0),
       );
 
+    // Games only in external sources that the player marked as playing:
+    // no sessions to go by, so after 3 months the app asks if they still
+    // are. "Yes" dates it today again (see markPlayedToday). Their status
+    // was set by hand, so the query above leaves them out.
+    const stillPlaying = (
+      await this.prisma.userGame.findMany({
+        where: {
+          userId,
+          owned: true,
+          status: GameStatus.PLAYING,
+          statusSource: StatusSource.MANUAL,
+          game: { kind: GameKind.GAME },
+          ownerships: {
+            some: {},
+            every: { source: { platform: Platform.EXTERNAL } },
+          },
+        },
+        select: cardSelect,
+      })
+    )
+      .filter((row) => pausedLongEnough(row.lastPlayedAt, now))
+      .sort(
+        (a, b) =>
+          (a.lastPlayedAt?.getTime() ?? 0) - (b.lastPlayedAt?.getTime() ?? 0),
+      );
+
     const page = [
       ...finished.map((row) => [row, 'finished'] as const),
       ...abandoned.map((row) => [row, 'abandoned'] as const),
+      ...stillPlaying.map((row) => [row, 'stillPlaying'] as const),
     ];
     const shown = page.slice(0, limit);
     // The finale achievement behind a FINALE_ACHIEVEMENT card: only for
@@ -200,7 +229,7 @@ export class ReviewService {
   ): Promise<void> {
     const entry = await this.prisma.userGame.findFirst({
       where: { id, userId },
-      select: { status: true, completionSignal: true },
+      select: { status: true, statusSource: true, completionSignal: true },
     });
     if (!entry) {
       throw new NotFoundException({
@@ -220,6 +249,18 @@ export class ReviewService {
       statusSource: StatusSource.MANUAL,
       completedAt: status === GameStatus.COMPLETED ? now : null,
     });
+
+    if (
+      answer === 'notFinished' &&
+      entry.status === GameStatus.PLAYING &&
+      entry.statusSource === StatusSource.MANUAL
+    ) {
+      // "Still playing it?": yes. Still the player's own "playing", dated
+      // today, so the card waits another 3 months.
+      await this.prisma.userGame.update({ where: { id }, data: reviewed });
+      await markPlayedToday(this.prisma, id, now);
+      return;
+    }
 
     const data: Prisma.UserGameUpdateInput =
       answer === 'finished'

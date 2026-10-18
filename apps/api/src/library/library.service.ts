@@ -22,6 +22,7 @@ import {
 import { fromHalfStars, toHalfStars } from '../common/stars.js';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { TasteProfileService } from '../taste/taste-profile.service.js';
+import { markPlayedToday } from './external-session.js';
 import { buildLibraryOrderBy, buildLibraryWhere } from './library-query.js';
 
 /** What the list needs from each entry: nothing more is read. */
@@ -204,6 +205,11 @@ export class LibraryService {
     }
 
     await this.prisma.userGame.update({ where: { id }, data });
+    if (body.status === GameStatus.PLAYING) {
+      // A game with no synced store has no sessions: saying "playing" is
+      // today's.
+      await markPlayedToday(this.prisma, id, now);
+    }
     if (data.status !== undefined || data.personalRating !== undefined) {
       // Completed, dropped or rated counts in the taste: the next
       // recommendation already knows, without waiting for the night's sync.

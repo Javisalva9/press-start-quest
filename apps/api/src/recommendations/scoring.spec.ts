@@ -16,6 +16,7 @@ const H = 60;
 
 const candidate = (overrides: Partial<Candidate> = {}): Candidate => ({
   playtimeMin: 0,
+  playing: false,
   lastPlayedAt: null,
   lengthMin: 20 * H,
   sandbox: false,
@@ -119,6 +120,19 @@ describe('momentumFactor', () => {
     expect(
       momentumFactor(candidate({ ...started, playtimeMin: 17 * H }), NOW),
     ).toBe(false);
+  });
+
+  it('is on for the player\'s own "playing", with no hours (an external game)', () => {
+    const external = candidate({
+      playing: true,
+      playtimeMin: 0,
+      lastPlayedAt: daysAgo(5),
+    });
+    expect(momentumFactor(external, NOW)).toBe(true);
+    // No "0 % in": the reason needs hours to show.
+    expect(
+      scoreCandidate(external, null, NOW).reasons.map((reason) => reason.code),
+    ).not.toContain('KEEP_GOING');
   });
 
   it('is on for a sandbox or an unknown length, whatever the hours', () => {

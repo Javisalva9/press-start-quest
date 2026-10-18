@@ -193,6 +193,23 @@ describe('ManualGamesService', () => {
       });
     });
 
+    it('dates a game added as playing today: external sources have no sessions', async () => {
+      prisma.userGame.findUnique.mockResolvedValue(null);
+      prisma.userGame.create.mockResolvedValue({ id: 'ug1' });
+      prisma.source.findFirst.mockResolvedValue({ id: 's1' });
+
+      await service.add('u1', {
+        origin: 'external',
+        igdbId: 7,
+        sourceName: 'Jack Sparrow',
+        status: 'PLAYING',
+      });
+
+      const { create, update } = prisma.ownership.upsert.mock.calls[0][0];
+      expect(create).toMatchObject({ lastPlayedAt: expect.any(Date) });
+      expect(update).toEqual({ lastPlayedAt: expect.any(Date) });
+    });
+
     it('reuses an external source with the same name, in any case', async () => {
       prisma.userGame.findUnique.mockResolvedValue(null);
       prisma.userGame.create.mockResolvedValue({ id: 'ug1' });

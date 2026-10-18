@@ -124,6 +124,10 @@ export class ManualGamesService {
         })
       ).id;
     const externalAppId = String(body.igdbId);
+    const now = new Date();
+    // No sessions in an external source: added as "playing", today is one.
+    const session =
+      body.status === GameStatus.PLAYING ? { lastPlayedAt: now } : {};
     await this.prisma.ownership.upsert({
       where: { sourceId_externalAppId: { sourceId: source.id, externalAppId } },
       create: {
@@ -131,12 +135,15 @@ export class ManualGamesService {
         sourceId: source.id,
         externalAppId,
         playtimeMin: body.playtimeMinutes ?? 0,
+        ...session,
       },
       // Added again: only the playtime changes, and only if given.
-      update:
-        body.playtimeMinutes === undefined
+      update: {
+        ...(body.playtimeMinutes === undefined
           ? {}
-          : { playtimeMin: body.playtimeMinutes },
+          : { playtimeMin: body.playtimeMinutes }),
+        ...session,
+      },
     });
 
     // Playtime summed over every store, as the sync does.
@@ -148,7 +155,6 @@ export class ManualGamesService {
     const playtimeMin = totals._sum.playtimeMin ?? 0;
     const lastPlayedAt = totals._max.lastPlayedAt;
 
-    const now = new Date();
     let status: Prisma.UserGameUpdateInput = {};
     if (body.status) {
       status = {
