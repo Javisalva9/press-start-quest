@@ -220,7 +220,8 @@
       "library": "Ver tu biblioteca"
     },
     "rate": "¿Qué nota le das a {{title}}?",
-    "rateLater": "Ahora no"
+    "rateLater": "Ahora no",
+    "rateSaved": "✓ Guardada"
   },
   "gameType": {
     "COMPLETABLE": "Completable",

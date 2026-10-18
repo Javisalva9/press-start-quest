@@ -220,7 +220,8 @@
       "library": "See your library"
     },
     "rate": "How would you rate {{title}}?",
-    "rateLater": "Not now"
+    "rateLater": "Not now",
+    "rateSaved": "✓ Saved"
   },
   "gameType": {
     "COMPLETABLE": "Completable",
