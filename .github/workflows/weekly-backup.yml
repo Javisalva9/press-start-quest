@@ -1,0 +1,78 @@
+name: Weekly backup
+
+# Neon's free plan can only restore the last 6 hours. Every Sunday the
+# whole database is copied, checked by restoring it, encrypted with age
+# and kept here as an artifact for 90 days (13 weekly copies). How to get
+# one back: "Backups" in the README.
+on:
+  schedule:
+    # Sundays at 04:17 UTC, a quiet hour, after the nightly sync.
+    - cron: '17 4 * * 0'
+  # Also by hand, from the Actions tab: before a risky migration, say.
+  workflow_dispatch:
+
+concurrency:
+  group: weekly-backup
+  cancel-in-progress: false
+
+# It reads nothing from the repository but this script, and uploading an
+# artifact needs no token permissions.
+permissions:
+  contents: read
+
+jobs:
+  backup:
+    name: Back up the database
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    services:
+      # An empty Postgres, as new as Neon's, to try the restore in. Gone
+      # with the job: nothing of it is kept.
+      restore:
+        image: postgres:18
+        env:
+          POSTGRES_PASSWORD: restore-check
+          POSTGRES_DB: restore_check
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      # pg_dump must be at least as new as the server (Neon runs 18). The
+      # runner's is older, so it comes from Postgres' own apt repository,
+      # along with age from Ubuntu's.
+      - name: Install pg_dump 18 and age
+        run: |
+          sudo apt-get update --quiet
+          sudo apt-get install --yes --quiet postgresql-common
+          sudo /usr/share/postgresql-common/pgdg/apt.postgresql.org.sh -y
+          sudo apt-get install --yes --quiet postgresql-client-18 age
+
+      - name: Dump, check and encrypt
+        env:
+          SOURCE_URL: ${{ secrets.DATABASE_URL_DIRECT }}
+          RESTORE_URL: postgresql://postgres:restore-check@localhost:5432/restore_check
+          AGE_RECIPIENT: ${{ vars.AGE_RECIPIENT }}
+          PG_BIN: /usr/lib/postgresql/18/bin
+        run: |
+          out="$RUNNER_TEMP/psq-backup-$(date -u +%F).dump.age"
+          echo "OUT_FILE=$out" >> "$GITHUB_ENV"
+          OUT_FILE="$out" bash scripts/backup-database.sh
+
+      - name: Keep the encrypted backup
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: psq-backup-${{ github.run_number }}
+          path: ${{ env.OUT_FILE }}
+          if-no-files-found: error
+          retention-days: 90
+          # Already compressed by pg_dump, and encrypted: nothing to gain.
+          compression-level: 0
