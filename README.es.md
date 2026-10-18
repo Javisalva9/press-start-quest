@@ -6,8 +6,9 @@ App web instalable en el móvil (PWA) que importa tu biblioteca de juegos de PC,
 la enriquece con duración, nota y portada, y cada día te propone qué jugar para
 ir cerrando tu backlog.
 
-> Estado: etapa 1 (Steam y catálogo) terminada. Siguiente: etapa 2,
-> clasificación y progreso.
+> Estado: etapas 1 a 3 (Steam y catálogo, clasificación y progreso,
+> recomendaciones) terminadas. Siguiente: etapa 4, ofertas, avisos y
+> motivación.
 
 ## Qué hace ya
 
@@ -19,6 +20,18 @@ ir cerrando tu backlog.
 - Biblioteca con búsqueda, filtros y orden, y una ficha por juego, donde puedes
   poner la duración si IGDB no la sabe.
 - Avisa si el perfil de Steam es privado, con los pasos para arreglarlo.
+- Clasifica cada juego como completable, sin fin o sandbox, marca los
+  servidores cerrados y detecta los juegos que parecen terminados (todos los
+  logros, el logro de final o suficientes horas) para que el jugador lo
+  confirme en el **Repaso**, con tarjetas que se deslizan.
+- Inicio con **tu siguiente juego**: uno principal y dos alternativas de otro
+  género, con sus motivos, filtrado por cuánto te apetece jugar. Puntúa el
+  backlog por nota, gustos, tiempo que falta, curadores e impulso.
+- Un perfil de gustos que aprende de lo que juegas, terminas, dejas y puntúas
+  (medias estrellas, en los completados).
+- Anillo de progreso, rachas, juegos añadidos a mano desde IGDB (con fuentes
+  externas, como los de un amigo) y listas de curadores para seguir.
+- Sincronización nocturna con fotos diarias de horas y copia semanal cifrada.
 - Instalable en el móvil (PWA), en inglés y español, y usable sin conexión con
   los últimos datos cargados.
 
@@ -40,9 +53,11 @@ press-start-quest/
 ├─ apps/
 │  ├─ api/                NestJS, esquema y migraciones en prisma/
 │  │  └─ src/
-│  │     ├─ auth/  users/  sources/  library/
-│  │     ├─ sync/         importación, enriquecimiento, deseados, logros
+│  │     ├─ auth/  users/  sources/  library/  curators/  stats/
+│  │     ├─ sync/         importación, enriquecimiento, clasificación, fotos
 │  │     ├─ catalog/      reglas de clasificación y de metadatos
+│  │     ├─ taste/        perfil de gustos
+│  │     ├─ recommendations/  puntuación y «tu siguiente juego»
 │  │     └─ providers/    clientes de Steam (Web API y tienda) e IGDB
 │  └─ web/                React + Vite: pages/, components/, api/, locales/
 ├─ packages/shared/       tipos y esquemas zod comunes a web y API
@@ -90,7 +105,7 @@ Entra en http://localhost:5173: la primera visita importa tu biblioteca.
 ## Cómo funciona la sincronización
 
 `POST /api/sync` crea un trabajo y responde al momento; la web consulta su
-progreso en `GET /api/sync/jobs/:id`. El trabajo tiene cuatro pasos:
+progreso en `GET /api/sync/jobs/:id`. El trabajo tiene estos pasos:
 
 1. **Biblioteca**: juegos y horas desde la Steam Web API, guardados en bloque;
    tras la primera sincronización, solo lo que cambia.
@@ -101,6 +116,11 @@ progreso en `GET /api/sync/jobs/:id`. El trabajo tiene cuatro pasos:
    días. El catálogo es compartido: cada juego se consulta una sola vez para
    todos.
 4. **Logros**: de los juegos jugados cuyas horas han cambiado.
+5. **Clasificación**: tipo de juego y servidores, y después los juegos que
+   parecen terminados y los estados automáticos (jugando, en pausa). Todo
+   desde la base de datos, sin llamadas externas.
+6. **Perfil de gustos**: se recalcula, para que la siguiente recomendación lo
+   sepa.
 
 ## Idiomas
 

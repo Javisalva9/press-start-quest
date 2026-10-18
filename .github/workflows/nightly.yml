@@ -33,6 +33,9 @@ jobs:
           # Repository variable (not secret): the API's public URL on Render.
           API_URL: ${{ vars.API_URL }}
           JOBS_TOKEN: ${{ secrets.JOBS_TOKEN }}
+          # Slower than this fails the run (after the sync is over), so
+          # GitHub emails about it: a warning well before Render's 15 min.
+          SLOW_AFTER_SECONDS: 600
         run: |
           # Render's free plan stops the API after 15 minutes without a new
           # request, and doesn't say whether one long open request counts.
@@ -53,8 +56,16 @@ jobs:
 
           # The retries cover Render waking the API up (up to a minute).
           # The request stays open until every sync is done.
+          started=$SECONDS
           curl --fail-with-body --silent --show-error \
             --retry 5 --retry-delay 30 --retry-all-errors \
             --max-time 2400 \
             --request POST "$API_URL/api/internal/jobs/daily" \
             --header "Authorization: Bearer $JOBS_TOKEN"
+
+          took=$((SECONDS - started))
+          echo "Nightly sync took $((took / 60)) min $((took % 60)) s"
+          if [ "$took" -gt "$SLOW_AFTER_SECONDS" ]; then
+            echo "::error title=Slow nightly sync::It took $((took / 60)) minutes, over $((SLOW_AFTER_SECONDS / 60)). The sync finished; worth a look before it nears Render's 15."
+            exit 1
+          fi

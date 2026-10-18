@@ -23,10 +23,10 @@
 # Nothing it prints contains data or credentials: workflow logs are public.
 set -euo pipefail
 
-: "${SOURCE_URL:?SOURCE_URL is not set}"
-: "${RESTORE_URL:?RESTORE_URL is not set}"
-: "${AGE_RECIPIENT:?AGE_RECIPIENT is not set}"
-: "${OUT_FILE:?OUT_FILE is not set}"
+: "${SOURCE_URL:?is empty: in GitHub, add the secret DATABASE_URL_DIRECT (Settings > Secrets and variables > Actions > Secrets, not Variables)}"
+: "${RESTORE_URL:?is not set}"
+: "${AGE_RECIPIENT:?is empty: in GitHub, add the variable AGE_RECIPIENT with the age public key (Settings > Secrets and variables > Actions > Variables)}"
+: "${OUT_FILE:?is not set}"
 bin="${PG_BIN:+${PG_BIN%/}/}"
 
 if [[ "$AGE_RECIPIENT" != age1* ]]; then
