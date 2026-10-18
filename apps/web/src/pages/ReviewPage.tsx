@@ -71,9 +71,13 @@ export default function ReviewPage() {
   const rate = useRateGame();
   // The game just finished, to rate it: offered above the next card and
   // gone with the next answer, so rating never slows the review down.
-  const [toRate, setToRate] = useState<{ id: string; title: string } | null>(
-    null,
-  );
+  // Once rated it stays, lit, with "saved": tapping again corrects it.
+  const [toRate, setToRate] = useState<{
+    id: string;
+    title: string;
+    rating: number | null;
+    saved: boolean;
+  } | null>(null);
   // Answered in this visit: hidden right away, without waiting for the API.
   const [answered, setAnswered] = useState<ReadonlySet<string>>(new Set());
   const [error, setError] = useState<string | null>(null);
@@ -120,7 +124,9 @@ export default function ReviewPage() {
       setError(null);
       setAnswered((previous) => new Set(previous).add(card.id));
       setToRate(
-        value === 'finished' ? { id: card.id, title: card.title } : null,
+        value === 'finished'
+          ? { id: card.id, title: card.title, rating: null, saved: false }
+          : null,
       );
       if (value === 'finished') {
         // A short buzz on Android to celebrate; iPhones ignore it.
@@ -178,31 +184,51 @@ export default function ReviewPage() {
       )}
 
       {toRate && (
-        <section className="flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-line bg-card px-4 py-3">
-          <p className="text-sm font-semibold">
+        <section className="flex flex-col items-center gap-1 rounded-2xl border border-line bg-card px-4 pt-3 pb-2">
+          <p className="text-center text-sm font-semibold">
             {t('review.rate', { title: toRate.title })}
           </p>
-          <div className="flex items-center gap-2">
-            <StarRating
-              label={t('review.rate', { title: toRate.title })}
-              value={null}
-              onChange={(personalRating) => {
-                setToRate(null);
-                if (personalRating !== null) {
-                  rate.mutate(
-                    { id: toRate.id, personalRating },
-                    { onError: () => setError(t('errors.UNKNOWN')) },
-                  );
-                }
-              }}
-            />
-            <button
-              type="button"
-              onClick={() => setToRate(null)}
-              className="text-sm text-muted hover:text-fg"
-            >
-              {t('review.rateLater')}
-            </button>
+          <StarRating
+            label={t('review.rate', { title: toRate.title })}
+            value={toRate.rating}
+            onChange={(personalRating) => {
+              const { id } = toRate;
+              setToRate({ ...toRate, rating: personalRating, saved: false });
+              rate.mutate(
+                { id, personalRating },
+                {
+                  // Only if it's still the strip on screen and its rating.
+                  onSuccess: () =>
+                    setToRate((shown) =>
+                      shown?.id === id && shown.rating === personalRating
+                        ? { ...shown, saved: true }
+                        : shown,
+                    ),
+                  onError: () => setError(t('errors.UNKNOWN')),
+                },
+              );
+            }}
+          />
+          {/* Its own row, away from the stars: no "not now" by mistake. */}
+          <div className="flex h-8 w-full items-center justify-end">
+            {toRate.rating === null ? (
+              <button
+                type="button"
+                onClick={() => setToRate(null)}
+                className="px-2 py-1 text-sm text-muted hover:text-fg"
+              >
+                {t('review.rateLater')}
+              </button>
+            ) : (
+              <p
+                role="status"
+                className={`px-2 text-sm font-semibold text-success transition-opacity ${
+                  toRate.saved ? 'opacity-100' : 'opacity-0'
+                }`}
+              >
+                {t('review.rateSaved')}
+              </p>
+            )}
           </div>
         </section>
       )}
