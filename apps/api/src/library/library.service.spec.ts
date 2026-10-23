@@ -185,6 +185,13 @@ describe('LibraryService.update', () => {
     ).rejects.toMatchObject({ status: 409 });
   });
 
+  it('takes back a "not now", and leaves the rest alone', async () => {
+    prisma.userGame.findFirst.mockResolvedValue(entry());
+    await service.update('u1', 'ug1', { snoozedUntil: null });
+    expect(saved()).toEqual({ snoozedUntil: null });
+    expect(taste.refresh).not.toHaveBeenCalled();
+  });
+
   it('saves and clears the server status', async () => {
     prisma.userGame.findFirst.mockResolvedValue(
       entry({ statusSource: 'MANUAL' }),

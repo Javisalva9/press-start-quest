@@ -163,6 +163,10 @@ export class LibraryService {
       data.personalRating =
         body.personalRating === null ? null : toHalfStars(body.personalRating);
     }
+    if (body.snoozedUntil !== undefined) {
+      // "Recommend it again now": the card's "not now" taken back.
+      data.snoozedUntil = null;
+    }
 
     const now = new Date();
     if (body.status) {
@@ -277,6 +281,7 @@ export class LibraryService {
         personalRating: true,
         typeOverride: true,
         serverOverride: true,
+        snoozedUntil: true,
         game: {
           select: {
             ...listSelect.game.select,
@@ -313,6 +318,7 @@ export class LibraryService {
         .filter(({ tag }) => tag.kind === kind)
         .map(({ tag }) => tag.name);
     const labels = await this.recommendedBy(userId, [row.gameId]);
+    const now = new Date();
     return {
       ...toLibraryItem(row, labels.get(row.gameId)),
       summary: game.summary,
@@ -341,7 +347,7 @@ export class LibraryService {
               lastPlayedAt: row.lastPlayedAt,
               gameType: row.typeOverride ?? game.gameType,
             },
-            new Date(),
+            now,
           )
         : GameStatus.WISHLIST,
       gameType: {
@@ -362,6 +368,11 @@ export class LibraryService {
         playtimeMinutes: ownership.playtimeMin,
         lastPlayedAt: ownership.lastPlayedAt?.toISOString() ?? null,
       })),
+      // A "not now" already over is the same as none.
+      snoozedUntil:
+        row.snoozedUntil && row.snoozedUntil > now
+          ? row.snoozedUntil.toISOString()
+          : null,
     };
   }
 }

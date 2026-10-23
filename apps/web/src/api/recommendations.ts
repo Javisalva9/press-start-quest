@@ -1,9 +1,17 @@
-import { keepPreviousData, useQuery } from '@tanstack/react-query';
+import {
+  keepPreviousData,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query';
 import {
   NextRecommendationSchema,
+  RecommendationFeedbackSchema,
   RecommendationRankingSchema,
   type Mood,
   type NextRecommendation,
+  type RecommendationFeedback,
+  type RecommendationFeedbackAction,
   type RecommendationRanking,
 } from '@psq/shared';
 import { authRequest } from './client';
@@ -40,5 +48,44 @@ export function useRecommendationRanking(mood: Mood | null) {
       );
     },
     placeholderData: keepPreviousData,
+  });
+}
+
+/**
+ * "Not now" or "I won't play it" on a recommended game. Afterwards (also
+ * when it fails: the card may be old) the recommendations are loaded again.
+ */
+export function useRecommendationFeedback() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      id,
+      action,
+      mood,
+    }: {
+      id: string;
+      action: RecommendationFeedbackAction;
+      mood: Mood | null;
+    }): Promise<RecommendationFeedback> =>
+      RecommendationFeedbackSchema.parse(
+        await authRequest(
+          `/api/recommendations/${encodeURIComponent(id)}/feedback`,
+          { method: 'POST', body: JSON.stringify({ action, mood }) },
+        ),
+      ),
+    onSuccess: (result, { id }) => {
+      void queryClient.invalidateQueries({ queryKey: ['library-game', id] });
+      if (result.action === 'NEVER') {
+        // Out of the backlog: lists, counts and the taste change too.
+        void queryClient.invalidateQueries({ queryKey: ['library'] });
+        void queryClient.invalidateQueries({ queryKey: ['stats-overview'] });
+      }
+    },
+    onSettled: () => {
+      void queryClient.invalidateQueries({ queryKey: ['recommendation'] });
+      void queryClient.invalidateQueries({
+        queryKey: ['recommendation-ranking'],
+      });
+    },
   });
 }

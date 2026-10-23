@@ -61,6 +61,12 @@ describe('UpdateLibraryGameRequestSchema', () => {
     }
   });
 
+  it('takes back a "not now" with null', () => {
+    expect(
+      UpdateLibraryGameRequestSchema.safeParse({ snoozedUntil: null }).success,
+    ).toBe(true);
+  });
+
   it('rejects an empty change', () => {
     expect(UpdateLibraryGameRequestSchema.safeParse({}).success).toBe(false);
   });
@@ -69,6 +75,8 @@ describe('UpdateLibraryGameRequestSchema', () => {
     [{ status: 'WISHLIST' }],
     [{ gameType: 'UNKNOWN' }],
     [{ serverStatus: 'UNKNOWN' }],
+    // "Not now" is set from the recommendation card, with its own length.
+    [{ snoozedUntil: '2026-11-01T00:00:00.000Z' }],
   ])('rejects what only the app or the store sets: %o', (body) => {
     expect(UpdateLibraryGameRequestSchema.safeParse(body).success).toBe(false);
   });

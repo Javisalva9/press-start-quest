@@ -12,5 +12,7 @@ import { ReviewService } from './review.service.js';
   imports: [CatalogModule, FinaleModule, TasteModule],
   controllers: [LibraryController, GamesController],
   providers: [LibraryService, ReviewService, ManualGamesService],
+  // The recommendations change a game's status the same way the game page does.
+  exports: [LibraryService],
 })
 export class LibraryModule {}
