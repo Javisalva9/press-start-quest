@@ -126,3 +126,34 @@ export const RecommendationRankingSchema = z.object({
 });
 
 export type RecommendationRanking = z.infer<typeof RecommendationRankingSchema>;
+
+/**
+ * The player's answer to a recommendation: "not now" hides it for a while,
+ * "I won't play it" takes it out of the backlog for good.
+ */
+export const RECOMMENDATION_FEEDBACK = ['NOT_NOW', 'NEVER'] as const;
+
+export type RecommendationFeedbackAction =
+  (typeof RECOMMENDATION_FEEDBACK)[number];
+
+/** Body of POST /api/recommendations/:id/feedback. */
+export const RecommendationFeedbackRequestSchema = z.object({
+  action: z.enum(RECOMMENDATION_FEEDBACK),
+  /** The mood of the card that was answered: it was ranked with it. */
+  mood: MoodSchema.nullable().default(null),
+});
+
+export type RecommendationFeedbackRequest = z.infer<
+  typeof RecommendationFeedbackRequestSchema
+>;
+
+/** Response of POST /api/recommendations/:id/feedback. */
+export const RecommendationFeedbackSchema = z.object({
+  action: z.enum(RECOMMENDATION_FEEDBACK),
+  /** With "not now": the day it can be recommended again. */
+  snoozedUntil: z.iso.datetime().nullable(),
+});
+
+export type RecommendationFeedback = z.infer<
+  typeof RecommendationFeedbackSchema
+>;

@@ -35,11 +35,13 @@ const entry = (
 
 describe('RecommendationsService', () => {
   const prisma = {
-    userGame: { findMany: vi.fn() },
+    userGame: { findMany: vi.fn(), findFirst: vi.fn(), update: vi.fn() },
     curatorPick: { findMany: vi.fn() },
+    recommendationEvent: { create: vi.fn() },
     $queryRaw: vi.fn(),
   };
-  const service = new RecommendationsService(prisma as never);
+  const library = { update: vi.fn() };
+  const service = new RecommendationsService(prisma as never, library as never);
 
   beforeEach(() => {
     vi.resetAllMocks();
@@ -186,5 +188,83 @@ describe('RecommendationsService', () => {
     expect(next.pick?.id).toBe('shooter');
     expect(next.alternatives.map((game) => game.id)).toEqual(['rpg', 'puzzle']);
     expect(next.candidates).toBe(4);
+  });
+
+  describe('feedback', () => {
+    beforeEach(() => {
+      prisma.userGame.findFirst.mockResolvedValue({ gameId: 'g-a' });
+      prisma.userGame.findMany.mockResolvedValue([
+        entry('a', { ttbMainMin: 6 * H }),
+        entry('b'),
+      ]);
+    });
+
+    it('hides a game for 14 days with "not now"', async () => {
+      await expect(
+        service.feedback('u1', 'a', { action: 'NOT_NOW', mood: null }, NOW),
+      ).resolves.toEqual({
+        action: 'NOT_NOW',
+        snoozedUntil: '2026-11-01T12:00:00.000Z',
+      });
+      expect(prisma.userGame.update).toHaveBeenCalledWith({
+        where: { id: 'a' },
+        data: { snoozedUntil: new Date('2026-11-01T12:00:00Z') },
+      });
+      expect(library.update).not.toHaveBeenCalled();
+    });
+
+    it('marks it "won\'t play" by hand, as the game page does', async () => {
+      await expect(
+        service.feedback('u1', 'a', { action: 'NEVER', mood: null }, NOW),
+      ).resolves.toEqual({ action: 'NEVER', snoozedUntil: null });
+      expect(library.update).toHaveBeenCalledWith('u1', 'a', {
+        status: 'DISCARDED',
+      });
+      expect(prisma.userGame.update).not.toHaveBeenCalled();
+    });
+
+    it('saves the answer with what the card showed, ranked with its mood', async () => {
+      await service.feedback(
+        'u1',
+        'a',
+        { action: 'NOT_NOW', mood: 'short' },
+        NOW,
+      );
+      expect(prisma.recommendationEvent.create).toHaveBeenCalledWith({
+        data: {
+          userId: 'u1',
+          gameId: 'g-a',
+          score: expect.any(Number),
+          reasons: expect.arrayContaining([
+            { code: 'TIME_LEFT', minutes: 6 * H },
+          ]),
+          mood: 'short',
+          action: 'NOT_NOW',
+          shownAt: NOW,
+          actedAt: NOW,
+        },
+      });
+    });
+
+    it('answers 404 for an entry of another user', async () => {
+      prisma.userGame.findFirst.mockResolvedValue(null);
+      await expect(
+        service.feedback('u1', 'zz', { action: 'NOT_NOW', mood: null }, NOW),
+      ).rejects.toMatchObject({ status: 404 });
+      expect(prisma.recommendationEvent.create).not.toHaveBeenCalled();
+    });
+
+    it('answers 409 when the card is old: the game is not a candidate any more', async () => {
+      // "b" is 15 h long: not one for a short mood.
+      prisma.userGame.findFirst.mockResolvedValue({ gameId: 'g-b' });
+      await expect(
+        service.feedback('u1', 'b', { action: 'NEVER', mood: 'short' }, NOW),
+      ).rejects.toMatchObject({
+        status: 409,
+        response: { code: 'RECOMMENDATION_OUTDATED' },
+      });
+      expect(library.update).not.toHaveBeenCalled();
+      expect(prisma.recommendationEvent.create).not.toHaveBeenCalled();
+    });
   });
 });

@@ -1,8 +1,15 @@
-import { Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import type {
+  ApiError,
   Mood,
   NextRecommendation,
   Recommendation,
+  RecommendationFeedback,
+  RecommendationFeedbackRequest,
   RecommendationRanking,
 } from '@psq/shared';
 import {
@@ -12,6 +19,7 @@ import {
   ServerStatus,
   TagKind,
 } from '../generated/prisma/client.js';
+import { LibraryService } from '../library/library.service.js';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { affinityByGame } from './queries/affinity.js';
 import {
@@ -31,6 +39,9 @@ const OPEN_STATUSES = [
 /** How many alternatives come with the main pick. */
 const ALTERNATIVES = 2;
 
+/** How long "not now" keeps a game out of the recommendations. */
+export const SNOOZE_DAYS = 14;
+
 type Ranked = Recommendation;
 
 /**
@@ -43,7 +54,10 @@ type Ranked = Recommendation;
  */
 @Injectable()
 export class RecommendationsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly library: LibraryService,
+  ) {}
 
   async next(
     userId: string,
@@ -73,6 +87,76 @@ export class RecommendationsService {
   ): Promise<RecommendationRanking> {
     const ranked = await this.rank(userId, mood, now);
     return { mood, items: ranked.slice(0, limit), candidates: ranked.length };
+  }
+
+  /**
+   * The player's answer to a recommended game: "not now" hides it for
+   * SNOOZE_DAYS, "I won't play it" marks it as such, by hand, like the game
+   * page does (out of the backlog, and of the taste profile).
+   *
+   * Each answer is saved with what the card showed (score, reasons and
+   * mood), worked out again here so it doesn't depend on the client: the
+   * data to tune the weights with later. Only answers are saved, not every
+   * card seen, so shownAt is when it was answered.
+   */
+  async feedback(
+    userId: string,
+    id: string,
+    body: RecommendationFeedbackRequest,
+    now = new Date(),
+  ): Promise<RecommendationFeedback> {
+    const entry = await this.prisma.userGame.findFirst({
+      // userId in the filter: another user's entry is simply "not found".
+      where: { id, userId },
+      select: { gameId: true },
+    });
+    if (!entry) {
+      throw new NotFoundException({
+        statusCode: 404,
+        code: 'LIBRARY_GAME_NOT_FOUND',
+      } satisfies ApiError);
+    }
+    const shown = (await this.rank(userId, body.mood, now)).find(
+      (game) => game.id === id,
+    );
+    if (!shown) {
+      // Not a candidate any more (completed, snoozed on another device…):
+      // the card on screen is old. The client loads the current one.
+      throw new ConflictException({
+        statusCode: 409,
+        code: 'RECOMMENDATION_OUTDATED',
+      } satisfies ApiError);
+    }
+
+    let snoozedUntil: Date | null = null;
+    if (body.action === 'NOT_NOW') {
+      snoozedUntil = new Date(now.getTime() + SNOOZE_DAYS * 86_400_000);
+      await this.prisma.userGame.update({
+        where: { id },
+        data: { snoozedUntil },
+      });
+    } else {
+      await this.library.update(userId, id, {
+        status: GameStatus.DISCARDED,
+      });
+    }
+
+    await this.prisma.recommendationEvent.create({
+      data: {
+        userId,
+        gameId: entry.gameId,
+        score: shown.score,
+        reasons: shown.reasons,
+        mood: body.mood,
+        action: body.action,
+        shownAt: now,
+        actedAt: now,
+      },
+    });
+    return {
+      action: body.action,
+      snoozedUntil: snoozedUntil?.toISOString() ?? null,
+    };
   }
 
   /** Every game that fits, best first. */

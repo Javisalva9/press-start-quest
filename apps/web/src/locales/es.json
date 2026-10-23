@@ -175,7 +175,9 @@
     "removeFromWishlist": "Quitar de «Lo quiero»",
     "removeFromWishlistHint": "No volverá a aparecer, aunque esté en una lista que sigues.",
     "yourRating": "Tu nota",
-    "yourRatingHint": "Toca la mitad izquierda de una estrella para dar media. Si vuelves a pulsar tu nota, se borra."
+    "yourRatingHint": "Toca la mitad izquierda de una estrella para dar media. Si vuelves a pulsar tu nota, se borra.",
+    "snoozed": "No te lo recomendaré hasta el {{date}}.",
+    "unsnooze": "Recomendármelo ya"
   },
   "review": {
     "title": "Repaso",
@@ -310,6 +312,14 @@
     "play": "Jugar en Steam",
     "details": "Ver ficha",
     "another": "Otro",
+    "notNow": "Ahora no",
+    "never": "No lo voy a jugar",
+    "neverConfirm": "Saldrá de tu backlog y no te lo volveré a recomendar. Si cambias de idea, puedes cambiar su estado en la ficha.",
+    "neverYes": "Sí, no lo voy a jugar",
+    "cancel": "Cancelar",
+    "snoozed": "No te recomendaré «{{title}}» hasta el {{date}}.",
+    "discarded": "«{{title}}» ya no cuenta como pendiente.",
+    "undo": "Deshacer",
     "alternatives": "O algo distinto",
     "empty": "Todavía no hay nada que recomendar: sincroniza tu biblioteca o repasa lo que ya terminaste.",
     "emptyMood": "No tienes juegos pendientes de esa duración. Prueba con otra.",
@@ -363,6 +373,7 @@
     "LIBRARY_GAME_NOT_WISHED": "Ese juego no está en «Lo quiero».",
     "CURATOR_NOT_FOUND": "No encontramos esa lista.",
     "ACHIEVEMENT_NOT_FOUND": "No encontramos ese logro en este juego.",
+    "RECOMMENDATION_OUTDATED": "La recomendación había cambiado. Aquí tienes la de ahora.",
     "UNKNOWN": "Algo ha fallado. Vuelve a intentarlo."
   }
 }

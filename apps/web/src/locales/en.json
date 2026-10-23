@@ -175,7 +175,9 @@
     "removeFromWishlist": "Remove from wishlist",
     "removeFromWishlistHint": "It won’t come back, even if it’s on a list you follow.",
     "yourRating": "Your rating",
-    "yourRatingHint": "Tap the left half of a star to give half of it. Tap your rating again to take it back."
+    "yourRatingHint": "Tap the left half of a star to give half of it. Tap your rating again to take it back.",
+    "snoozed": "I won't recommend it until {{date}}.",
+    "unsnooze": "Recommend it again now"
   },
   "review": {
     "title": "Catch up",
@@ -310,6 +312,14 @@
     "play": "Play on Steam",
     "details": "See game",
     "another": "Another one",
+    "notNow": "Not now",
+    "never": "I won't play it",
+    "neverConfirm": "It leaves your backlog and won't be recommended again. If you change your mind, you can change its status on its page.",
+    "neverYes": "Yes, I won't play it",
+    "cancel": "Cancel",
+    "snoozed": "I won't recommend “{{title}}” until {{date}}.",
+    "discarded": "“{{title}}” no longer counts as pending.",
+    "undo": "Undo",
     "alternatives": "Or something different",
     "empty": "Nothing to recommend yet: sync your library, or check what you’ve already finished.",
     "emptyMood": "No pending games of that length. Try another one.",
@@ -363,6 +373,7 @@
     "LIBRARY_GAME_NOT_WISHED": "That game isn’t on your wishlist.",
     "CURATOR_NOT_FOUND": "We couldn’t find that list.",
     "ACHIEVEMENT_NOT_FOUND": "We couldn’t find that achievement in this game.",
+    "RECOMMENDATION_OUTDATED": "That recommendation had changed. Here is the current one.",
     "UNKNOWN": "Something went wrong. Please try again."
   }
 }

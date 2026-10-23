@@ -1,10 +1,21 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  Param,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import {
   NextRecommendationQuerySchema,
+  RecommendationFeedbackRequestSchema,
   RecommendationRankingQuerySchema,
   type NextRecommendation,
   type NextRecommendationQuery,
+  type RecommendationFeedback,
+  type RecommendationFeedbackRequest,
   type RecommendationRanking,
   type RecommendationRankingQuery,
 } from '@psq/shared';
@@ -39,5 +50,17 @@ export class RecommendationsController {
       query.mood ?? null,
       query.limit,
     );
+  }
+
+  @Post(':id/feedback')
+  @HttpCode(200)
+  @ApiOkResponse({ description: '"Not now" or "I won\'t play it", saved' })
+  feedback(
+    @CurrentUser() user: AuthUser,
+    @Param('id') id: string,
+    @Body({ schema: RecommendationFeedbackRequestSchema })
+    body: RecommendationFeedbackRequest,
+  ): Promise<RecommendationFeedback> {
+    return this.recommendations.feedback(user.id, id, body);
   }
 }

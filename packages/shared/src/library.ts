@@ -208,6 +208,8 @@ export const LibraryGameSchema = LibraryItemSchema.extend({
       lastPlayedAt: z.iso.datetime().nullable(),
     }),
   ),
+  /** "Not now" on its recommendation: hidden from them until this day. */
+  snoozedUntil: z.iso.datetime().nullable(),
 });
 
 export type LibraryGame = z.infer<typeof LibraryGameSchema>;
@@ -243,6 +245,11 @@ export const UpdateLibraryGameRequestSchema = z
       .multipleOf(0.5)
       .nullable()
       .optional(),
+    /**
+     * Only null: recommend it again now. "Not now" on the recommendation
+     * card is what sets it.
+     */
+    snoozedUntil: z.null().optional(),
   })
   .refine((body) => Object.values(body).some((value) => value !== undefined), {
     message: 'Nothing to change',

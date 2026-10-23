@@ -367,6 +367,27 @@ function YourCallSection({ game }: { game: LibraryGame }) {
         />
       )}
 
+      {game.snoozedUntil && (
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
+          <span className="text-muted">
+            {t('game.snoozed', {
+              date: new Intl.DateTimeFormat(i18n.language, {
+                day: 'numeric',
+                month: 'long',
+              }).format(new Date(game.snoozedUntil)),
+            })}
+          </span>
+          <button
+            type="button"
+            onClick={() => update.mutate({ snoozedUntil: null })}
+            disabled={update.isPending}
+            className="font-semibold text-cyan disabled:opacity-50"
+          >
+            {t('game.unsnooze')}
+          </button>
+        </div>
+      )}
+
       {game.owned && game.status === 'COMPLETED' && (
         <div className="flex flex-col gap-1">
           <span className="text-sm text-muted">{t('game.yourRating')}</span>
