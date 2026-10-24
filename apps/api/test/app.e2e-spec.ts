@@ -135,7 +135,27 @@ describe('API (e2e)', () => {
             synced: 0,
             skipped: 0,
             failed: 0,
+            // No ITAD_API_KEY in the tests: no prices.
+            prices: null,
           });
+        });
+    });
+  });
+
+  describe('POST /api/internal/jobs/prices', () => {
+    const route = '/api/internal/jobs/prices';
+
+    it('needs the jobs token', () => {
+      return request(app.getHttpServer()).post(route).expect(401);
+    });
+
+    it('says it skipped without an ITAD key', () => {
+      return request(app.getHttpServer())
+        .post(route)
+        .set('Authorization', `Bearer ${process.env.JOBS_TOKEN}`)
+        .expect(200)
+        .expect((res) => {
+          expect(res.body).toEqual({ skipped: 'ITAD_API_KEY is not set' });
         });
     });
   });

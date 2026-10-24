@@ -145,6 +145,8 @@ model Game {
   igdbId               Int?                  @unique
   steamAppId           Int?                  @unique
   epicCatalogId        String?               @unique
+  // IsThereAnyDeal's id (a UUID), found from the Steam appid for prices.
+  itadId               String?               @unique
   kind                 GameKind              @default(GAME)
   coverUrl             String?
   heroUrl              String?
@@ -166,7 +168,7 @@ model Game {
   userGames            UserGame[]
   tags                 GameTag[]
   curatorPicks         CuratorPick[]
-  deals                Deal[]
+  deal                 Deal?
   recommendationEvents RecommendationEvent[]
   achievements         Achievement[]
 
@@ -385,9 +387,12 @@ model RecommendationEvent {
   @@map("recommendation_events")
 }
 
+// The best current price of a game in the official stores (data/official-
+// stores.json), from IsThereAnyDeal, in euros for Spain. One row per
+// game, refreshed every night for the games someone wants ("Lo quiero").
 model Deal {
   id              String    @id @default(cuid())
-  gameId          String
+  gameId          String    @unique
   store           String
   price           Decimal   @db.Decimal(8, 2)
   regularPrice    Decimal   @db.Decimal(8, 2)
@@ -395,11 +400,13 @@ model Deal {
   currency        String    @default("EUR")
   url             String
   isHistoricalLow Boolean   @default(false)
+  // Lowest price ever in those stores, and when.
+  lowestPrice     Decimal?  @db.Decimal(8, 2)
+  lowestAt        DateTime?
   expiresAt       DateTime?
   fetchedAt       DateTime  @default(now())
   game            Game      @relation(fields: [gameId], references: [id], onDelete: Cascade)
 
-  @@index([gameId, fetchedAt])
   @@map("deals")
 }
 
