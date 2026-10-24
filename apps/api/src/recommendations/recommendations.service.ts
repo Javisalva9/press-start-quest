@@ -3,14 +3,15 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import type {
-  ApiError,
-  Mood,
-  NextRecommendation,
-  Recommendation,
-  RecommendationFeedback,
-  RecommendationFeedbackRequest,
-  RecommendationRanking,
+import {
+  weightShares,
+  type ApiError,
+  type Mood,
+  type NextRecommendation,
+  type Recommendation,
+  type RecommendationFeedback,
+  type RecommendationFeedbackRequest,
+  type RecommendationRanking,
 } from '@psq/shared';
 import {
   GameKind,
@@ -21,6 +22,7 @@ import {
 } from '../generated/prisma/client.js';
 import { LibraryService } from '../library/library.service.js';
 import { PrismaService } from '../prisma/prisma.service.js';
+import { readSettings, weightsOf } from '../users/user-settings.js';
 import { affinityByGame } from './queries/affinity.js';
 import {
   fitsMood,
@@ -225,7 +227,7 @@ export class RecommendationsService {
     }
 
     const gameIds = open.map(({ entry }) => entry.gameId);
-    const [affinities, picks] = await Promise.all([
+    const [affinities, picks, user] = await Promise.all([
       affinityByGame(this.prisma, userId, gameIds),
       this.prisma.curatorPick.findMany({
         where: {
@@ -235,7 +237,13 @@ export class RecommendationsService {
         select: { gameId: true, curator: { select: { name: true } } },
         orderBy: { curator: { name: 'asc' } },
       }),
+      this.prisma.user.findUnique({
+        where: { id: userId },
+        select: { settings: true },
+      }),
     ]);
+    // The player's weights from Settings, else the plan's.
+    const weights = weightShares(weightsOf(readSettings(user?.settings)));
     const affinity = new Map(affinities.map((row) => [row.gameId, row]));
     // Compared with the best fit of this backlog: it gets 1.
     const best = Math.max(0, ...affinities.map((row) => Number(row.raw)));
@@ -271,7 +279,7 @@ export class RecommendationsService {
       })
       .filter(({ candidate }) => fitsMood(candidate, mood))
       .map(({ entry, candidate }): Ranked => {
-        const scored = scoreCandidate(candidate, mood, now);
+        const scored = scoreCandidate(candidate, mood, now, weights);
         return {
           id: entry.id,
           title: entry.game.title,

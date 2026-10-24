@@ -21,6 +21,9 @@ export function AppNav() {
         <NavLink to="/library" className={linkClass}>
           {t('nav.library')}
         </NavLink>
+        <NavLink to="/settings" className={linkClass}>
+          {t('nav.settings')}
+        </NavLink>
       </div>
     </nav>
   );

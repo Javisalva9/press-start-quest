@@ -8,6 +8,7 @@ export * from './library.js';
 export * from './manual.js';
 export * from './recommendations.js';
 export * from './review.js';
+export * from './settings.js';
 export * from './sources.js';
 export * from './stats.js';
 export * from './sync.js';

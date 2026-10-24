@@ -1,20 +1,19 @@
-import type {
-  Mood,
-  RecommendationFactors,
-  RecommendationReason,
+import {
+  DEFAULT_WEIGHTS,
+  weightShares,
+  type Mood,
+  type RecommendationFactors,
+  type RecommendationReason,
 } from '@psq/shared';
 
+/** How much each factor counts, 0–1, adding up to 1. */
+export type Weights = Record<keyof RecommendationFactors, number>;
+
 /**
- * The weights of the formula, from the plan: they add up to 1. The ones to
- * tune after a week of real use (the ranking endpoint shows each factor).
+ * The plan's formula: 0.30 N + 0.30 A + 0.20 D + 0.10 S + 0.10 I. Each
+ * player can change it in Settings (users.settings).
  */
-export const WEIGHTS = {
-  quality: 0.3,
-  affinity: 0.3,
-  length: 0.2,
-  social: 0.1,
-  momentum: 0.1,
-} as const satisfies Record<keyof RecommendationFactors, number>;
+export const WEIGHTS: Weights = weightShares(DEFAULT_WEIGHTS);
 
 /** Extra for a game whose servers are about to close: play it while you can. */
 export const CLOSING_BONUS = 0.1;
@@ -178,6 +177,7 @@ export function scoreCandidate(
   candidate: Candidate,
   mood: Mood | null,
   now: Date,
+  weights: Weights = WEIGHTS,
 ): Scored {
   const factors: RecommendationFactors = {
     quality: qualityFactor(candidate),
@@ -186,8 +186,8 @@ export function scoreCandidate(
     social: candidate.curators.length > 0 ? 1 : 0,
     momentum: momentumFactor(candidate, now) ? 1 : 0,
   };
-  const weighted = (Object.keys(WEIGHTS) as Array<keyof typeof WEIGHTS>).reduce(
-    (total, key) => total + WEIGHTS[key] * factors[key],
+  const weighted = (Object.keys(weights) as Array<keyof Weights>).reduce(
+    (total, key) => total + weights[key] * factors[key],
     0,
   );
   const score = weighted + (candidate.closing ? CLOSING_BONUS : 0);
@@ -202,7 +202,7 @@ export function scoreCandidate(
       momentum: factors.momentum,
     },
     remainingMin,
-    reasons: reasons(candidate, factors, remainingMin),
+    reasons: reasons(candidate, factors, remainingMin, weights),
   };
 }
 
@@ -214,6 +214,7 @@ function reasons(
   candidate: Candidate,
   factors: RecommendationFactors,
   remainingMin: number | null,
+  weights: Weights,
 ): RecommendationReason[] {
   const options: Array<{ weight: number; reason: RecommendationReason }> = [];
   if (candidate.closing) {
@@ -227,7 +228,7 @@ function reasons(
   }
   if (candidate.topTag && factors.affinity >= REASON_MIN.affinity) {
     options.push({
-      weight: WEIGHTS.affinity * factors.affinity,
+      weight: weights.affinity * factors.affinity,
       reason: {
         code: 'TASTE_MATCH',
         tag: candidate.topTag.name,
@@ -245,7 +246,7 @@ function reasons(
           )
         : null;
     options.push({
-      weight: WEIGHTS.momentum * factors.momentum,
+      weight: weights.momentum * factors.momentum,
       reason: {
         code: 'KEEP_GOING',
         playedMinutes: candidate.playtimeMin,
@@ -255,24 +256,26 @@ function reasons(
   }
   if (remainingMin !== null && factors.length >= REASON_MIN.length) {
     options.push({
-      weight: WEIGHTS.length * (factors.length - ORDINARY.length),
+      weight: weights.length * (factors.length - ORDINARY.length),
       reason: { code: 'TIME_LEFT', minutes: remainingMin },
     });
   }
   if (factors.social) {
     options.push({
-      weight: WEIGHTS.social * factors.social,
+      weight: weights.social * factors.social,
       reason: { code: 'RECOMMENDED_BY', curator: candidate.curators[0]! },
     });
   }
   const rating = candidate.rating ?? candidate.metacritic;
   if (rating !== null && factors.quality >= REASON_MIN.quality) {
     options.push({
-      weight: WEIGHTS.quality * (factors.quality - ORDINARY.quality),
+      weight: weights.quality * (factors.quality - ORDINARY.quality),
       reason: { code: 'HIGHLY_RATED', rating: Math.round(rating) },
     });
   }
+  // A factor the player set to 0 doesn't count: it's no reason either.
   return options
+    .filter(({ weight }) => weight > 0)
     .sort((a, b) => b.weight - a.weight)
     .slice(0, 2)
     .map(({ reason }) => reason);

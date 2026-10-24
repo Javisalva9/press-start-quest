@@ -102,6 +102,15 @@ describe('UsersService', () => {
         locale: 'es',
         steamId: '76561197960287930',
         lastSyncAt: '2026-10-12T22:00:00.000Z',
+        settings: {
+          weights: {
+            quality: 3,
+            affinity: 3,
+            length: 2,
+            social: 1,
+            momentum: 1,
+          },
+        },
       });
     });
 
@@ -110,6 +119,49 @@ describe('UsersService', () => {
       await expect(service.getMe('gone')).rejects.toMatchObject({
         status: 401,
       });
+    });
+  });
+
+  describe('updateMe', () => {
+    const weights = {
+      quality: 5,
+      affinity: 5,
+      length: 0,
+      social: 0,
+      momentum: 2,
+    };
+
+    beforeEach(() => {
+      // The profile returned afterwards is not what these tests check.
+      vi.spyOn(service, 'getMe').mockResolvedValue({} as never);
+    });
+
+    const saved = () => prisma.user.update.mock.calls[0]![0].data;
+
+    it('changes the language and leaves the settings alone', async () => {
+      prisma.user.findUnique.mockResolvedValue({ settings: { weights } });
+      await service.updateMe('u1', { locale: 'es' });
+      expect(saved()).toEqual({ locale: 'es' });
+    });
+
+    it('saves the weights in the settings column', async () => {
+      prisma.user.findUnique.mockResolvedValue({ settings: {} });
+      await service.updateMe('u1', { weights });
+      expect(saved()).toEqual({ settings: { weights } });
+    });
+
+    it("takes them out with null: back to the plan's", async () => {
+      prisma.user.findUnique.mockResolvedValue({ settings: { weights } });
+      await service.updateMe('u1', { weights: null });
+      expect(saved()).toEqual({ settings: {} });
+    });
+
+    it('rejects a token whose user no longer exists', async () => {
+      prisma.user.findUnique.mockResolvedValue(null);
+      await expect(
+        service.updateMe('gone', { locale: 'es' }),
+      ).rejects.toMatchObject({ status: 401 });
+      expect(prisma.user.update).not.toHaveBeenCalled();
     });
   });
 });

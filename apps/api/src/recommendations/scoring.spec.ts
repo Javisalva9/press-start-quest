@@ -7,12 +7,20 @@ import {
   qualityFactor,
   remainingMinutes,
   scoreCandidate,
+  WEIGHTS,
   type Candidate,
 } from './scoring.js';
 
 const NOW = new Date('2026-10-18T12:00:00Z');
 const daysAgo = (days: number) => new Date(NOW.getTime() - days * 86_400_000);
 const H = 60;
+const WEIGHTS_OFF = {
+  quality: 0,
+  affinity: 0,
+  length: 0,
+  social: 0,
+  momentum: 0,
+};
 
 const candidate = (overrides: Partial<Candidate> = {}): Candidate => ({
   playtimeMin: 0,
@@ -164,6 +172,26 @@ describe('scoreCandidate', () => {
     // 0.3 × 0.8 + 0.3 × 0.5 + 0.2 × 1 + 0.1 × 1 + 0.1 × 0
     expect(scored.score).toBeCloseTo(0.69, 2);
     expect(scored.factors).toMatchObject({ social: 1, momentum: 0 });
+  });
+
+  it("uses the player's weights, and says nothing of a factor at 0", () => {
+    const game = candidate({
+      lengthMin: 15 * H,
+      rating: 95,
+      ratingCount: 100_000,
+      curators: ['AlexElCapso'],
+    });
+    const onlyQuality = { ...WEIGHTS_OFF, quality: 1 };
+    expect(scoreCandidate(game, null, NOW, onlyQuality).score).toBeCloseTo(
+      0.95,
+      2,
+    );
+    const noCurators = { ...WEIGHTS, social: 0 };
+    expect(
+      scoreCandidate(game, null, NOW, noCurators).reasons.map(
+        (reason) => reason.code,
+      ),
+    ).not.toContain('RECOMMENDED_BY');
   });
 
   it('gives closing servers a bonus and their reason first', () => {

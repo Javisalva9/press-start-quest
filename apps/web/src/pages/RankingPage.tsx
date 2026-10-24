@@ -31,6 +31,9 @@ export default function RankingPage() {
       </Link>
       <h1 className="font-display text-2xl font-bold">{t('ranking.title')}</h1>
       <p className="text-sm text-muted">{t('ranking.intro')}</p>
+      <Link to="/settings" className="text-sm font-semibold text-cyan">
+        {t('ranking.tune')}
+      </Link>
 
       <MoodPicker mood={mood} onChange={setMood} />
 

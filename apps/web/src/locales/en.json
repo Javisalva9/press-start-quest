@@ -92,7 +92,8 @@
   "nav": {
     "label": "Main",
     "home": "Home",
-    "library": "Library"
+    "library": "Library",
+    "settings": "Settings"
   },
   "status": {
     "BACKLOG": "Pending",
@@ -338,7 +339,8 @@
   "ranking": {
     "back": "← Home",
     "title": "Recommendation ranking",
-    "intro": "The best candidates with every factor of the formula, each from 0 to 1: quality, taste, length, curators and momentum. To tune the weights.",
+    "intro": "The best candidates with each factor of the formula, from 0 to 1: rating, taste, length, curators and momentum. Use them to tune the weights in Settings.",
+    "tune": "Tune the weights →",
     "candidates_one": "{{count}} game fits",
     "candidates_other": "{{count}} games fit",
     "position": "{{position}}. {{title}}",
@@ -353,6 +355,30 @@
   "rating": {
     "stars_one": "{{stars}} star",
     "stars_other": "{{stars}} stars"
+  },
+  "settings": {
+    "title": "Settings",
+    "language": "Language",
+    "languageName": {
+      "en": "English",
+      "es": "Español"
+    },
+    "weights": {
+      "title": "How I pick your next game",
+      "intro": "Each game gets a score from five factors. Move each one by how much it matters to you: its share of the total counts, and at 0 it doesn’t.",
+      "hint": {
+        "quality": "The game’s rating on IGDB, or on Metacritic if it has none.",
+        "affinity": "How much it looks like what you play and finish.",
+        "length": "Whether what’s left of it fits how much you feel like playing.",
+        "social": "Whether someone you follow recommends it.",
+        "momentum": "Whether you started it and played it in the last 3 months."
+      },
+      "nothingCounts": "At least one factor has to count.",
+      "save": "Save",
+      "saved": "Saved. Your next game already uses these weights.",
+      "restore": "Back to the defaults",
+      "ranking": "See how the ranking looks →"
+    }
   },
   "errors": {
     "VALIDATION_FAILED": "Something in the request wasn't right. Please try again.",

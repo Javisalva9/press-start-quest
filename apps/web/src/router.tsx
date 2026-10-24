@@ -9,6 +9,7 @@ import SteamCallbackPage from './pages/SteamCallbackPage';
 import SyncPage from './pages/SyncPage';
 import RankingPage from './pages/RankingPage';
 import ReviewPage from './pages/ReviewPage';
+import SettingsPage from './pages/SettingsPage';
 
 export const router = createBrowserRouter([
   { path: '/login', element: <LoginPage /> },
@@ -24,6 +25,7 @@ export const router = createBrowserRouter([
       { path: 'library/:id', element: <GamePage /> },
       { path: 'review', element: <ReviewPage /> },
       { path: 'recommendations', element: <RankingPage /> },
+      { path: 'settings', element: <SettingsPage /> },
     ],
   },
   { path: '*', element: <Navigate to="/" replace /> },

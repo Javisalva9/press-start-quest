@@ -92,7 +92,8 @@
   "nav": {
     "label": "Principal",
     "home": "Inicio",
-    "library": "Biblioteca"
+    "library": "Biblioteca",
+    "settings": "Ajustes"
   },
   "status": {
     "BACKLOG": "Pendiente",
@@ -338,7 +339,8 @@
   "ranking": {
     "back": "← Inicio",
     "title": "Ranking de recomendaciones",
-    "intro": "Los mejores candidatos con cada factor de la fórmula, de 0 a 1: nota, gusto, duración, curadores e impulso. Para ajustar los pesos.",
+    "intro": "Los mejores candidatos con cada factor de la fórmula, de 0 a 1: nota, gusto, duración, curadores e impulso. Con ellos puedes ajustar los pesos en Ajustes.",
+    "tune": "Ajustar los pesos →",
     "candidates_one": "Encaja {{count}} juego",
     "candidates_other": "Encajan {{count}} juegos",
     "position": "{{position}}. {{title}}",
@@ -353,6 +355,30 @@
   "rating": {
     "stars_one": "{{stars}} estrella",
     "stars_other": "{{stars}} estrellas"
+  },
+  "settings": {
+    "title": "Ajustes",
+    "language": "Idioma",
+    "languageName": {
+      "en": "English",
+      "es": "Español"
+    },
+    "weights": {
+      "title": "Cómo elijo tu siguiente juego",
+      "intro": "Cada juego recibe una puntuación con cinco factores. Mueve cada uno según lo que te importe: cuenta su parte del total, y a 0 no cuenta.",
+      "hint": {
+        "quality": "La nota del juego en IGDB, o en Metacritic si no tiene.",
+        "affinity": "Cuánto se parece a lo que juegas y terminas.",
+        "length": "Si lo que te falta encaja con cuánto te apetece jugar.",
+        "social": "Si lo recomienda alguien a quien sigues.",
+        "momentum": "Si ya lo empezaste y lo has jugado en los últimos 3 meses."
+      },
+      "nothingCounts": "Al menos un factor tiene que contar.",
+      "save": "Guardar",
+      "saved": "Guardado. Tu siguiente juego ya usa estos pesos.",
+      "restore": "Volver a los de serie",
+      "ranking": "Ver cómo queda el ranking →"
+    }
   },
   "errors": {
     "VALIDATION_FAILED": "Algo de la petición no era correcto. Vuelve a intentarlo.",
