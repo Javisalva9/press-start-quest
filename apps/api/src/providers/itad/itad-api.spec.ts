@@ -84,6 +84,7 @@ describe('ItadApi', () => {
         itadId: 'uuid-1',
         current: {
           shop: 'GOG',
+          shopId: 35,
           price: 4.99,
           regularPrice: 19.99,
           cutPct: 75,

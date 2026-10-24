@@ -107,7 +107,9 @@ export class PricesService {
       summary.onSale += current.cutPct > 0 ? 1 : 0;
       summary.historicalLows += isHistoricalLow ? 1 : 0;
       const data = {
-        store: current.shop,
+        // Our name for the store ("Epic Games Store", not ITAD's
+        // "Epic Game Store"), or ITAD's if it ever isn't in the list.
+        store: shops.names.get(current.shopId) ?? current.shop,
         price: current.price,
         regularPrice: current.regularPrice,
         cutPct: current.cutPct,

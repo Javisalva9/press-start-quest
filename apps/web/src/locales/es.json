@@ -443,7 +443,13 @@
     "emptyWishlist": "Aún no hay precios. Se miran cada noche para los juegos de tu lista de deseados de Steam y de las listas que sigues.",
     "emptyOnSale": "Ahora mismo nada de lo que quieres está rebajado. Quita «Solo rebajados» para ver todos los precios.",
     "error": "No hemos podido cargar las ofertas.",
-    "updatedAt": "Precios de IsThereAnyDeal, actualizados el {{date}}."
+    "updatedAt": "Precios de IsThereAnyDeal, actualizados el {{date}}.",
+    "free": {
+      "title": "Gratis ahora",
+      "owned": "Ya lo tienes",
+      "wanted": "¡Lo quieres!",
+      "get": "Conseguir ↗"
+    }
   },
   "errors": {
     "VALIDATION_FAILED": "Algo de la petición no era correcto. Vuelve a intentarlo.",

@@ -443,7 +443,13 @@
     "emptyWishlist": "No prices yet. They’re checked every night for the games on your Steam wishlist and the lists you follow.",
     "emptyOnSale": "Nothing you want is on sale right now. Untick “On sale only” to see every price.",
     "error": "We couldn’t load the deals.",
-    "updatedAt": "Prices from IsThereAnyDeal, updated {{date}}."
+    "updatedAt": "Prices from IsThereAnyDeal, updated {{date}}.",
+    "free": {
+      "title": "Free right now",
+      "owned": "You have it",
+      "wanted": "On your wishlist!",
+      "get": "Get it ↗"
+    }
   },
   "errors": {
     "VALIDATION_FAILED": "Something in the request wasn't right. Please try again.",

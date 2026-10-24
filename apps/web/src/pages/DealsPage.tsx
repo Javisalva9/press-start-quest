@@ -5,6 +5,7 @@ import { Link } from 'react-router';
 import { useDeals } from '../api/deals';
 import { CuratorLabel } from '../components/CuratorLabel';
 import { DealPriceLine } from '../components/DealPriceLine';
+import { FreeGamesSection } from '../components/FreeGamesSection';
 import { GameCover } from '../components/GameCover';
 import { DEAL_SORTS, visibleDeals, type DealSort } from '../deals';
 import { tagLabel } from '../tag-names';
@@ -29,6 +30,8 @@ export default function DealsPage() {
         <h1 className="font-display text-2xl font-bold">{t('deals.title')}</h1>
         <p className="text-sm text-muted">{t('deals.intro')}</p>
       </header>
+
+      <FreeGamesSection />
 
       <div className="flex flex-wrap items-center gap-2">
         <div
