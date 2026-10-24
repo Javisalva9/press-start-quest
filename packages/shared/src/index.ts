@@ -1,6 +1,7 @@
 export * from './achievements.js';
 export * from './auth.js';
 export * from './curators.js';
+export * from './deals.js';
 export * from './errors.js';
 export * from './health.js';
 export * from './language.js';

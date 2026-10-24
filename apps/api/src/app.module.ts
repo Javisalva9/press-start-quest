@@ -6,6 +6,7 @@ import { ApiValidationPipe } from './common/api-validation.pipe.js';
 import { validateEnv } from './config/env.js';
 import { AchievementsModule } from './achievements/achievements.module.js';
 import { CuratorsModule } from './curators/curators.module.js';
+import { DealsModule } from './deals/deals.module.js';
 import { HealthModule } from './health/health.module.js';
 import { InternalModule } from './internal/internal.module.js';
 import { StatsModule } from './stats/stats.module.js';
@@ -34,6 +35,7 @@ import { UsersModule } from './users/users.module.js';
     AchievementsModule,
     TasteModule,
     RecommendationsModule,
+    DealsModule,
   ],
   providers: [
     // Global pipe registered here (not in main.ts) so tests get it too.

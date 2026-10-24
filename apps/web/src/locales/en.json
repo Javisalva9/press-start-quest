@@ -105,6 +105,7 @@
     "label": "Main",
     "home": "Home",
     "library": "Library",
+    "deals": "Deals",
     "settings": "Settings"
   },
   "status": {
@@ -420,6 +421,29 @@
       "MONTH_other": "Game of the month"
     },
     "reachedOn": "{{name}}, on {{date}}"
+  },
+  "deals": {
+    "title": "Deals",
+    "intro": "What you want that is cheaper today, in official stores only and in euros. What fits you best goes first.",
+    "sortLabel": "Sort",
+    "sort": {
+      "forYou": "For you",
+      "cut": "Discount",
+      "price": "Price"
+    },
+    "onSaleOnly": "On sale only",
+    "cut": "−{{cut}}%",
+    "at": "at {{store}}",
+    "historicalLow": "Historical low",
+    "lowest": "Historical low: {{price}}",
+    "separator": " · ",
+    "endsOn": "Ends {{date}}",
+    "open": "See it at {{store}} ↗",
+    "bestPrice": "Best price now",
+    "emptyWishlist": "No prices yet. They’re checked every night for the games on your Steam wishlist and the lists you follow.",
+    "emptyOnSale": "Nothing you want is on sale right now. Untick “On sale only” to see every price.",
+    "error": "We couldn’t load the deals.",
+    "updatedAt": "Prices from IsThereAnyDeal, updated {{date}}."
   },
   "errors": {
     "VALIDATION_FAILED": "Something in the request wasn't right. Please try again.",

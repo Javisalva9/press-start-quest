@@ -195,6 +195,7 @@ export function useRemoveFromWishlist() {
       queryClient.removeQueries({ queryKey: ['library-game', id] });
       void queryClient.invalidateQueries({ queryKey: ['library'] });
       void queryClient.invalidateQueries({ queryKey: ['curators'] });
+      void queryClient.invalidateQueries({ queryKey: ['deals'] });
     },
   });
 }

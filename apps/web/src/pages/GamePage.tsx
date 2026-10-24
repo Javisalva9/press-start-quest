@@ -17,6 +17,7 @@ import {
 } from '../api/library';
 import { AchievementsSection } from '../components/AchievementsSection';
 import { CuratorLabel } from '../components/CuratorLabel';
+import { DealPriceLine } from '../components/DealPriceLine';
 import { GameCover } from '../components/GameCover';
 import { StarRating } from '../components/StarRating';
 import { formatHours, yearOf } from '../format';
@@ -172,6 +173,22 @@ export default function GamePage() {
 
         <StoresLine game={data} />
         <RecommendedByLine game={data} />
+        {data.deal && (
+          <section className="flex flex-col gap-2 rounded-2xl border border-line bg-card p-4">
+            <h2 className="text-xs font-semibold tracking-wide text-muted uppercase">
+              {t('deals.bestPrice')}
+            </h2>
+            <DealPriceLine deal={data.deal} />
+            <a
+              href={data.deal.url}
+              target="_blank"
+              rel="noreferrer"
+              className="self-start text-sm font-semibold text-cyan"
+            >
+              {t('deals.open', { store: data.deal.store })}
+            </a>
+          </section>
+        )}
         {!data.owned && data.status === 'WISHLIST' && (
           <RemoveFromWishlist id={data.id} />
         )}
