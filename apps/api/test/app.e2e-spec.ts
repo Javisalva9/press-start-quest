@@ -163,6 +163,10 @@ describe('API (e2e)', () => {
     return request(app.getHttpServer()).get('/api/stats/overview').expect(401);
   });
 
+  it('GET /api/stats/timeline requires a token', () => {
+    return request(app.getHttpServer()).get('/api/stats/timeline').expect(401);
+  });
+
   it('GET /api/curators requires a token', () => {
     return request(app.getHttpServer()).get('/api/curators').expect(401);
   });

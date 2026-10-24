@@ -7,6 +7,7 @@ import { useStatsOverview } from '../api/stats';
 import { NextGameCard } from '../components/NextGameCard';
 import { ProgressCard } from '../components/ProgressCard';
 import { SteamPrivacyNotice } from '../components/SteamPrivacyNotice';
+import { TimelineCard } from '../components/TimelineCard';
 
 /**
  * Home: what to play now, "how far have I got", what's waiting to review,
@@ -60,6 +61,8 @@ export default function HomePage() {
           className="h-72 animate-pulse rounded-2xl border border-line bg-card"
         />
       )}
+
+      <TimelineCard />
 
       {toReview > 0 && (
         <section className="flex items-center justify-between gap-4 rounded-2xl border border-line bg-card p-5">

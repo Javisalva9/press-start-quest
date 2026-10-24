@@ -42,8 +42,20 @@
       "endless": "Sin fin",
       "abandoned": "Abandonados",
       "closed": "Servidores cerrados",
+      "pace": "A tu ritmo de los últimos {{days}} días ({{perDay}} al día en tu backlog), lo acabas {{when}}.",
+      "paceIdle": "En los últimos {{days}} días no has jugado a nada de tu backlog: a ese ritmo no se acaba nunca.",
       "since": "Las rachas cuentan desde el {{date}}.",
       "noHistory": "Las rachas empezarán a contar tras tu primera sincronización."
+    },
+    "timeline": {
+      "title": "Tus meses",
+      "legend": "Horas jugadas cada mes, con todos tus juegos. Encima, los que completaste.",
+      "empty": "Cuando lleves unos días jugando, aquí verás tus horas y tus completados de cada mes.",
+      "error": "No hemos podido cargar tus meses.",
+      "completed_one": "✓ {{count}}",
+      "completed_other": "✓ {{count}}",
+      "month_one": "{{month}}: {{hours}} y {{count}} completado",
+      "month_other": "{{month}}: {{hours}} y {{count}} completados"
     }
   },
   "steamPrivacy": {

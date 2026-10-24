@@ -42,8 +42,20 @@
       "endless": "Endless",
       "abandoned": "Abandoned",
       "closed": "Servers closed",
+      "pace": "At your pace of the last {{days}} days ({{perDay}} a day on your backlog), you finish it {{when}}.",
+      "paceIdle": "You haven’t played anything from your backlog in the last {{days}} days: at that pace it never ends.",
       "since": "Streaks count from {{date}}.",
       "noHistory": "Streaks start counting after your first sync."
+    },
+    "timeline": {
+      "title": "Your months",
+      "legend": "Hours played each month, all your games included. On top, the ones you completed.",
+      "empty": "After a few days of play, your hours and completed games will show here month by month.",
+      "error": "We couldn’t load your months.",
+      "completed_one": "✓ {{count}}",
+      "completed_other": "✓ {{count}}",
+      "month_one": "{{month}}: {{hours}} and {{count}} completed",
+      "month_other": "{{month}}: {{hours}} and {{count}} completed"
     }
   },
   "steamPrivacy": {

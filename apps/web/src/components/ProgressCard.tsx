@@ -2,7 +2,7 @@ import type { StatsOverview } from '@psq/shared';
 import type { CSSProperties } from 'react';
 import { useTranslation } from 'react-i18next';
 import { formatHours } from '../format';
-import { ringPercent } from '../progress';
+import { formatDailyTime, formatEta, ringPercent } from '../progress';
 
 const RADIUS = 52;
 const LENGTH = 2 * Math.PI * RADIUS;
@@ -75,6 +75,21 @@ export function ProgressCard({ stats }: { stats: StatsOverview }) {
           />
         )}
       </dl>
+
+      {stats.pace && stats.remainingMinutes > 0 && (
+        <p className="text-sm text-fg/90">
+          {stats.pace.etaDays === null
+            ? t('home.progress.paceIdle', { days: stats.pace.windowDays })
+            : t('home.progress.pace', {
+                days: stats.pace.windowDays,
+                perDay: formatDailyTime(
+                  stats.pace.minutesPerDay,
+                  i18n.language,
+                ),
+                when: formatEta(stats.pace.etaDays, i18n.language),
+              })}
+        </p>
+      )}
 
       <p className="text-xs text-muted">
         {stats.streak.since

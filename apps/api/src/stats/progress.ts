@@ -15,7 +15,7 @@ export interface ProgressEntry {
   ttbMainMin: number | null;
 }
 
-type Counts = Omit<StatsOverview, 'streak'>;
+type Counts = Omit<StatsOverview, 'streak' | 'pace'>;
 
 /**
  * The progress counts of an owned library, by the plan's rules. In order,
