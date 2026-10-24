@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { LanguageSchema } from './language.js';
+import { DEFAULT_WEIGHTS, UserSettingsSchema } from './settings.js';
 
 /** Body of POST /api/auth/steam: what Steam sent back to the web app. */
 export const SteamLoginRequestSchema = z.object({
@@ -42,6 +43,8 @@ export const MeSchema = z.object({
    * earlier without this field (Render deploys them separately).
    */
   lastSyncAt: z.iso.datetime().nullable().default(null),
+  /** Defaults for an API deployed a moment earlier without it, as above. */
+  settings: UserSettingsSchema.default({ weights: DEFAULT_WEIGHTS }),
 });
 
 export type Me = z.infer<typeof MeSchema>;

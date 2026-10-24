@@ -205,6 +205,13 @@ describe('API (e2e)', () => {
       .expect(401);
   });
 
+  it('PATCH /api/me requires a token', () => {
+    return request(app.getHttpServer())
+      .patch('/api/me')
+      .send({ locale: 'es' })
+      .expect(401);
+  });
+
   it('GET /api/taste-profile requires a token', () => {
     return request(app.getHttpServer()).get('/api/taste-profile').expect(401);
   });
@@ -283,6 +290,16 @@ describe('API (e2e)', () => {
           locale: 'es',
           steamId: '76561197960287930',
           lastSyncAt: null,
+          // Nothing saved yet: the plan's weights.
+          settings: {
+            weights: {
+              quality: 3,
+              affinity: 3,
+              length: 2,
+              social: 1,
+              momentum: 1,
+            },
+          },
         });
       });
   });

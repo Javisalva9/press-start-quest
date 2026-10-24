@@ -38,6 +38,7 @@ describe('RecommendationsService', () => {
     userGame: { findMany: vi.fn(), findFirst: vi.fn(), update: vi.fn() },
     curatorPick: { findMany: vi.fn() },
     recommendationEvent: { create: vi.fn() },
+    user: { findUnique: vi.fn() },
     $queryRaw: vi.fn(),
   };
   const library = { update: vi.fn() };
@@ -47,6 +48,7 @@ describe('RecommendationsService', () => {
     vi.resetAllMocks();
     prisma.curatorPick.findMany.mockResolvedValue([]);
     prisma.$queryRaw.mockResolvedValue([]);
+    prisma.user.findUnique.mockResolvedValue({ settings: {} });
   });
 
   it('only scores open games of the library', async () => {
@@ -139,6 +141,30 @@ describe('RecommendationsService', () => {
       code: 'RECOMMENDED_BY',
       curator: 'AlexElCapso',
     });
+  });
+
+  it("ranks with the player's weights from Settings", async () => {
+    prisma.userGame.findMany.mockResolvedValue([
+      entry('great', { rating: 98, ttbMainMin: 40 * H }),
+      entry('fits', { rating: 40, ttbMainMin: 15 * H }),
+    ]);
+    // The plan's formula: the better game wins.
+    expect((await service.next('u1', null, 0, NOW)).pick?.id).toBe('great');
+
+    // Only the length counts: the one that fits wins.
+    prisma.user.findUnique.mockResolvedValue({
+      settings: {
+        weights: { quality: 0, affinity: 0, length: 1, social: 0, momentum: 0 },
+      },
+    });
+    const next = await service.next('u1', null, 0, NOW);
+    expect(next.pick?.id).toBe('fits');
+    // Quality counts for nothing now: it's no reason either.
+    expect(
+      [next.pick!, ...next.alternatives].flatMap((game) =>
+        game.reasons.map((reason) => reason.code),
+      ),
+    ).not.toContain('HIGHLY_RATED');
   });
 
   it('uses the player estimate when there is no main story length', async () => {

@@ -1,7 +1,14 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { MeSchema, type ApiError, type Language, type Me } from '@psq/shared';
+import {
+  MeSchema,
+  type ApiError,
+  type Language,
+  type Me,
+  type UpdateMeRequest,
+} from '@psq/shared';
 import { Platform, type User } from '../generated/prisma/client.js';
 import { PrismaService } from '../prisma/prisma.service.js';
+import { readSettings, toUserSettings } from './user-settings.js';
 
 @Injectable()
 export class UsersService {
@@ -68,6 +75,38 @@ export class UsersService {
       locale: user.locale,
       steamId: user.sources[0]?.externalId ?? null,
       lastSyncAt: user.sources[0]?.lastSyncAt?.toISOString() ?? null,
+      settings: toUserSettings(readSettings(user.settings)),
     });
+  }
+
+  /**
+   * Changes the language or the recommendation weights. The settings
+   * column only keeps what differs from the defaults: weights null take
+   * them out, so the player follows the plan's formula again.
+   */
+  async updateMe(userId: string, body: UpdateMeRequest): Promise<Me> {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: { settings: true },
+    });
+    if (!user) {
+      throw new UnauthorizedException({
+        statusCode: 401,
+        code: 'UNAUTHENTICATED',
+      } satisfies ApiError);
+    }
+    const { weights: _old, ...settings } = readSettings(user.settings);
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: {
+        ...(body.locale && { locale: body.locale }),
+        ...(body.weights !== undefined && {
+          settings: body.weights
+            ? { ...settings, weights: body.weights }
+            : settings,
+        }),
+      },
+    });
+    return this.getMe(userId);
   }
 }
