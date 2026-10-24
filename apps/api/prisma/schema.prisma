@@ -410,6 +410,25 @@ model Deal {
   @@map("deals")
 }
 
+// Games given away for free right now in official stores (Epic, Steam,
+// GOG), from GamerPower. Shared by everyone and replaced every night.
+model FreeGame {
+  // GamerPower's id for the giveaway.
+  id        Int       @id
+  title     String
+  // What it usually costs, as GamerPower writes it ("$19.99").
+  worth     String?
+  imageUrl  String
+  // The giveaway page, through GamerPower.
+  url       String
+  // Store names, e.g. ["Epic Games Store"].
+  stores    String[]
+  endsAt    DateTime?
+  fetchedAt DateTime  @default(now())
+
+  @@map("free_games")
+}
+
 model SyncJob {
   id         String    @id @default(cuid())
   userId     String

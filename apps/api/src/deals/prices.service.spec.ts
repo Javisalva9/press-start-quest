@@ -11,7 +11,8 @@ const sold = (
 ): ItadPrice => ({
   itadId,
   current: {
-    shop: 'GOG',
+    shop: 'GOG.com',
+    shopId: 35,
     price,
     regularPrice: 20,
     cutPct,

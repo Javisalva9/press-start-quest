@@ -52,6 +52,8 @@ export interface ItadPrice {
   itadId: string;
   current: {
     shop: string;
+    /** ITAD's id for the shop, to name it as our list does. */
+    shopId: number;
     price: number;
     regularPrice: number;
     cutPct: number;
@@ -141,6 +143,7 @@ export class ItadApi {
           itadId: row.id,
           current: row.current && {
             shop: row.current.shop.name,
+            shopId: row.current.shop.id,
             price: row.current.price.amount,
             regularPrice: row.current.regular.amount,
             cutPct: row.current.cut,

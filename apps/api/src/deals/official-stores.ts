@@ -38,9 +38,16 @@ const normalize = (name: string) =>
 export function matchOfficialShops(
   stores: OfficialStore[],
   shops: ItadShop[],
-): { shopIds: number[]; matched: string[]; missing: string[] } {
+): {
+  shopIds: number[];
+  /** ITAD's shop id → the store's name in our list ("Epic Games Store"). */
+  names: Map<number, string>;
+  matched: string[];
+  missing: string[];
+} {
   const byName = new Map(shops.map((shop) => [normalize(shop.title), shop.id]));
   const shopIds: number[] = [];
+  const names = new Map<number, string>();
   const matched: string[] = [];
   const missing: string[] = [];
   for (const store of stores) {
@@ -49,10 +56,13 @@ export function matchOfficialShops(
       .filter((id): id is number => id !== undefined);
     if (ids.length > 0) {
       shopIds.push(...ids.filter((id) => !shopIds.includes(id)));
+      for (const id of ids) {
+        names.set(id, store.name);
+      }
       matched.push(store.name);
     } else {
       missing.push(store.name);
     }
   }
-  return { shopIds, matched, missing };
+  return { shopIds, names, matched, missing };
 }

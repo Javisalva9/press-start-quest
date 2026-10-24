@@ -29,6 +29,13 @@ describe('matchOfficialShops', () => {
       ]),
     ).toEqual({
       shopIds: [61, 16, 27, 28],
+      // Shown with our names, not ITAD's.
+      names: new Map([
+        [61, 'Steam'],
+        [16, 'Epic Games Store'],
+        [27, 'Gamesplanet'],
+        [28, 'Gamesplanet'],
+      ]),
       matched: ['Steam', 'Epic Games Store', 'Gamesplanet'],
       missing: ['Nowhere'],
     });

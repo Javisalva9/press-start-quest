@@ -52,3 +52,31 @@ export const DealsResponseSchema = z.object({
 });
 
 export type DealsResponse = z.infer<typeof DealsResponseSchema>;
+
+/** A game given away for free right now in an official store. */
+export const FreeGameSchema = z.object({
+  id: z.number().int(),
+  title: z.string(),
+  /** What it usually costs, as the source writes it ("$19.99"). */
+  worth: z.string().nullable(),
+  imageUrl: z.string(),
+  /** The giveaway page. */
+  url: z.string(),
+  stores: z.array(z.string()),
+  endsAt: z.iso.datetime().nullable(),
+  /** Already in the player's library (by title). */
+  owned: z.boolean(),
+  /** In their "Lo quiero" (by title). */
+  wanted: z.boolean(),
+});
+
+export type FreeGame = z.infer<typeof FreeGameSchema>;
+
+/** Response of GET /api/deals/free. */
+export const FreeGamesResponseSchema = z.object({
+  /** The ones ending soonest first. */
+  items: z.array(FreeGameSchema),
+  updatedAt: z.iso.datetime().nullable(),
+});
+
+export type FreeGamesResponse = z.infer<typeof FreeGamesResponseSchema>;

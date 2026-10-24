@@ -2,6 +2,7 @@ import { Controller, HttpCode, Logger, Post, UseGuards } from '@nestjs/common';
 import { ApiExcludeController } from '@nestjs/swagger';
 import { Platform } from '../generated/prisma/client.js';
 import { Public } from '../auth/public.decorator.js';
+import { FreeGamesService } from '../deals/free-games.service.js';
 import {
   PricesService,
   type PriceRunSummary,
@@ -23,6 +24,8 @@ interface DailyRunSummary {
    * the playtime photos matter more.
    */
   prices: PriceRunSummary | { error: string } | null;
+  /** The free games of the week; an error doesn't fail the night either. */
+  freeGames: { freeGames: number } | { error: string };
 }
 
 /**
@@ -41,6 +44,7 @@ export class JobsController {
     private readonly prisma: PrismaService,
     private readonly sync: SyncService,
     private readonly prices: PricesService,
+    private readonly freeGames: FreeGamesService,
   ) {}
 
   /**
@@ -61,6 +65,7 @@ export class JobsController {
       skipped: 0,
       failed: 0,
       prices: null,
+      freeGames: { freeGames: 0 },
     };
     for (const { id } of users) {
       const job = await this.sync.runAndWait(id);
@@ -78,8 +83,21 @@ export class JobsController {
         return { error: error instanceof Error ? error.name : 'Error' };
       });
     }
+    summary.freeGames = await this.freeGames
+      .refresh()
+      .catch((error: unknown) => {
+        this.logger.error(`Free games failed: ${String(error)}`);
+        return { error: error instanceof Error ? error.name : 'Error' };
+      });
     this.logger.log(`Nightly sync: ${JSON.stringify(summary)}`);
     return summary;
+  }
+
+  /** Only the free games: to try them, or to catch up a night. */
+  @Post('free-games')
+  @HttpCode(200)
+  refreshFreeGames(): Promise<{ freeGames: number }> {
+    return this.freeGames.refresh();
   }
 
   /** Only the prices: to try them, or to catch up a night. */

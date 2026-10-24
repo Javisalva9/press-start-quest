@@ -4,15 +4,18 @@ describe('JobsController.daily', () => {
   const prisma = { user: { findMany: vi.fn() } };
   const sync = { runAndWait: vi.fn() };
   const prices = { enabled: false, refresh: vi.fn() };
+  const freeGames = { refresh: vi.fn() };
   const controller = new JobsController(
     prisma as never,
     sync as never,
     prices as never,
+    freeGames as never,
   );
 
   beforeEach(() => {
     vi.clearAllMocks();
     prices.enabled = false;
+    freeGames.refresh.mockResolvedValue({ freeGames: 2 });
   });
 
   it('syncs every Steam user one after another and sums it up', async () => {
@@ -32,6 +35,7 @@ describe('JobsController.daily', () => {
       skipped: 1,
       failed: 1,
       prices: null,
+      freeGames: { freeGames: 2 },
     });
     expect(sync.runAndWait.mock.calls).toEqual([['u1'], ['u2'], ['u3']]);
     expect(prisma.user.findMany).toHaveBeenCalledWith(
@@ -65,6 +69,14 @@ describe('JobsController.daily', () => {
     await expect(controller.daily()).resolves.toMatchObject({
       synced: 1,
       prices: { error: 'TypeError' },
+    });
+  });
+
+  it("doesn't fail the night when the free games do", async () => {
+    prisma.user.findMany.mockResolvedValue([]);
+    freeGames.refresh.mockRejectedValue(new SyntaxError('bad json'));
+    await expect(controller.daily()).resolves.toMatchObject({
+      freeGames: { error: 'SyntaxError' },
     });
   });
 });

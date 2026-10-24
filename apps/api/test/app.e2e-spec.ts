@@ -4,6 +4,7 @@ import { JwtService } from '@nestjs/jwt';
 import request from 'supertest';
 import { App } from 'supertest/types.js';
 import { AppModule } from './../src/app.module.js';
+import { GamerPowerApi } from './../src/providers/gamerpower/gamerpower-api.js';
 import { PrismaService } from './../src/prisma/prisma.service.js';
 
 // Tests the whole app (modules, routes, guards, /api prefix) without a real
@@ -17,7 +18,11 @@ describe('API (e2e)', () => {
       findUnique: vi.fn().mockResolvedValue(null),
       deleteMany: vi.fn().mockResolvedValue({ count: 0 }),
     },
+    freeGame: { deleteMany: vi.fn(), upsert: vi.fn() },
+    $transaction: vi.fn().mockResolvedValue([]),
   };
+  // Never GamerPower for real from the tests: no giveaways today.
+  const gamerPower = { freeGames: vi.fn().mockResolvedValue([]) };
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -25,6 +30,8 @@ describe('API (e2e)', () => {
     })
       .overrideProvider(PrismaService)
       .useValue(prisma)
+      .overrideProvider(GamerPowerApi)
+      .useValue(gamerPower)
       .compile();
 
     app = moduleFixture.createNestApplication();
@@ -137,6 +144,7 @@ describe('API (e2e)', () => {
             failed: 0,
             // No ITAD_API_KEY in the tests: no prices.
             prices: null,
+            freeGames: { freeGames: 0 },
           });
         });
     });
@@ -195,6 +203,10 @@ describe('API (e2e)', () => {
 
   it('GET /api/deals requires a token', () => {
     return request(app.getHttpServer()).get('/api/deals').expect(401);
+  });
+
+  it('GET /api/deals/free requires a token', () => {
+    return request(app.getHttpServer()).get('/api/deals/free').expect(401);
   });
 
   it('GET /api/curators requires a token', () => {
