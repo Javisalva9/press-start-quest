@@ -4,6 +4,7 @@ import { signOut } from '../api/auth';
 import { useMe } from '../api/me';
 import { useReviewQueue } from '../api/review';
 import { useStatsOverview } from '../api/stats';
+import { MilestonesCard } from '../components/MilestonesCard';
 import { NextGameCard } from '../components/NextGameCard';
 import { ProgressCard } from '../components/ProgressCard';
 import { SteamPrivacyNotice } from '../components/SteamPrivacyNotice';
@@ -61,6 +62,8 @@ export default function HomePage() {
           className="h-72 animate-pulse rounded-2xl border border-line bg-card"
         />
       )}
+
+      <MilestonesCard />
 
       <TimelineCard />
 
