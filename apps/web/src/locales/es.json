@@ -52,8 +52,8 @@
       "legend": "Horas jugadas cada mes, con todos tus juegos. Encima, los que completaste.",
       "empty": "Cuando lleves unos días jugando, aquí verás tus horas y tus completados de cada mes.",
       "error": "No hemos podido cargar tus meses.",
-      "completed_one": "✓ {{count}}",
-      "completed_other": "✓ {{count}}",
+      "completed_one": "✓{{count}}",
+      "completed_other": "✓{{count}}",
       "month_one": "{{month}}: {{hours}} y {{count}} completado",
       "month_other": "{{month}}: {{hours}} y {{count}} completados"
     }

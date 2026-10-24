@@ -16,16 +16,27 @@ describe('monthlyTimeline', () => {
         '2026-10-24',
       ),
     ).toEqual([
+      // Six months at least: the ones before the history are empty.
+      { month: '2026-05', completed: 0, playedMinutes: 0 },
+      { month: '2026-06', completed: 0, playedMinutes: 0 },
+      { month: '2026-07', completed: 0, playedMinutes: 0 },
       { month: '2026-08', completed: 1, playedMinutes: 90 },
       { month: '2026-09', completed: 0, playedMinutes: 0 },
       { month: '2026-10', completed: 2, playedMinutes: 90 },
     ]);
   });
 
-  it('shows only this month when there is nothing yet', () => {
-    expect(monthlyTimeline([], [], '2026-10-24')).toEqual([
-      { month: '2026-10', completed: 0, playedMinutes: 0 },
+  it('shows six empty months when there is nothing yet, across years', () => {
+    const months = monthlyTimeline([], [], '2026-03-24');
+    expect(months.map(({ month }) => month)).toEqual([
+      '2025-10',
+      '2025-11',
+      '2025-12',
+      '2026-01',
+      '2026-02',
+      '2026-03',
     ]);
+    expect(months.every((month) => month.playedMinutes === 0)).toBe(true);
   });
 
   it('goes back 12 months at most, across years', () => {

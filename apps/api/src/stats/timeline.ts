@@ -13,6 +13,12 @@ export interface PlayedDay {
 /** How far back the monthly chart goes. */
 export const TIMELINE_MONTHS = 12;
 
+/**
+ * How many months it always shows, empty ones before the history
+ * included: one lonely bar filling the whole card looks broken.
+ */
+export const TIMELINE_MIN_MONTHS = 6;
+
 /** The pace is measured over the last days, up to this many... */
 export const PACE_WINDOW_DAYS = 30;
 
@@ -21,9 +27,9 @@ export const PACE_MIN_DAYS = 7;
 
 /**
  * Completed games and minutes played per month, from the first month
- * with anything (at most TIMELINE_MONTHS ago) up to this one, empty
- * months included: a gap in the chart is a month off, and that's worth
- * seeing too.
+ * with anything (at most TIMELINE_MONTHS ago, at least TIMELINE_MIN_MONTHS)
+ * up to this one, empty months included: a gap in the chart is a month
+ * off, and that's worth seeing too.
  */
 export function monthlyTimeline(
   days: PlayedDay[],
@@ -43,7 +49,8 @@ export function monthlyTimeline(
 
   const current = today.slice(0, 7);
   const oldest = addMonths(current, -(TIMELINE_MONTHS - 1));
-  const first = [...played.keys(), ...completed.keys(), current]
+  const newestStart = addMonths(current, -(TIMELINE_MIN_MONTHS - 1));
+  const first = [...played.keys(), ...completed.keys(), newestStart]
     .filter((month) => month >= oldest)
     .sort()[0]!;
 

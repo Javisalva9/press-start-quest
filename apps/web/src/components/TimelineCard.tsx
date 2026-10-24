@@ -41,34 +41,39 @@ function Bars({ months }: { months: TimelineMonth[] }) {
   const { t, i18n } = useTranslation();
   const most = Math.max(1, ...months.map((month) => month.playedMinutes));
   return (
-    <ol className="flex h-40 items-end gap-1.5">
+    <ol className="flex gap-1.5">
       {months.map((month) => {
         const hours = formatHours(month.playedMinutes, i18n.language);
         const label = monthLabel(month.month, i18n.language);
+        const height = (month.playedMinutes / most) * 100;
         return (
           <li
             key={month.month}
-            className="flex h-full min-w-0 flex-1 flex-col items-center justify-end gap-1"
+            className="flex min-w-0 flex-1 flex-col items-center gap-1"
             aria-label={t('home.timeline.month', {
               month: label,
               hours,
               count: month.completed,
             })}
           >
-            {month.completed > 0 && (
-              <span className="font-display text-xs font-bold text-success">
-                {t('home.timeline.completed', { count: month.completed })}
-              </span>
-            )}
-            <div
-              className="w-full rounded-t-md bg-linear-to-t from-violet to-cyan"
-              // At least a sliver: a month with a little play shows.
-              style={{
-                height: `${Math.max(month.playedMinutes > 0 ? 3 : 0, (month.playedMinutes / most) * 100)}%`,
-              }}
-              title={hours}
-            />
+            <span className="h-4 font-display text-[0.7rem] leading-4 font-bold whitespace-nowrap text-success">
+              {month.completed > 0 &&
+                t('home.timeline.completed', { count: month.completed })}
+            </span>
+            {/* Every month has its slot, so an empty one reads as empty, not missing. */}
+            <div className="flex h-28 w-full items-end overflow-hidden rounded-md bg-canvas">
+              <div
+                className="w-full rounded-t-md bg-linear-to-t from-violet to-cyan"
+                // At least a sliver: a month with a little play shows.
+                style={{
+                  height: `${month.playedMinutes > 0 ? Math.max(4, height) : 0}%`,
+                }}
+              />
+            </div>
             <span className="truncate text-[0.65rem] text-muted">{label}</span>
+            <span className="truncate text-[0.6rem] text-fg/80 tabular-nums">
+              {month.playedMinutes > 0 ? hours : ''}
+            </span>
           </li>
         );
       })}

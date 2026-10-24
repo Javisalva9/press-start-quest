@@ -52,8 +52,8 @@
       "legend": "Hours played each month, all your games included. On top, the ones you completed.",
       "empty": "After a few days of play, your hours and completed games will show here month by month.",
       "error": "We couldn’t load your months.",
-      "completed_one": "✓ {{count}}",
-      "completed_other": "✓ {{count}}",
+      "completed_one": "✓{{count}}",
+      "completed_other": "✓{{count}}",
       "month_one": "{{month}}: {{hours}} and {{count}} completed",
       "month_other": "{{month}}: {{hours}} and {{count}} completed"
     }
