@@ -1,7 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
 import {
+  StatsMilestonesSchema,
   StatsOverviewSchema,
   StatsTimelineSchema,
+  type StatsMilestones,
   type StatsOverview,
   type StatsTimeline,
 } from '@psq/shared';
@@ -25,5 +27,14 @@ export function useStatsTimeline() {
     queryKey: ['stats-overview', 'timeline'],
     queryFn: async (): Promise<StatsTimeline> =>
       StatsTimelineSchema.parse(await authRequest('/api/stats/timeline')),
+  });
+}
+
+/** Milestones reached and the next ones; refreshed with the progress too. */
+export function useStatsMilestones() {
+  return useQuery({
+    queryKey: ['stats-overview', 'milestones'],
+    queryFn: async (): Promise<StatsMilestones> =>
+      StatsMilestonesSchema.parse(await authRequest('/api/stats/milestones')),
   });
 }

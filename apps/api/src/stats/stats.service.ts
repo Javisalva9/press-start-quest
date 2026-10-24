@@ -1,8 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import type { StatsOverview, StatsTimeline } from '@psq/shared';
+import type {
+  StatsMilestones,
+  StatsOverview,
+  StatsTimeline,
+} from '@psq/shared';
 import { GameKind, GameStatus } from '../generated/prisma/client.js';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { gamingDay } from '../sync/gaming-day.js';
+import { milestones } from './milestones.js';
 import { streaks, summarizeProgress } from './progress.js';
 import { backlogPace, monthlyTimeline, type PlayedDay } from './timeline.js';
 
@@ -59,24 +64,39 @@ export class StatsService {
   async timeline(userId: string, now = new Date()): Promise<StatsTimeline> {
     const [history, completed] = await Promise.all([
       this.playedDays(userId),
-      this.prisma.userGame.findMany({
-        where: {
-          userId,
-          owned: true,
-          status: GameStatus.COMPLETED,
-          completedAt: { not: null },
-          game: { kind: GameKind.GAME },
-        },
-        select: { completedAt: true },
-      }),
+      this.completedDays(userId),
     ]);
     return {
-      months: monthlyTimeline(
-        history.days,
-        completed.map(({ completedAt }) => gamingDay(completedAt!)),
-        gamingDay(now),
-      ),
+      months: monthlyTimeline(history.days, completed, gamingDay(now)),
     };
+  }
+
+  /** Milestones reached and the next of each kind. */
+  async milestones(userId: string, now = new Date()): Promise<StatsMilestones> {
+    const [history, completed] = await Promise.all([
+      this.playedDays(userId),
+      this.completedDays(userId),
+    ]);
+    return milestones(
+      completed,
+      history.days.map(({ day }) => day),
+      gamingDay(now),
+    );
+  }
+
+  /** The gaming day of each completion. */
+  private async completedDays(userId: string): Promise<string[]> {
+    const rows = await this.prisma.userGame.findMany({
+      where: {
+        userId,
+        owned: true,
+        status: GameStatus.COMPLETED,
+        completedAt: { not: null },
+        game: { kind: GameKind.GAME },
+      },
+      select: { completedAt: true },
+    });
+    return rows.map(({ completedAt }) => gamingDay(completedAt!));
   }
 
   /**

@@ -392,6 +392,35 @@
       "ranking": "See how the ranking looks →"
     }
   },
+  "milestones": {
+    "title": "Your milestones",
+    "reached": "Earned",
+    "more_one": "and {{count}} more",
+    "more_other": "and {{count}} more",
+    "progress": "{{current}} / {{target}}",
+    "next": {
+      "COMPLETED_one": "Complete your first game",
+      "COMPLETED_other": "Complete {{count}} games",
+      "STREAK_one": "Play {{count}} day in a row",
+      "STREAK_other": "Play {{count}} days in a row",
+      "MONTH_one": "Complete a game this month",
+      "MONTH_other": "Complete {{count}} games this month"
+    },
+    "badge": {
+      "COMPLETED": "{{count}}",
+      "STREAK": "{{count}}D",
+      "MONTH": "{{month}}"
+    },
+    "name": {
+      "COMPLETED_one": "First completed",
+      "COMPLETED_other": "{{count}} completed",
+      "STREAK_one": "{{count}}-day streak",
+      "STREAK_other": "{{count}}-day streak",
+      "MONTH_one": "Game of the month",
+      "MONTH_other": "Game of the month"
+    },
+    "reachedOn": "{{name}}, on {{date}}"
+  },
   "errors": {
     "VALIDATION_FAILED": "Something in the request wasn't right. Please try again.",
     "UNAUTHENTICATED": "Your session has ended. Please sign in again.",

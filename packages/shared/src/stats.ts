@@ -63,3 +63,35 @@ export const StatsTimelineSchema = z.object({
 });
 
 export type StatsTimeline = z.infer<typeof StatsTimelineSchema>;
+
+/**
+ * Kinds of milestone: games completed in total, the best streak of
+ * gaming days, and completing something this month (it starts again
+ * every month).
+ */
+export const MILESTONE_KINDS = ['COMPLETED', 'STREAK', 'MONTH'] as const;
+
+export type MilestoneKind = (typeof MILESTONE_KINDS)[number];
+
+/** One milestone, reached or the next one to reach. */
+export const MilestoneSchema = z.object({
+  kind: z.enum(MILESTONE_KINDS),
+  /** 10 completed, a 7-day streak, 1 this month. */
+  target: z.number().int().positive(),
+  /** How far the player is: past the target once reached. */
+  current: z.number().int().nonnegative(),
+  /** The gaming day it was reached; null while it isn't. */
+  reachedOn: z.iso.date().nullable(),
+});
+
+export type Milestone = z.infer<typeof MilestoneSchema>;
+
+/** Response of GET /api/stats/milestones. */
+export const StatsMilestonesSchema = z.object({
+  /** Reached ones, the newest first. */
+  reached: z.array(MilestoneSchema),
+  /** The next one of each kind still ahead. */
+  next: z.array(MilestoneSchema),
+});
+
+export type StatsMilestones = z.infer<typeof StatsMilestonesSchema>;
