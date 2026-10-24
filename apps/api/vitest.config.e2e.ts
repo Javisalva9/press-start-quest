@@ -14,6 +14,9 @@ export default defineConfig({
       IGDB_CLIENT_ID: 'e2e-test-igdb-client',
       IGDB_CLIENT_SECRET: 'e2e-test-igdb-secret',
       JOBS_TOKEN: 'e2e-test-jobs-token-that-is-at-least-32-characters',
+      // Empty on purpose, so your real key in .env doesn't switch the
+      // prices on: they would call IsThereAnyDeal for real.
+      ITAD_API_KEY: '',
     },
   },
 });

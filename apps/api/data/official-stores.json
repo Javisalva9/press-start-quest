@@ -1,0 +1,26 @@
+[
+  { "name": "Steam", "itad": ["Steam"] },
+  { "name": "GOG", "itad": ["GOG", "GOG.com"] },
+  {
+    "name": "Epic Games Store",
+    "itad": ["Epic Game Store", "Epic Games Store"]
+  },
+  { "name": "Humble Store", "itad": ["Humble Store"] },
+  { "name": "Fanatical", "itad": ["Fanatical"] },
+  {
+    "name": "Green Man Gaming",
+    "itad": ["GreenManGaming", "Green Man Gaming"]
+  },
+  { "name": "Microsoft Store", "itad": ["Microsoft Store"] },
+  { "name": "Ubisoft Store", "itad": ["Ubisoft Store", "Ubisoft Connect"] },
+  { "name": "EA app", "itad": ["EA Store", "EA app", "Origin"] },
+  { "name": "Battle.net", "itad": ["Battle.net", "Blizzard"] },
+  { "name": "GamersGate", "itad": ["GamersGate"] },
+  { "name": "WinGameStore", "itad": ["WinGameStore"] },
+  {
+    "name": "Gamesplanet",
+    "itad": ["Gamesplanet DE", "Gamesplanet FR", "Gamesplanet UK"]
+  },
+  { "name": "IndieGala", "itad": ["IndieGala Store", "IndieGala"] },
+  { "name": "DLGamer", "itad": ["DLGamer"] }
+]
