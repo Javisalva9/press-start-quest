@@ -105,6 +105,7 @@
     "label": "Principal",
     "home": "Inicio",
     "library": "Biblioteca",
+    "deals": "Ofertas",
     "settings": "Ajustes"
   },
   "status": {
@@ -420,6 +421,29 @@
       "MONTH_other": "Juego del mes"
     },
     "reachedOn": "{{name}}, el {{date}}"
+  },
+  "deals": {
+    "title": "Ofertas",
+    "intro": "Lo que quieres y hoy está más barato, solo en tiendas oficiales y en euros. Primero lo que más encaja contigo.",
+    "sortLabel": "Ordenar",
+    "sort": {
+      "forYou": "Para ti",
+      "cut": "Descuento",
+      "price": "Precio"
+    },
+    "onSaleOnly": "Solo rebajados",
+    "cut": "−{{cut}} %",
+    "at": "en {{store}}",
+    "historicalLow": "Mínimo histórico",
+    "lowest": "Mínimo histórico: {{price}}",
+    "separator": " · ",
+    "endsOn": "Termina el {{date}}",
+    "open": "Ver en {{store}} ↗",
+    "bestPrice": "Mejor precio ahora",
+    "emptyWishlist": "Aún no hay precios. Se miran cada noche para los juegos de tu lista de deseados de Steam y de las listas que sigues.",
+    "emptyOnSale": "Ahora mismo nada de lo que quieres está rebajado. Quita «Solo rebajados» para ver todos los precios.",
+    "error": "No hemos podido cargar las ofertas.",
+    "updatedAt": "Precios de IsThereAnyDeal, actualizados el {{date}}."
   },
   "errors": {
     "VALIDATION_FAILED": "Algo de la petición no era correcto. Vuelve a intentarlo.",

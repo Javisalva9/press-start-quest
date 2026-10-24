@@ -21,6 +21,7 @@ import {
 } from '../generated/prisma/client.js';
 import { fromHalfStars, toHalfStars } from '../common/stars.js';
 import { PrismaService } from '../prisma/prisma.service.js';
+import { toDealPrice } from '../deals/deals.service.js';
 import { TasteProfileService } from '../taste/taste-profile.service.js';
 import { markPlayedToday } from './external-session.js';
 import { buildLibraryOrderBy, buildLibraryWhere } from './library-query.js';
@@ -285,6 +286,7 @@ export class LibraryService {
         game: {
           select: {
             ...listSelect.game.select,
+            deal: true,
             gameType: true,
             serverStatus: true,
             serverClosedAt: true,
@@ -373,6 +375,8 @@ export class LibraryService {
         row.snoozedUntil && row.snoozedUntil > now
           ? row.snoozedUntil.toISOString()
           : null,
+      // Only the wishlist is priced; a game bought keeps no stale price.
+      deal: !row.owned && game.deal ? toDealPrice(game.deal) : null,
     };
   }
 }

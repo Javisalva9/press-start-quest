@@ -121,7 +121,9 @@ export function fitsMood(candidate: Candidate, mood: Mood | null): boolean {
 }
 
 /** N: IGDB's rating pulled towards neutral when few voted; else Metacritic. */
-export function qualityFactor(candidate: Candidate): number {
+export function qualityFactor(
+  candidate: Pick<Candidate, 'rating' | 'ratingCount' | 'metacritic'>,
+): number {
   if (candidate.rating !== null) {
     const votes = candidate.ratingCount ?? 0;
     const rating = candidate.rating / 100;

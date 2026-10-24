@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { RecommendedBySchema } from './curators.js';
+import { DealPriceSchema } from './deals.js';
 
 /** Same values as the GameStatus enum in the database. */
 export const GAME_STATUSES = [
@@ -210,6 +211,11 @@ export const LibraryGameSchema = LibraryItemSchema.extend({
   ),
   /** "Not now" on its recommendation: hidden from them until this day. */
   snoozedUntil: z.iso.datetime().nullable(),
+  /**
+   * Its best price now, for a game of the wishlist. The default keeps the
+   * web app working against an API deployed a moment earlier without it.
+   */
+  deal: DealPriceSchema.nullable().default(null),
 });
 
 export type LibraryGame = z.infer<typeof LibraryGameSchema>;
